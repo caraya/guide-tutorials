@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CaniuseSupport Web Component Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.0/dist/typography.min.css">
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal text-gray-800">
+  <div class="container mx-auto p-4 bg-white shadow-lg rounded-lg my-8">
+    <h1 class="text-4xl font-extrabold mb-8 text-center text-gray-900">Web Feature Compatibility Checker</h1>
+    <p class="text-lg text-gray-700 mb-10 text-center max-w-prose mx-auto">
+      Enter a web feature ID (e.g., <code class="bg-gray-200 px-1 rounded">flexbox</code>, <code
+        class="bg-gray-200 px-1 rounded">css-grid</code>, <code
+        class="bg-gray-200 px-1 rounded">intersectionobserver</code>) into the field below to see its browser support
+      matrix.
+    </p>
+
+    <div class="mb-8 flex flex-col items-center">
+      <div class="flex w-full max-w-md mb-4">
+        <input type="text" id="featureInput" placeholder="Enter feature ID (e.g., flexbox)"
+          class="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="renderButton"
+          class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Render</button>
+      </div>
+      <div id="componentContainer" class="w-full flex justify-center">
+      </div>
+    </div>
+
+    <hr class="my-10 border-gray-300">
+
+    <div class="w-full">
+      <div role="tablist" class="flex border-b border-gray-200">
+        <button role="tab" id="tab-explanation" aria-controls="panel-explanation" aria-selected="true"
+          class="main-tab-button active px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 hover:text-blue-800 focus:outline-none">
+          Component Explanation
+        </button>
+        <button role="tab" id="tab-private-methods" aria-controls="panel-private-methods" aria-selected="false"
+          class="main-tab-button px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 hover:border-gray-300 focus:outline-none">
+          Underscore vs. Private Methods
+        </button>
+      </div>
+
+      <div id="panel-explanation" role="tabpanel" aria-labelledby="tab-explanation"
+        class="main-tab-content active p-4 prose prose-lg max-w-none mx-auto">
+        <h2 class="mb-4">Explanation of <code class="bg-gray-200 px-1 rounded">CaniuseSupport</code> Web Component</h2>
+        <p>
+          This web component, <code class="bg-gray-200 px-1 rounded">CaniuseSupport</code>, is designed to display a
+          browser compatibility matrix for a specific web feature using data from the <a href="https://caniuse.com"
+            target="_blank" class="text-blue-600 hover:underline">caniuse.com</a> database. It's built to be entirely
+          self-contained, meaning all its styling and logic are encapsulated within the component itself. This
+          separation ensures that the component's internal styles and markup won't "leak out" and affect the main
+          document, and vice-versa, adhering to Web Component best practices.
+        </p>
+
+        <h3 class="mb-3">Code Breakdown by Function:</h3>
+        <p>Here's a detailed breakdown of the <code class="bg-gray-200 px-1 rounded">CaniuseSupport</code> class,
+          organized by function, using expandable sections:</p>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">static BROWSER_INFO</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: A static (class-level) object that maps short browser IDs (like <code
+                  class="bg-gray-200 px-1 rounded">'edge'</code>, <code
+                  class="bg-gray-200 px-1 rounded">'chrome'</code>) to more human-readable names (like <code
+                  class="bg-gray-200 px-1 rounded">'Edge'</code>, <code
+                  class="bg-gray-200 px-1 rounded">'Chrome'</code>).</li>
+              <li><strong>Explanation</strong>: This makes the code cleaner when displaying browser names in the UI, as
+                you don't have to hardcode them everywhere. Being <code class="bg-gray-200 px-1 rounded">static</code>
+                means it's shared across all instances of <code class="bg-gray-200 px-1 rounded">CaniuseSupport</code>
+                and doesn't need to be recreated for each component.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">static _db</code> and <code
+                class="bg-gray-200 px-1 rounded">static _dbPromise</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: These static properties are used to cache the fetched <code
+                  class="bg-gray-200 px-1 rounded">caniuse</code> database and manage the asynchronous fetching process.
+              </li>
+              <li><strong>Explanation</strong>: <code class="bg-gray-200 px-1 rounded">_db</code> will store the actual
+                database once it's downloaded. <code class="bg-gray-200 px-1 rounded">_dbPromise</code> stores the <code
+                  class="bg-gray-200 px-1 rounded">Promise</code> object that represents the ongoing or completed fetch
+                operation. This pattern ensures that the database is only fetched <i>once</i> from the network, even if
+                you have multiple <code class="bg-gray-200 px-1 rounded">caniuse-support</code> components on the same
+                page. Subsequent components will just wait for the existing <code
+                  class="bg-gray-200 px-1 rounded">_dbPromise</code> to resolve or directly use the <code
+                  class="bg-gray-200 px-1 rounded">_db</code> if it's already available.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">constructor()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Initializes a new instance of the <code
+                  class="bg-gray-200 px-1 rounded">CaniuseSupport</code> custom element.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li><code class="bg-gray-200 px-1 rounded">super()</code>: Must be called first in a custom element's
+                    constructor. It calls the constructor of the parent <code
+                      class="bg-gray-200 px-1 rounded">HTMLElement</code> class.</li>
+                  <li><code class="bg-gray-200 px-1 rounded">this.attachShadow({ mode: 'open' })</code>: Creates a
+                    Shadow DOM for this component. <code class="bg-gray-200 px-1 rounded">mode: 'open'</code> means
+                    JavaScript outside the Shadow DOM can still access its contents (though typically discouraged for
+                    true encapsulation). The Shadow DOM provides encapsulation, meaning the component's internal styles
+                    and markup won't "leak out" and affect the main document, and vice-versa.</li>
+                  <li><code class="bg-gray-200 px-1 rounded">this._initialized = false</code>: A flag to track if the
+                    component's internal setup (like injecting styles and creating the container) has already run.</li>
+                  <li><code class="bg-gray-200 px-1 rounded">this._container = null</code>: A placeholder for the main
+                    <code class="bg-gray-200 px-1 rounded">div</code> element inside the Shadow DOM where the
+                    component's content will be rendered.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">static get observedAttributes()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: A static getter that tells the browser which attributes on the custom
+                element should be "observed" for changes.</li>
+              <li><strong>Explanation</strong>: When an attribute listed here changes (e.g., <code
+                  class="bg-gray-200 px-1 rounded">feature-id</code> changes from "flexbox" to "css-grid"), the <code
+                  class="bg-gray-200 px-1 rounded">attributeChangedCallback</code> method is automatically invoked by
+                the browser.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">connectedCallback()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: A lifecycle callback method that is invoked by the browser when the custom
+                element is first connected to the document's DOM.</li>
+              <li><strong>Explanation</strong>: This is the ideal place to perform initial setup. It checks if the
+                component has been <code class="bg-gray-200 px-1 rounded">_initialized</code> yet (to prevent
+                re-initialization if the element is moved in the DOM), retrieves the <code
+                  class="bg-gray-200 px-1 rounded">feature-id</code> attribute's value, and then calls <code
+                  class="bg-gray-200 px-1 rounded">_render()</code> to display the initial content.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code
+                class="bg-gray-200 px-1 rounded">attributeChangedCallback(name, oldValue, newValue)</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: A lifecycle callback method invoked when an observed attribute changes.</li>
+              <li><strong>Explanation</strong>: If the <code class="bg-gray-200 px-1 rounded">feature-id</code>
+                attribute changes, this method updates the component's <code
+                  class="bg-gray-200 px-1 rounded">_featureId</code> property and triggers a re-render using <code
+                  class="bg-gray-200 px-1 rounded">_render()</code>, ensuring the displayed compatibility data is always
+                up-to-date with the attribute.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">_initialize()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Performs the one-time setup of the component's internal structure and
+                injects its self-contained CSS into the Shadow DOM.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li>It creates a <code class="bg-gray-200 px-1 rounded">&lt;style&gt;</code> element and sets its
+                    <code class="bg-gray-200 px-1 rounded">textContent</code> to a large string of CSS rules. These
+                    rules are standard CSS, mimicking the visual appearance that Tailwind CSS would provide, but they
+                    are now scoped <i>only</i> to this component's Shadow DOM.</li>
+                  <li>It appends this <code class="bg-gray-200 px-1 rounded">&lt;style&gt;</code> element to the <code
+                      class="bg-gray-200 px-1 rounded">shadowRoot</code>.</li>
+                  <li>It creates the main <code class="bg-gray-200 px-1 rounded">_container</code> <code
+                      class="bg-gray-200 px-1 rounded">div</code> where all the dynamic HTML content will be placed and
+                    appends it to the <code class="bg-gray-200 px-1 rounded">shadowRoot</code>.</li>
+                  <li>Sets <code class="bg-gray-200 px-1 rounded">_initialized</code> to <code
+                      class="bg-gray-200 px-1 rounded">true</code> to mark that setup is complete.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">static async _fetchDb()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Asynchronously fetches the <code
+                  class="bg-gray-200 px-1 rounded">caniuse-db/data.json</code> file, which contains all the browser
+                compatibility information.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li>It first checks <code class="bg-gray-200 px-1 rounded">this._db</code>. If the database has
+                    already been fetched and stored, it returns it immediately.</li>
+                  <li>If not, it checks <code class="bg-gray-200 px-1 rounded">this._dbPromise</code>. If a fetch is
+                    already in progress, it returns that existing promise, preventing duplicate network requests.</li>
+                  <li>If no fetch is in progress, it initiates a <code class="bg-gray-200 px-1 rounded">fetch()</code>
+                    request to the <code class="bg-gray-200 px-1 rounded">caniuse-db</code> CDN.</li>
+                  <li>It uses <code class="bg-gray-200 px-1 rounded">.then()</code> to handle the response: first
+                    checking if the HTTP response was successful (<code
+                      class="bg-gray-200 px-1 rounded">response.ok</code>), then parsing the response as JSON.</li>
+                  <li>Once the JSON data is received, it stores it in <code
+                      class="bg-gray-200 px-1 rounded">this._db</code> for future use.</li>
+                  <li>The <code class="bg-gray-200 px-1 rounded">async</code>/<code
+                      class="bg-gray-200 px-1 rounded">await</code> syntax makes working with promises more readable,
+                    allowing you to write asynchronous code that looks more like synchronous code.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">async _render()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: The core rendering logic of the component. It orchestrates showing loading
+                states, fetching data, and displaying the final browser support matrix or error messages.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li>Starts by displaying a loading spinner/message using <code
+                      class="bg-gray-200 px-1 rounded">_renderLoading()</code>.</li>
+                  <li>Checks if a <code class="bg-gray-200 px-1 rounded">feature-id</code> is provided; if not, it shows
+                    a message.</li>
+                  <li>Uses a <code class="bg-gray-200 px-1 rounded">try...catch</code> block for robust error handling
+                    during the asynchronous data fetching.</li>
+                  <li><code class="bg-gray-200 px-1 rounded">await CaniuseSupport._fetchDb()</code>: Waits for the
+                    database to be available.</li>
+                  <li>It then accesses the specific <code class="bg-gray-200 px-1 rounded">featureData</code> from the
+                    database using <code class="bg-gray-200 px-1 rounded">this._featureId</code>.</li>
+                  <li>If <code class="bg-gray-200 px-1 rounded">featureData</code> is not found (invalid ID), it
+                    displays a "not found" message.</li>
+                  <li>Finally, it calls <code class="bg-gray-200 px-1 rounded">_buildLayout()</code> to construct the
+                    detailed HTML for the feature and injects it into <code
+                      class="bg-gray-200 px-1 rounded">this._container</code>.</li>
+                  <li>Any errors during fetch or data processing are caught and an error message is displayed.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">_getSupportInfo(stats)</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: This helper method parses the raw support string for a specific browser and
+                feature (e.g., <code class="bg-gray-200 px-1 rounded">"y #1"</code> or <code
+                  class="bg-gray-200 px-1 rounded">"a #2 3"</code>) into a more structured format.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li>It iterates through the browser versions (sorted numerically) to find the <i>earliest</i> version
+                    that offers full support (<code class="bg-gray-200 px-1 rounded">'y'</code>) or partial support
+                    (<code class="bg-gray-200 px-1 rounded">'a'</code>).</li>
+                  <li>It extracts the support status (<code class="bg-gray-200 px-1 rounded">'yes'</code>, <code
+                      class="bg-gray-200 px-1 rounded">'partial'</code>, <code
+                      class="bg-gray-200 px-1 rounded">'no'</code>), the version number where support begins, and any
+                    associated note numbers (e.g., <code class="bg-gray-200 px-1 rounded">["1", "2"]</code>).</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">_renderLoading()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Generates the HTML string for the loading state, including an SVG spinner.
+              </li>
+              <li><strong>Explanation</strong>: This method returns a simple HTML string that the <code
+                  class="bg-gray-200 px-1 rounded">_render()</code> method injects into the <code
+                  class="bg-gray-200 px-1 rounded">_container</code> while data is being fetched. The CSS for the
+                spinner and text is defined in the <code class="bg-gray-200 px-1 rounded">_initialize()</code> method,
+                ensuring it's encapsulated.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">_renderMessage()</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Generates a simple HTML string to display a general message, typically for
+                errors or when a feature ID is not found.</li>
+              <li><strong>Explanation</strong>: Returns a basic HTML structure to show text feedback to the user. Its
+                styling is also defined internally.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-4 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <summary
+            class="flex items-center justify-between p-4 bg-gray-50 cursor-pointer text-lg font-semibold text-gray-800 hover:bg-gray-100 focus:outline-none">
+            <span><code class="bg-gray-200 px-1 rounded">_buildLayout(featureData)</code></span>
+            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </summary>
+          <div class="p-4 border-t border-gray-200">
+            <ul>
+              <li><strong>Purpose</strong>: Constructs the complete HTML structure for the feature's support matrix,
+                including browser compatibility details and notes.</li>
+              <li><strong>Explanation</strong>:
+                <ul>
+                  <li><code class="bg-gray-200 px-1 rounded">relevantNoteNumbers</code>: A <code
+                      class="bg-gray-200 px-1 rounded">Set</code> is used to collect only the note numbers that are
+                    actually referenced by the browsers' support data, avoiding displaying irrelevant notes.</li>
+                  <li><code class="bg-gray-200 px-1 rounded">browserItems</code>: Uses <code
+                      class="bg-gray-200 px-1 rounded">Object.keys()</code> and <code
+                      class="bg-gray-200 px-1 rounded">map()</code> to iterate through the <code
+                      class="bg-gray-200 px-1 rounded">BROWSER_INFO</code> and generate an HTML block for each browser.
+                    For each browser, it calls <code class="bg-gray-200 px-1 rounded">_getSupportInfo()</code> to get
+                    the detailed support status and then uses a <code class="bg-gray-200 px-1 rounded">switch</code>
+                    statement to determine the appropriate icon, text, and CSS class for the visual indicator (✅, ⚠️,
+                    ❌).</li>
+                  <li><code class="bg-gray-200 px-1 rounded">notesHtml</code>: This section dynamically generates the
+                    general notes and filtered numbered notes. It uses a <code
+                      class="bg-gray-200 px-1 rounded">&lt;details&gt;</code> and <code
+                      class="bg-gray-200 px-1 rounded">&lt;summary&gt;</code> HTML element to create an
+                    expandable/collapsible section for the notes, improving the UI's cleanliness. The note text from the
+                    database can contain HTML, so it's directly inserted.</li>
+                  <li>Finally, it returns the complete HTML string for the entire component, combining the header,
+                    browser grid, and notes section. All HTML elements within this string use the custom CSS classes
+                    defined in <code class="bg-gray-200 px-1 rounded">_initialize()</code>.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <div id="panel-private-methods" role="tabpanel" aria-labelledby="tab-private-methods"
+        class="main-tab-content p-4 prose prose-lg max-w-none hidden mx-auto">
+        <h2>Why <code class="bg-gray-200 px-1 rounded">_</code> (Underscore) Instead of Private Class Methods (<code
+            class="bg-gray-200 px-1 rounded">#</code>)?</h2>
+        <p>
+          You might notice that many of the methods and properties in this class start with an underscore (e.g., <code
+            class="bg-gray-200 px-1 rounded">_initialize</code>, <code class="bg-gray-200 px-1 rounded">_fetchDb</code>,
+          <code class="bg-gray-200 px-1 rounded">_container</code>). In JavaScript, the <code
+            class="bg-gray-200 px-1 rounded">#</code> symbol is used to denote truly private class fields and methods (a
+          relatively newer feature introduced in ES2020).
+        </p>
+        <p>
+          While private class methods (<code class="bg-gray-200 px-1 rounded">#</code>) offer stronger encapsulation by
+          making members inaccessible from outside the class, using an underscore <code
+            class="bg-gray-200 px-1 rounded">_</code> as a convention is a common practice in JavaScript for indicating
+          that a method or property is intended for internal use within the class and should not be directly accessed or
+          modified from outside.
+        </p>
+        <p>
+          I've used the <code class="bg-gray-200 px-1 rounded">_</code> convention here for a few reasons:
+        </p>
+        <ul>
+          <li><strong>Broader Compatibility</strong>: The code was originally written without private class fields, and
+            using <code class="bg-gray-200 px-1 rounded">_</code> ensures broader compatibility with older JavaScript
+            environments or build setups that might not fully support the private class fields syntax.</li>
+          <li><strong>Simplicity for Explanation</strong>: For an intermediate developer, the <code
+              class="bg-gray-200 px-1 rounded">_</code> convention is often easier to grasp initially as a "hint" for
+            internal methods, without diving into the specifics of JavaScript's private class fields implementation
+            details.</li>
+          <li><strong>Flexibility</strong>: While generally discouraged, using <code
+              class="bg-gray-200 px-1 rounded">_</code> allows for easier debugging or testing in some scenarios where
+            temporary access to internal state might be beneficial during development. True private fields (<code
+              class="bg-gray-200 px-1 rounded">#</code>) would prevent this entirely.</li>
+        </ul>
+        <p>
+          In a new project targeting modern environments, using <code class="bg-gray-200 px-1 rounded">#</code> for
+          truly private members would be the preferred and more robust approach for encapsulation.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    /**
+     * CaniuseSupport
+     * A Web Component that displays a browser support matrix for a given web feature.
+     * This component is designed to be entirely self-contained and styled within its
+     * own Shadow DOM, without relying on external CSS frameworks like Tailwind CSS.
+     */
+    class CaniuseSupport extends HTMLElement {
+      // --- Static Properties ---
+      static BROWSER_INFO = {
+        'edge': { name: 'Edge' },
+        'firefox': { name: 'Firefox' },
+        'chrome': { name: 'Chrome' },
+        'safari': { name: 'Safari' },
+        'ios_saf': { name: 'Safari on iOS' },
+        'and_chr': { name: 'Chrome for Android' },
+        'and_ff': { name: 'Firefox for Android' },
+      };
+      static _db = null;
+      static _dbPromise = null;
+
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this._initialized = false;
+        this._container = null;
+      }
+
+      static get observedAttributes() {
+        return [ 'feature-id' ];
+      }
+
+      connectedCallback() {
+        if (!this._initialized) {
+          this._initialize();
+        }
+        this._featureId = this.getAttribute('feature-id');
+        this._render();
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (this._initialized && name === 'feature-id' && oldValue !== newValue) {
+          this._featureId = newValue;
+          this._render();
+        }
+      }
+
+      _initialize() {
+        const style = document.createElement('style');
+        style.textContent = `
+                    :host {
+                        display: block;
+                        font-family: 'Inter', sans-serif;
+                    }
+                    .caniuse-card {
+                        background-color: #ffffff;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                        overflow: hidden;
+                        width: 100%;
+                        max-width: 700px;
+                    }
+                    .caniuse-header {
+                        padding: 1rem 1.5rem;
+                        border-bottom: 1px solid #e5e7eb;
+                        background-color: #f9fafb;
+                    }
+                    .caniuse-title {
+                        font-size: 1.25rem;
+                        font-weight: bold;
+                        color: #111827;
+                    }
+                    .caniuse-status {
+                        font-size: 0.875rem;
+                        color: #6b7280;
+                        margin-top: 0.25rem;
+                    }
+                    .caniuse-browser-grid {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+                        padding: 1rem;
+                        justify-content: center;
+                    }
+                    .caniuse-browser-item {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: flex-start;
+                        padding: 0.75rem;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 0.5rem;
+                        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+                        flex-grow: 1;
+                        min-width: 150px;
+                    }
+                    .caniuse-browser-name {
+                        font-weight: bold;
+                        color: #374151;
+                        text-align: center;
+                    }
+                    .caniuse-support-info {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.25rem;
+                        margin-top: 0.5rem;
+                    }
+                    .caniuse-support-icon {
+                        font-size: 1.25rem;
+                    }
+                    .caniuse-support-text {
+                        font-size: 0.75rem;
+                        color: #6b7280;
+                        text-align: center;
+                    }
+                    .caniuse-notes-section {
+                        padding: 1rem 1.5rem;
+                        border-top: 1px solid #e5e7eb;
+                        background-color: rgba(249, 250, 251, 0.5);
+                    }
+                    .caniuse-notes-summary {
+                        font-weight: 600;
+                        color: #374151;
+                        cursor: pointer;
+                        list-style: none;
+                        display: flex;
+                        align-items: center;
+                    }
+                    .caniuse-notes-summary:hover {
+                        color: #2563eb;
+                    }
+                    .caniuse-notes-summary svg {
+                        width: 1rem;
+                        height: 1rem;
+                        margin-left: 0.5rem;
+                        transition: transform 0.2s ease-in-out;
+                    }
+                    details[open] .caniuse-notes-summary svg {
+                        transform: rotate(180deg);
+                    }
+                    .caniuse-notes-content {
+                        font-size: 0.875rem;
+                        margin-top: 0.75rem;
+                        color: #4b5563;
+                        max-width: none;
+                    }
+                    .caniuse-notes-content ul {
+                        list-style-type: disc;
+                        padding-left: 1.25rem;
+                        margin-top: 0.75rem;
+                        margin-bottom: 0.75rem;
+                        line-height: 1.5;
+                    }
+                    .caniuse-notes-content li {
+                        margin-bottom: 0.25rem;
+                    }
+
+                    /* Specific colors for support status */
+                    .support-yes { color: #16a34a; }
+                    .support-partial { color: #eab308; }
+                    .support-no { color: #dc2626; }
+
+                    /* Loading spinner */
+                    @keyframes spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                    .animate-spin {
+                        animation: spin 1s linear infinite;
+                    }
+                    .spinner-color {
+                        color: #3b82f6;
+                    }
+                    .spinner-path-opacity {
+                        opacity: 0.75;
+                    }
+                    .spinner-circle-opacity {
+                        opacity: 0.25;
+                    }
+                    .loading-text-color {
+                        color: #6b7280;
+                    }
+                    .loading-feature-id {
+                        font-weight: 600;
+                        color: #374151;
+                    }
+                    .message-box {
+                        background-color: #ffffff;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                        padding: 2rem;
+                        text-align: center;
+                        color: #4b5563;
+                    }
+                `;
+        this.shadowRoot.appendChild(style);
+
+        this._container = document.createElement('div');
+        this.shadowRoot.appendChild(this._container);
+        this._initialized = true;
+      }
+
+      static async _fetchDb() {
+        if (this._db) return this._db;
+        if (!this._dbPromise) {
+          this._dbPromise = fetch('https://cdn.jsdelivr.net/npm/caniuse-db/data.json')
+            .then(response => {
+              if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+              return response.json();
+            })
+            .then(data => { this._db = data; return this._db; });
+        }
+        return this._dbPromise;
+      }
+
+      async _render() {
+        if (!this._container) return;
+        this._container.innerHTML = this._renderLoading();
+
+        if (!this._featureId) {
+          this._container.innerHTML = this._renderMessage('No feature ID provided.');
+          return;
+        }
+
+        try {
+          const db = await CaniuseSupport._fetchDb();
+          const featureData = db.data[ this._featureId ];
+
+          if (!featureData) {
+            this._container.innerHTML = this._renderMessage(`Feature '${this._featureId}' not found.`);
+            return;
+          }
+          this._container.innerHTML = this._buildLayout(featureData);
+        } catch (error) {
+          console.error('Failed to fetch or render caniuse data:', error);
+          this._container.innerHTML = this._renderMessage('Could not load support data. Please check the console.');
+        }
+      }
+
+      _getSupportInfo(stats) {
+        if (!stats) return { status: 'no', version: null, noteNumbers: [] };
+        let firstSupported = null;
+        let firstPartial = null;
+        const versions = Object.keys(stats).sort((a, b) => parseFloat(a) - parseFloat(b));
+
+        let supportData = null;
+
+        for (const version of versions) {
+          const supportString = stats[ version ];
+          if (supportString.includes('y') && !firstSupported) {
+            firstSupported = { version, supportString };
+            break;
+          }
+          if (supportString.includes('a') && !firstPartial) {
+            firstPartial = { version, supportString };
+          }
+        }
+
+        if (firstSupported) {
+          supportData = { status: 'yes', ...firstSupported };
+        } else if (firstPartial) {
+          supportData = { status: 'partial', ...firstPartial };
+        } else {
+          return { status: 'no', version: null, noteNumbers: [] };
+        }
+
+        const parts = supportData.supportString.split(' ');
+        const noteNumbers = parts.slice(1).map(p => p.replace('#', ''));
+
+        return { status: supportData.status, version: supportData.version, noteNumbers };
+      }
+
+      _renderLoading() {
+        return `<div class="caniuse-card" style="padding: 2rem; text-align: center;">
+                            <svg class="animate-spin spinner-color" style="height: 2rem; width: 2rem; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="spinner-circle-opacity" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="spinner-path-opacity" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p class="loading-text-color" style="margin-top: 1rem;">Loading support data for <strong class="loading-feature-id">${this._featureId || ''}</strong>...</p>
+                        </div>`;
+      }
+
+      _renderMessage(message) {
+        return `<div class="message-box">${message}</div>`;
+      }
+
+      _buildLayout(featureData) {
+        const relevantNoteNumbers = new Set();
+
+        const browserItems = Object.keys(CaniuseSupport.BROWSER_INFO)
+          .map(id => {
+            const info = CaniuseSupport.BROWSER_INFO[ id ];
+            const supportInfo = this._getSupportInfo(featureData.stats[ id ]);
+
+            if (supportInfo.noteNumbers && supportInfo.noteNumbers.length > 0) {
+              supportInfo.noteNumbers.forEach(num => relevantNoteNumbers.add(num));
+            }
+
+            let supportIcon = '';
+            let supportText = '';
+            let supportColorClass = '';
+
+            switch (supportInfo.status) {
+              case 'yes':
+                supportIcon = '✅';
+                supportText = `Supported since v${supportInfo.version}`;
+                supportColorClass = 'support-yes';
+                break;
+              case 'partial':
+                supportIcon = '⚠️';
+                supportText = `Partial since v${supportInfo.version}`;
+                supportColorClass = 'support-partial';
+                break;
+              case 'no':
+                supportIcon = '❌';
+                supportText = 'Not Supported';
+                supportColorClass = 'support-no';
+                break;
+            }
+            return `
+                            <div class="caniuse-browser-item">
+                                <span class="caniuse-browser-name">${info.name}</span>
+                                <div class="caniuse-support-info">
+                                    <span class="caniuse-support-icon ${supportColorClass}">${supportIcon}</span>
+                                    <span class="caniuse-support-text">${supportText}</span>
+                                </div>
+                            </div>
+                        `;
+          }).join('');
+
+        let notesHtml = '';
+        const generalNotes = featureData.notes;
+        const allNumberedNotes = featureData.notes_by_num;
+
+        const filteredNumberedNotes = {};
+        if (allNumberedNotes) {
+          for (const num of relevantNoteNumbers) {
+            if (allNumberedNotes[ num ]) {
+              filteredNumberedNotes[ num ] = allNumberedNotes[ num ];
+            }
+          }
+        }
+
+        if (generalNotes || Object.keys(filteredNumberedNotes).length > 0) {
+          let generalNotesHtml = generalNotes ? `<p style="margin-bottom: 0.5rem;">${generalNotes}</p>` : '';
+
+          let numberedNotesHtml = '';
+          if (Object.keys(filteredNumberedNotes).length > 0) {
+            const notesList = Object.entries(filteredNumberedNotes)
+              .map(([ num, noteText ]) => `<li>${noteText.replace(/^\d+:\s*/, '')}</li>`)
+              .join('');
+            numberedNotesHtml = `<ul style="list-style-type: disc; padding-left: 1.25rem; margin-top: 0.75rem; margin-bottom: 0.75rem; line-height: 1.5;">${notesList}</ul>`;
+          }
+
+          notesHtml = `
+                        <div class="caniuse-notes-section">
+                            <details>
+                                <summary class="caniuse-notes-summary">
+                                    <span style="display: flex; align-items: center;">
+                                        Notes
+                                        <svg style="width: 1rem; height: 1rem; margin-left: 0.5rem; transition: transform 0.2s ease-in-out;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </span>
+                                </summary>
+                                <div class="caniuse-notes-content">
+                                    ${generalNotesHtml}
+                                    ${numberedNotesHtml}
+                                </div>
+                            </details>
+                        </div>
+                    `;
+        }
+
+        return `
+                    <div class="caniuse-card">
+                        <div class="caniuse-header">
+                            <h2 class="caniuse-title">${featureData.title}</h2>
+                            <p class="caniuse-status">Status: ${featureData.status}</p>
+                        </div>
+                        <div class="caniuse-browser-grid">
+                            ${browserItems}
+                        </div>
+                        ${notesHtml}
+                    </div>
+                `;
+      }
+    }
+
+    if (!customElements.get('caniuse-support')) {
+      customElements.define('caniuse-support', CaniuseSupport);
+    }
+
+    // JavaScript for dynamic input and rendering
+    document.addEventListener('DOMContentLoaded', () => {
+      const featureInput = document.getElementById('featureInput');
+      const renderButton = document.getElementById('renderButton');
+      const componentContainer = document.getElementById('componentContainer');
+
+      const renderCaniuseComponent = () => {
+        const featureId = featureInput.value.trim().toLowerCase();
+        componentContainer.innerHTML = ''; // Clear previous component
+
+        if (featureId) {
+          const caniuseElement = document.createElement('caniuse-support');
+          caniuseElement.setAttribute('feature-id', featureId);
+          componentContainer.appendChild(caniuseElement);
+        } else {
+          componentContainer.innerHTML = '<p class="text-red-500 mt-4">Please enter a feature ID.</p>';
+        }
+      };
+
+      renderButton.addEventListener('click', renderCaniuseComponent);
+      featureInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          renderCaniuseComponent();
+        }
+      });
+
+      // Main Tab functionality
+      const mainTabButtons = document.querySelectorAll('.main-tab-button');
+      const mainTabPanels = document.querySelectorAll('.main-tab-content');
+
+      const activateMainTab = (selectedTabId) => {
+        mainTabButtons.forEach(button => {
+          button.setAttribute('aria-selected', 'false');
+          button.classList.remove('active', 'text-blue-600', 'border-blue-600');
+          button.classList.add('text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:border-gray-300');
+        });
+
+        mainTabPanels.forEach(panel => {
+          panel.classList.add('hidden');
+        });
+
+        const selectedButton = document.getElementById(selectedTabId);
+        const targetPanelId = selectedButton.getAttribute('aria-controls');
+        const targetPanel = document.getElementById(targetPanelId);
+
+        selectedButton.setAttribute('aria-selected', 'true');
+        selectedButton.classList.add('active', 'text-blue-600', 'border-blue-600');
+        selectedButton.classList.remove('text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:border-gray-300');
+
+        targetPanel.classList.remove('hidden');
+      };
+
+      mainTabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          activateMainTab(button.id);
+        });
+      });
+
+      // Activate the first main tab by default on load
+      activateMainTab('tab-explanation');
+
+      // Render a default component on page load
+      featureInput.value = 'css-grid';
+      renderCaniuseComponent();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Modern CSS Colors</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.0/dist/typography.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 
+    Chosen Palette: Warm Neutral
+    Application Structure Plan: The application is designed as a single-page, scrollable dashboard with a sticky top navigation for easy access to different sections. This structure moves away from the linear format of the source report to create an interactive learning environment. Key sections include a hands-on "Color Explorer" for live experimentation with different color functions and a "`color-mix()` Playground" to demonstrate the crucial impact of color spaces on mixing. This design was chosen because direct interaction is the most effective way to understand and retain concepts about color manipulation in CSS. It prioritizes discovery and experiential learning over passive reading.
+    Visualization & Content Choices: 
+    - Report Info: `hwb()`, `lch()`, `oklch()`, etc. -> Goal: Inform & Explore -> Viz/Method: Interactive sliders and text inputs coupled with a large color swatch display and a code output block. -> Interaction: User manipulates sliders/inputs to see the color and corresponding CSS code update in real-time. -> Justification: This provides immediate, tangible feedback, making the abstract concepts of color functions concrete and easy to grasp. Implemented with HTML inputs and vanilla JavaScript.
+    - Report Info: `color-mix()` function -> Goal: Compare & Explain -> Viz/Method: Two color inputs, a dropdown to select the mixing color space, and a prominent result swatch. -> Interaction: User picks two colors and a space, and the mixed result is instantly displayed. -> Justification: This is the most direct way to illustrate the key takeaway about perceptual vs. non-perceptual color mixing (e.g., the sRGB "dead zone"). Implemented with HTML inputs and vanilla JavaScript.
+    - Report Info: `color()` function / Display-P3 -> Goal: Compare & Inform -> Viz/Method: A side-by-side visual comparison of an sRGB color and its more vibrant `display-p3` equivalent. -> Interaction: Static visual display with clear labels. -> Justification: Effectively demonstrates the value of wide-gamut colors where supported. Implemented with styled HTML `div` elements.
+    - Report Info: Browser Compatibility Table -> Goal: Inform -> Viz/Method: A clean, styled HTML table. -> Interaction: None. -> Justification: A table is the most universally understood and clearest format for presenting tabular data. Implemented with semantic HTML `<table>`.
+    CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+      body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FDFBF8;
+      /* Warm off-white */
+      color: #403A3A;
+      /* Dark brown-gray */
+    }
+
+    .nav-link {
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #D35400;
+      /* Muted orange accent */
+    }
+
+    .control-label {
+      -webkit-user-select: none;
+      /* Safari */
+      -ms-user-select: none;
+      /* IE 10+ */
+      user-select: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #D35400;
+      cursor: pointer;
+      border-radius: 50%;
+      margin-top: -6px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #D35400;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .color-swatch-large {
+      width: 100%;
+      height: 12rem;
+      /* 192px */
+      border: 1px solid #EAEAEA;
+      transition: background-color 0.3s ease;
+    }
+
+    @media (min-width: 768px) {
+      .color-swatch-large {
+        height: 16rem;
+        /* 256px */
+      }
+    }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/80">
+      <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <h1 class="text-xl font-bold text-gray-800">CSS Color Explorer</h1>
+          <div class="hidden sm:flex items-center space-x-6 text-sm font-medium">
+            <a href="#explorer" class="nav-link text-gray-600">Explorer</a>
+            <a href="#mixer" class="nav-link text-gray-600">Color Mix</a>
+            <a href="#hd-colors" class="nav-link text-gray-600">HD Colors</a>
+            <a href="#print-colors" class="nav-link text-gray-600">Print</a>
+            <a href="#compatibility" class="nav-link text-gray-600">Support</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <!-- Introduction Section -->
+      <section id="intro" class="mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center">A Guide to Modern CSS Colors</h2>
+        <p class="max-w-3xl mx-auto text-gray-600 text-center">
+          For decades, web color was limited to keywords, hex codes, and `rgb()`. CSS Color Levels 4 and 5 fundamentally
+        change this, introducing new color spaces that map to human perception and functions that allow for powerful,
+        predictable manipulation. This guide provides interactive tools to explore these new frontiers.
+        </p>
+      </section>
+      <!-- Color Explorer Section -->
+      <section id="explorer" class="mb-16 scroll-mt-20">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl md:text-3xl font-bold">Color Function Explorer</h3>
+          <p class="max-w-2xl mx-auto text-gray-600 mt-2">Select a color space and use the sliders to see how each
+          parameter changes the color in real-time.</p>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200/80">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <!-- Controls -->
+            <div class="space-y-6">
+              <div>
+                <label for="color-space-select" class="block text-sm font-medium mb-2">Color Space</label>
+                <select id="color-space-select" class="w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-[#D35400] focus:border-[#D35400]">
+                  <option value="oklch" selected>oklch() - Recommended</option>
+                  <option value="lch">lch()</option>
+                  <option value="hwb">hwb()</option>
+                  <option value="hsl">hsl()</option>
+                  <option value="rgb">rgb()</option>
+                </select>
+              </div>
+              <div id="controls-container" class="space-y-4"></div>
+            </div>
+            <!-- Display -->
+            <div class="flex flex-col items-center justify-center lg:pt-12">
+              <div id="explorer-swatch" class="color-swatch-large rounded-lg mb-4"></div>
+              <div class="w-full bg-gray-800 text-white p-4 rounded-lg font-mono text-sm break-all">
+                <code id="explorer-output">oklch(0.65 0.15 25)</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Color Mixer Section -->
+      <section id="mixer" class="mb-16 scroll-mt-20">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl md:text-3xl font-bold">The `color-mix()` Playground</h3>
+          <p class="max-w-2xl mx-auto text-gray-600 mt-2">Discover the power of `color-mix()`. The color space you mix in
+          dramatically changes the result. Mixing blue and yellow in `srgb` passes through a gray "dead zone," creating
+          a muddy intermediate color. Perceptually uniform spaces like `oklch` produce the clean, vibrant green you'd
+          expect.</p>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200/80">
+          <div class="flex flex-col md:flex-row items-center justify-around gap-6 mb-6">
+            <div class="flex flex-col items-center space-y-2">
+              <label for="mix-color-1" class="text-sm font-medium">Color 1</label>
+              <input type="color" id="mix-color-1" value="#0000ff" class="w-20 h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+            </div>
+            <div class="flex flex-col items-center space-y-2">
+              <label for="mix-space-select" class="text-sm font-medium">Mixing Space</label>
+              <select id="mix-space-select" class="w-full max-w-xs p-2 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-[#D35400] focus:border-[#D35400]">
+                <option value="oklch" selected>oklch (Recommended)</option>
+                <option value="lch">lch</option>
+                <option value="srgb">srgb</option>
+                <option value="hsl">hsl</option>
+              </select>
+            </div>
+            <div class="flex flex-col items-center space-y-2">
+              <label for="mix-color-2" class="text-sm font-medium">Color 2</label>
+              <input type="color" id="mix-color-2" value="#ffff00" class="w-20 h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+            </div>
+          </div>
+          <div id="mixer-swatch-result" class="h-40 md:h-64 rounded-lg border border-gray-200"></div>
+          <div class="w-full bg-gray-800 text-white p-4 rounded-lg font-mono text-sm break-all mt-6">
+            <code id="mixer-output"></code>
+          </div>
+        </div>
+      </section>
+      <!-- HD Colors Section -->
+      <section id="hd-colors" class="mb-16 scroll-mt-20">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl md:text-3xl font-bold">HD Colors with `color()`</h3>
+          <p class="max-w-2xl mx-auto text-gray-600 mt-2">The `color()` function unlocks wider color gamuts like
+          `display-p3`, which offers about 25% more colors—especially vibrant reds and greens—on compatible HD displays.</p>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200/80">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="text-center">
+              <h4 class="font-semibold mb-2">Standard RGB</h4>
+              <div class="h-40 rounded-lg" style="background-color: rgb(0, 255, 0);"></div>
+              <p class="font-mono text-sm mt-2 text-gray-600">rgb(0 255 0)</p>
+            </div>
+            <div class="text-center">
+              <h4 class="font-semibold mb-2">Display P3 (HD)</h4>
+              <div class="h-40 rounded-lg" style="background-color: color(display-p3 0 1 0);"></div>
+              <p class="font-mono text-sm mt-2 text-gray-600">color(display-p3 0 1 0)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Print Colors Section -->
+      <section id="print-colors" class="mb-16 scroll-mt-20">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl md:text-3xl font-bold">Print Colors: `device-cmyk()`</h3>
+          <p class="max-w-2xl mx-auto text-gray-600 mt-2">The `device-cmyk()` function is a specialized, unmanaged color
+          tool intended only for print. It instructs printers to use exact amounts of Cyan, Magenta, Yellow, and Black
+          ink, bypassing screen-based color management for maximum print accuracy.</p>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200/80">
+          <p class="text-center mb-4">You should only use this function inside a `@media print` block. Its on-screen
+          appearance is unreliable.</p>
+          <div class="bg-gray-800 text-white p-4 rounded-lg font-mono text-sm">
+            <pre><code>@media print {
+  .logo {
+    /* Use official CMYK brand color */
+    color: device-cmyk(0.1 0.8 0 0.2); 
+  }
+  p {
+    /* Use 100% black ink for crisp text */
+    color: device-cmyk(0 0 0 1);
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+      <!-- Compatibility Section -->
+      <section id="compatibility" class="scroll-mt-20">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl md:text-3xl font-bold">Browser Compatibility</h3>
+          <p class="max-w-2xl mx-auto text-gray-600 mt-2">Support for modern color syntax is excellent across all major
+          desktop browsers. The table shows the first version of each browser to provide support.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                <tr>
+                  <th scope="col" class="px-6 py-3">Feature</th>
+                  <th scope="col" class="px-6 py-3 text-center">Chrome</th>
+                  <th scope="col" class="px-6 py-3 text-center">Safari</th>
+                  <th scope="col" class="px-6 py-3 text-center">Firefox</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">`hwb()`</th>
+                  <td class="px-6 py-4 text-center">101</td>
+                  <td class="px-6 py-4 text-center">15</td>
+                  <td class="px-6 py-4 text-center">96</td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">`lab()` & `lch()`</th>
+                  <td class="px-6 py-4 text-center">111</td>
+                  <td class="px-6 py-4 text-center">15</td>
+                  <td class="px-6 py-4 text-center">113</td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">`oklab()` & `oklch()`</th>
+                  <td class="px-6 py-4 text-center">111</td>
+                  <td class="px-6 py-4 text-center">15.4</td>
+                  <td class="px-6 py-4 text-center">113</td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">`color()` function</th>
+                  <td class="px-6 py-4 text-center">111</td>
+                  <td class="px-6 py-4 text-center">15</td>
+                  <td class="px-6 py-4 text-center">113</td>
+                </tr>
+                <tr class="bg-white">
+                  <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">`color-mix()`</th>
+                  <td class="px-6 py-4 text-center">111</td>
+                  <td class="px-6 py-4 text-center">16.2</td>
+                  <td class="px-6 py-4 text-center">113</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+      // --- COLOR EXPLORER ---
+      const explorerState = {
+        space: 'oklch',
+        oklch: { l: 0.65, c: 0.15, h: 25 },
+        lch: { l: 65, c: 55, h: 25 },
+        hwb: { h: 194, w: 20, b: 20 },
+        hsl: { h: 200, s: 80, l: 50 },
+        rgb: { r: 50, g: 150, b: 200 },
+      };
+
+      const spaceSelect = document.getElementById('color-space-select');
+      const controlsContainer = document.getElementById('controls-container');
+      const explorerSwatch = document.getElementById('explorer-swatch');
+      const explorerOutput = document.getElementById('explorer-output');
+
+      const controlTemplates = {
+        oklch: [
+          { id: 'l', label: 'Lightness (L)', min: 0, max: 1, step: 0.01, value: explorerState.oklch.l },
+          { id: 'c', label: 'Chroma (C)', min: 0, max: 0.4, step: 0.01, value: explorerState.oklch.c },
+          { id: 'h', label: 'Hue (H)', min: 0, max: 360, step: 1, value: explorerState.oklch.h }
+        ],
+        lch: [
+          { id: 'l', label: 'Lightness (L)', min: 0, max: 100, step: 1, value: explorerState.lch.l },
+          { id: 'c', label: 'Chroma (C)', min: 0, max: 230, step: 1, value: explorerState.lch.c },
+          { id: 'h', label: 'Hue (H)', min: 0, max: 360, step: 1, value: explorerState.lch.h }
+        ],
+        hwb: [
+          { id: 'h', label: 'Hue (H)', min: 0, max: 360, step: 1, value: explorerState.hwb.h },
+          { id: 'w', label: 'Whiteness (W)', min: 0, max: 100, step: 1, value: explorerState.hwb.w },
+          { id: 'b', label: 'Blackness (B)', min: 0, max: 100, step: 1, value: explorerState.hwb.b }
+        ],
+        hsl: [
+          { id: 'h', label: 'Hue (H)', min: 0, max: 360, step: 1, value: explorerState.hsl.h },
+          { id: 's', label: 'Saturation (S)', min: 0, max: 100, step: 1, value: explorerState.hsl.s },
+          { id: 'l', label: 'Lightness (L)', min: 0, max: 100, step: 1, value: explorerState.hsl.l }
+        ],
+        rgb: [
+          { id: 'r', label: 'Red (R)', min: 0, max: 255, step: 1, value: explorerState.rgb.r },
+          { id: 'g', label: 'Green (G)', min: 0, max: 255, step: 1, value: explorerState.rgb.g },
+          { id: 'b', label: 'Blue (B)', min: 0, max: 255, step: 1, value: explorerState.rgb.b }
+        ],
+      };
+
+      function createSlider(config) {
+        return `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label for="${config.id}-slider" class="text-sm font-medium control-label">${config.label}</label>
+                            <span id="${config.id}-value" class="text-sm text-gray-500">${config.value}</span>
+                        </div>
+                        <input type="range" id="${config.id}-slider" min="${config.min}" max="${config.max}" step="${config.step}" value="${config.value}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>`;
+      }
+
+      function updateExplorerUI() {
+        const space = explorerState.space;
+        const params = explorerState[ space ];
+        let cssString = '';
+
+        switch (space) {
+          case 'oklch':
+            cssString = `oklch(${params.l.toFixed(2)} ${params.c.toFixed(2)} ${params.h})`;
+            break;
+          case 'lch':
+            cssString = `lch(${params.l} ${params.c} ${params.h})`;
+            break;
+          case 'hwb':
+            cssString = `hwb(${params.h} ${params.w}% ${params.b}%)`;
+            break;
+          case 'hsl':
+            cssString = `hsl(${params.h} ${params.s}% ${params.l}%)`;
+            break;
+          case 'rgb':
+            cssString = `rgb(${params.r} ${params.g} ${params.b})`;
+            break;
+        }
+
+        explorerSwatch.style.backgroundColor = cssString;
+        explorerOutput.textContent = cssString;
+      }
+
+      function setupExplorerControls() {
+        const space = spaceSelect.value;
+        explorerState.space = space;
+
+        controlsContainer.innerHTML = controlTemplates[ space ].map(createSlider).join('');
+
+        controlTemplates[ space ].forEach(config => {
+          const slider = document.getElementById(`${config.id}-slider`);
+          const valueDisplay = document.getElementById(`${config.id}-value`);
+
+          slider.addEventListener('input', () => {
+            let newValue = parseFloat(slider.value);
+            explorerState[ space ][ config.id ] = newValue;
+
+            if (config.step < 1) {
+              valueDisplay.textContent = newValue.toFixed(2);
+            } else {
+              valueDisplay.textContent = newValue;
+            }
+
+            updateExplorerUI();
+          });
+        });
+        updateExplorerUI();
+      }
+
+      spaceSelect.addEventListener('change', setupExplorerControls);
+      setupExplorerControls();
+
+      // --- COLOR MIXER ---
+      const mixerState = {
+        color1: '#0000ff',
+        color2: '#ffff00',
+        space: 'oklch',
+      };
+
+      const mixColor1Input = document.getElementById('mix-color-1');
+      const mixColor2Input = document.getElementById('mix-color-2');
+      const mixSpaceSelect = document.getElementById('mix-space-select');
+      const mixerSwatchResult = document.getElementById('mixer-swatch-result');
+      const mixerOutput = document.getElementById('mixer-output');
+
+      function updateMixerUI() {
+        const { color1, color2, space } = mixerState;
+        const cssString = `color-mix(in ${space}, ${color1}, ${color2})`;
+
+        mixerSwatchResult.style.backgroundColor = cssString;
+        mixerOutput.textContent = cssString;
+      }
+
+      mixColor1Input.addEventListener('input', (e) => {
+        mixerState.color1 = e.target.value;
+        updateMixerUI();
+      });
+
+      mixColor2Input.addEventListener('input', (e) => {
+        mixerState.color2 = e.target.value;
+        updateMixerUI();
+      });
+
+      mixSpaceSelect.addEventListener('change', (e) => {
+        mixerState.space = e.target.value;
+        updateMixerUI();
+      });
+
+      updateMixerUI();
+
+    });
+    </script>
+  </body>
+</html>

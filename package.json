@@ -1,0 +1,21 @@
+{
+  "name": "guide-tutorials",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Carlos Araya <carlos.araya@gmail.com> (https://publishing-project.rivendellweb.net/)",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "lerna": "^8.2.3",
+    "vite": "^7.0.4"
+  },
+  "dependencies": {}
+}
