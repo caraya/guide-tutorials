@@ -1,0 +1,3 @@
+[submodule "tailwind-explainer"]
+	path = tailwind-explainer
+	url = https://github.com/caraya/tailwind-tutorial
