@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CSS Anchor Positioning Tutorial</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.0/dist/typography.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      /* Basic styles for the tutorial layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        .prose {
+            max-width: 65ch;
+        }
+        .code-editor {
+            /* This is the key fix: make the <style> tag visible */
+            display: block;
+            font-family: 'Fira Code', monospace;
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            white-space: pre-wrap;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            -moz-tab-size: 4;
+            tab-size: 4;
+            outline: none;
+        }
+        .interactive-area {
+            position: relative;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            min-height: 300px;
+            overflow: hidden;
+            background-image:
+                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .anchor-element {
+            /* This property establishes the element as an anchor */
+            anchor-name: var(--anchor-name);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .positioned-element {
+            /* The key to anchor positioning */
+            position: absolute;
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            max-width: 250px;
+            z-index: 10;
+        }
+        .note {
+            background-color: #fefce8;
+            border-left: 4px solid #facc15;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .draggable {
+            cursor: move;
+            user-select: none;
+        }
+    </style>
+  </head>
+  <body class="p-4 md:p-8">
+    <main class="max-w-5xl mx-auto space-y-12">
+      <header class="text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-slate-800">Interactive CSS Anchor Positioning Tutorial</h1>
+        <p class="mt-4 text-lg text-slate-600">A hands-on guide to the future of CSS popovers and tooltips.</p>
+        <div class="note mt-6 max-w-2xl mx-auto text-left">
+          <p><strong>Heads up!</strong>
+            CSS Anchor Positioning is a cutting-edge feature. As of late 2025, you need a browser like Chrome or Edge with "Experimental Web Platform features" enabled via
+            <code>chrome://flags</code>
+            for these demos to work.</p>
+        </div>
+      </header>
+      <!-- 1. The Basics -->
+      <section>
+        <h2 class="text-3xl font-bold border-b pb-2 mb-4">1. The Basics: `anchor-name` and `anchor()`</h2>
+        <p class="prose mb-6">Anchor positioning allows you to tether an absolutely positioned element to another element (the "anchor") without complex JavaScript. The connection is made with two new CSS properties:</p>
+        <ul class="list-disc list-inside prose mb-6">
+          <li><code class="font-mono bg-slate-200 p-1 rounded">anchor-name: --my-anchor;</code>: You apply this to the element you want to anchor *to*. The name must start with
+            <code class="font-mono bg-slate-200 p-1 rounded">--</code>.</li>
+          <li><code class="font-mono bg-slate-200 p-1 rounded">position-anchor: --my-anchor;</code>: You apply this to the element you want to position. It links this element to the anchor. (Note: In some specs/implementations, this is implicit and you just use the `anchor()` function).</li>
+          <li><code class="font-mono bg-slate-200 p-1 rounded">top: anchor(--my-anchor bottom);</code>: You use the
+            <code class="font-mono">anchor()</code>
+            function to set the positioned element's coordinates, referencing the anchor's physical boundaries (top, bottom, left, right, center, or percentages).</li>
+        </ul>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Live Demo</h3>
+            <div id="demo1-area" class="interactive-area flex justify-center items-center">
+              <button id="anchor1" class="anchor-element bg-white hover:bg-slate-50 border border-slate-300 shadow-sm rounded-md px-4 py-2 font-semibold">
+                I am the Anchor
+              </button>
+              <div id="positioned1" class="positioned-element">
+                I am positioned relative to the anchor's bottom edge.
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Editable CSS</h3>
+            <style id="style1" contenteditable="true" class="code-editor">
+              #anchor1 {
+    /* This makes the button the anchor */
+    anchor-name: --anchor1;
+}
+
+#positioned1 {
+    position: absolute;
+
+    /* Try changing 'bottom' to 'top'! */
+    /* Or 'left' to 'right' */
+    top: anchor(--anchor1 bottom);
+    left: anchor(--anchor1 center);
+
+    /* A little nudge for spacing */
+    margin-top: 8px;
+
+    /* Centering trick */
+    transform: translateX(-50%);
+}
+            </style>
+          </div>
+        </div>
+      </section>
+      <!-- 2. Dynamic Positioning with Fallbacks -->
+      <section>
+        <h2 class="text-3xl font-bold border-b pb-2 mb-4">2. Staying in Viewport with `@position-fallback`</h2>
+        <p class="prose mb-6">What happens if your anchored element goes off-screen? Anchor positioning provides a powerful, CSS-only solution: the
+          <code class="font-mono bg-slate-200 p-1 rounded">@position-fallback</code>
+          at-rule. You define a set of alternative positions, and the browser will automatically pick the first one that fits within the viewport.</p>
+        <p class="prose mb-6">In this demo, drag the anchor button around. Watch how the tooltip "flips" to stay visible when you get close to the edges of the container.</p>
+        <div class="note">
+          <p><strong>Note on an Edge Case:</strong>
+            You might notice that if you drag the anchor button very close to the bottom edge, the tooltip can get cut off instead of flipping to the top. This is not an error in the demo's code, but rather a limitation of the browser's current
+            <strong>experimental implementation</strong>
+            of this feature.</p>
+          <p class="mt-2">The CSS is written correctly, but the browser doesn't yet perfectly detect that the element is being clipped by its container. As a result, it applies the first fallback rule (position below) and doesn't proceed to the next `@try` block. This behavior is expected to be resolved as the feature matures.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Live Demo (Drag the button!)</h3>
+            <div id="demo2-area" class="interactive-area">
+              <button id="anchor2" class="draggable anchor-element bg-white hover:bg-slate-50 border border-slate-300 shadow-sm rounded-md px-4 py-2 font-semibold" style="position: absolute; top: 130px; left: 200px;">
+                Drag Me!
+              </button>
+              <div id="positioned2" class="positioned-element">I will try not to leave the box.</div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Editable CSS</h3>
+            <style id="style2" contenteditable="true" class="code-editor">
+              /* Define the fallback options */
+@position-fallback --flip-tooltip {
+    @try {
+        /* Try putting it below */
+        top: anchor(--anchor2 bottom);
+        left: anchor(--anchor2 center);
+        transform: translateX(-50%);
+    }
+
+    @try {
+        /* If that fails, put it above */
+        bottom: anchor(--anchor2 top);
+        left: anchor(--anchor2 center);
+        transform: translateX(-50%);
+    }
+
+    @try {
+        /* Or to the right */
+        left: anchor(--anchor2 right);
+        top: anchor(--anchor2 center);
+        transform: translateY(-50%);
+    }
+
+    @try {
+        /* Or to the left */
+        right: anchor(--anchor2 left);
+        top: anchor(--anchor2 center);
+        transform: translateY(-50%);
+    }
+}
+
+#anchor2 {
+    anchor-name: --anchor2;
+}
+
+#positioned2 {
+    position: absolute;
+    /* Apply the fallback logic */
+    position-fallback: --flip-tooltip;
+
+    /* Set an initial position (the first @try rule) */
+    top: anchor(--anchor2 bottom);
+    left: anchor(--anchor2 center);
+    transform: translateX(-50%);
+    margin: 8px; /* Add some spacing */
+}
+            </style>
+          </div>
+        </div>
+      </section>
+      <!-- 3. Sizing with anchor-size() -->
+      <section>
+        <h2 class="text-3xl font-bold border-b pb-2 mb-4">3. Sizing with `anchor-size()`</h2>
+        <p class="prose mb-6">Anchor positioning isn't just for coordinates. You can also dynamically size an element based on its anchor's dimensions using the
+          <code class="font-mono bg-slate-200 p-1 rounded">anchor-size()</code>
+          function. This is incredibly useful for things like dropdown menus that should match the width of the button that triggered them.</p>
+        <p class="prose mb-6">In this demo, try resizing the anchor box (drag the bottom-right corner). The positioned element's width will automatically match it.</p>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Live Demo (Resize the anchor)</h3>
+            <div id="demo3-area" class="interactive-area flex justify-center items-center">
+              <div id="anchor3" class="anchor-element bg-white border-2 border-slate-400 p-4 text-center" style="resize: both; overflow: auto; width: 200px; min-width:100px; min-height:50px;">
+                I am a resizable anchor.
+              </div>
+              <div id="positioned3" class="positioned-element">My width matches the anchor.</div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Editable CSS</h3>
+            <style id="style3" contenteditable="true" class="code-editor">
+              #anchor3 {
+    anchor-name: --anchor3;
+}
+
+#positioned3 {
+    position: absolute;
+    top: anchor(--anchor3 bottom);
+    left: anchor(--anchor3 left);
+    margin-top: 8px;
+
+    /*
+     * This is the magic!
+     * It binds the width of this element
+     * to the width of the anchor.
+     * Try changing it to 'height'!
+     */
+    width: anchor-size(--anchor3 width);
+}
+            </style>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      // This script is for making the demos interactive and applying styles.
+
+        // Function to apply styles from contenteditable <style> tags
+        function applyCustomStyles() {
+            document.querySelectorAll('[contenteditable="true"][id^="style"]').forEach((styleTag, index) => {
+                const id = styleTag.id;
+                let existingStyle = document.head.querySelector(`style[data-dynamic-id="${id}"]`);
+                if (!existingStyle) {
+                    existingStyle = document.createElement('style');
+                    existingStyle.setAttribute('data-dynamic-id', id);
+                    document.head.appendChild(existingStyle);
+                }
+                existingStyle.textContent = styleTag.textContent;
+            });
+        }
+
+        // Initial application and re-application on edit
+        applyCustomStyles();
+        document.querySelectorAll('[contenteditable="true"][id^="style"]').forEach(styleTag => {
+            styleTag.addEventListener('input', applyCustomStyles);
+        });
+
+
+        // --- Draggable Logic for Demo 2 ---
+        const draggable = document.getElementById('anchor2');
+        const container = document.getElementById('demo2-area');
+
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        draggable.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            // Calculate offset from top-left of the element
+            offsetX = e.clientX - draggable.getBoundingClientRect().left;
+            offsetY = e.clientY - draggable.getBoundingClientRect().top;
+            draggable.style.transition = 'none'; // Disable transition while dragging
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const containerRect = container.getBoundingClientRect();
+
+            // Calculate new position relative to the container
+            let newX = e.clientX - containerRect.left - offsetX;
+            let newY = e.clientY - containerRect.top - offsetY;
+
+            // Constrain within the container
+            newX = Math.max(0, Math.min(newX, containerRect.width - draggable.offsetWidth));
+            newY = Math.max(0, Math.min(newY, containerRect.height - draggable.offsetHeight));
+
+            draggable.style.left = `${newX}px`;
+            draggable.style.top = `${newY}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                draggable.style.transition = ''; // Re-enable transition
+            }
+        });
+
+        // Touch events for mobile
+        draggable.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            offsetX = touch.clientX - draggable.getBoundingClientRect().left;
+            offsetY = touch.clientY - draggable.getBoundingClientRect().top;
+            draggable.style.transition = 'none';
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            // e.preventDefault(); // This can prevent scrolling, use with caution
+            const touch = e.touches[0];
+            const containerRect = container.getBoundingClientRect();
+            let newX = touch.clientX - containerRect.left - offsetX;
+            let newY = touch.clientY - containerRect.top - offsetY;
+
+            newX = Math.max(0, Math.min(newX, containerRect.width - draggable.offsetWidth));
+            newY = Math.max(0, Math.min(newY, containerRect.height - draggable.offsetHeight));
+
+            draggable.style.left = `${newX}px`;
+            draggable.style.top = `${newY}px`;
+        });
+
+        document.addEventListener('touchend', () => {
+            if (isDragging) {
+                isDragging = false;
+                draggable.style.transition = '';
+            }
+        });
+    </script>
+  </body>
+</html>

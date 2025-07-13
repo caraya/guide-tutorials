@@ -5,6 +5,7 @@
   "scripts": {
     "start": "npx lerna run build",
     "build": "npx lerna run build",
+    "dev": "npx vite dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [

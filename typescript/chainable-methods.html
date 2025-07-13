@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to TypeScript Array Methods</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutral -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive, two-column educational tool. A persistent left-hand navigation menu lists all array methods, grouped by chainability. This allows users to quickly jump to any method, supporting non-linear exploration. The main content area on the right dynamically displays detailed information for the selected method. Above this, a "live demo" section visualizes the chaining example from the report. This structure was chosen because it transforms a passive document into an active learning experience. Users can directly compare methods and see the practical outcome of chaining, which is more effective for understanding technical concepts than static text. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Core concept of method chaining. -> Goal: Demonstrate. -> Viz/Presentation: Interactive data transformation display. -> Interaction: Buttons ('Filter', 'Map', 'Sort') trigger JS functions to visually update an array of data, showing the output at each step. -> Justification: Makes an abstract programming concept tangible and easy to follow. -> Library/Method: Vanilla JS, HTML, Tailwind CSS.
+        - Report Info: Lists of chainable/non-chainable methods. -> Goal: Organize/Navigate. -> Viz/Presentation: Two lists of buttons in a sidebar. -> Interaction: Clicking a button updates the main content view. -> Justification: Provides a clear, persistent, and fast navigation structure. -> Library/Method: Vanilla JS, HTML, Tailwind CSS.
+        - Report Info: Details for each individual method (description, return type, code). -> Goal: Inform. -> Viz/Presentation: A formatted content card in the main panel with a runnable, interactive code example for each method. -> Interaction: Content is dynamically rendered. User can click "Run" on any example to see the immediate output, and "Reset" to clear it. -> Justification: Active learning is superior to passive reading for code. This makes the effect of every method clear and tangible. -> Library/Method: Vanilla JS, HTML, Tailwind CSS.
+        - Chart.js is not used as the data is textual/code-based, not quantitative in a way that suits traditional charts. The interactive data transformation serves as the primary visualization.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #383838;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .active-nav {
+            background-color: #EAE6E1;
+            color: #2c2c2c;
+            font-weight: 600;
+        }
+        .nav-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .code-block {
+            background-color: #F3F0EC;
+            border: 1px solid #EAE6E1;
+        }
+        .data-box {
+            transition: all 0.3s ease-in-out;
+            min-height: 80px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            max-height: 500px;
+        }
+        .prose {
+            --tw-prose-body: #383838;
+            --tw-prose-headings: #2c2c2c;
+            --tw-prose-code: #5a4b8c;
+            --tw-prose-pre-code: #5a4b8c;
+            --tw-prose-pre-bg: #F3F0EC;
+        }
+        .interactive-code-area {
+            background-color: #F9F7F5;
+            border: 1px solid #EAE6E1;
+        }
+        .console-output {
+            background-color: #2c2c2c;
+            color: #d4d4d4;
+            font-size: 0.875rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div id="app" class="min-h-screen flex flex-col">
+      <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200/80 sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center h-16">
+            <h1 class="text-2xl font-bold text-gray-800">TypeScript Array Methods</h1>
+            <p class="text-sm text-gray-500 hidden sm:block">An Interactive Guide</p>
+          </div>
+        </div>
+      </header>
+      <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <aside class="lg:col-span-3 lg:sticky top-24 self-start">
+            <nav id="navigation" class="space-y-6">
+              <div>
+                <h3 class="px-3 text-xs font-semibold uppercase text-gray-500 tracking-wider">Chainable Methods</h3>
+                <div id="chainable-methods-nav" class="mt-2 space-y-1"></div>
+              </div>
+              <div>
+                <h3 class="px-3 text-xs font-semibold uppercase text-gray-500 tracking-wider">Non-Chainable Methods</h3>
+                <div id="non-chainable-methods-nav" class="mt-2 space-y-1"></div>
+              </div>
+            </nav>
+          </aside>
+          <div class="lg:col-span-9 prose max-w-none">
+            <section id="intro-section" class="mb-12 p-6 bg-white rounded-xl shadow-sm border border-gray-200/80 not-prose">
+              <h2 class="text-2xl font-bold text-gray-800 mb-3">The Power of Method Chaining</h2>
+              <p class="text-gray-600 mb-6">
+                In TypeScript, method chaining is a powerful technique that allows you to call multiple methods on an array in a single, continuous line of code. This is possible when an array method returns a new array, enabling you to write clean, readable, and highly expressive code for data manipulation. This guide lets you explore which methods support chaining and which don't.
+              </p>
+              <div class="space-y-10">
+                <div class="chart-container interactive-demo" data-demo-id="demo1">
+                  <h3 class="text-lg font-semibold text-gray-700 mb-4">Example 1: Product Sales</h3>
+                  <div class="flex items-center justify-center space-x-2 sm:space-x-4 mb-4 flex-wrap">
+                    <button class="reset-btn px-3 py-1.5 text-sm font-medium bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors mb-2">Reset</button>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors mb-2" data-step="1">1. Filter</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors mb-2" data-step="2">2. Map</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-purple-100 text-purple-800 rounded-md hover:bg-purple-200 transition-colors mb-2" data-step="3">3. Sort</button>
+                  </div>
+                  <div class="demo-code p-4 rounded-lg code-block text-sm mb-4 font-mono"></div>
+                  <div class="demo-output p-4 rounded-lg bg-white border-2 border-dashed border-gray-300 data-box flex items-center justify-center"></div>
+                </div>
+                <div class="chart-container interactive-demo" data-demo-id="demo2">
+                  <h3 class="text-lg font-semibold text-gray-700 mb-4">Example 2: Active Users</h3>
+                  <div class="flex items-center justify-center space-x-2 sm:space-x-4 mb-4 flex-wrap">
+                    <button class="reset-btn px-3 py-1.5 text-sm font-medium bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors mb-2">Reset</button>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors mb-2" data-step="1">1. Filter</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors mb-2" data-step="2">2. Map</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors mb-2" data-step="3">3. Reverse</button>
+                  </div>
+                  <div class="demo-code p-4 rounded-lg code-block text-sm mb-4 font-mono"></div>
+                  <div class="demo-output p-4 rounded-lg bg-white border-2 border-dashed border-gray-300 data-box flex items-center justify-center"></div>
+                </div>
+                <div class="chart-container interactive-demo" data-demo-id="demo3">
+                  <h3 class="text-lg font-semibold text-gray-700 mb-4">Example 3: Unique Words</h3>
+                  <div class="flex items-center justify-center space-x-2 sm:space-x-4 mb-4 flex-wrap">
+                    <button class="reset-btn px-3 py-1.5 text-sm font-medium bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors mb-2">Reset</button>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-teal-100 text-teal-800 rounded-md hover:bg-teal-200 transition-colors mb-2" data-step="1">1. flatMap</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors mb-2" data-step="2">2. Filter</button>
+                    <span class="text-gray-400 font-mono mx-2 mb-2">&rarr;</span>
+                    <button class="step-btn flex-1 px-3 py-1.5 text-sm font-medium bg-indigo-100 text-indigo-800 rounded-md hover:bg-indigo-200 transition-colors mb-2" data-step="3">3. Unique</button>
+                  </div>
+                  <div class="demo-code p-4 rounded-lg code-block text-sm mb-4 font-mono"></div>
+                  <div class="demo-output p-4 rounded-lg bg-white border-2 border-dashed border-gray-300 data-box flex items-center justify-center"></div>
+                </div>
+              </div>
+            </section>
+            <section id="method-details" class="p-6 bg-white rounded-xl shadow-sm border border-gray-200/80 min-h-[300px]">
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      const appData = {
+            methods: [
+                { name: 'map()', chainable: true, description: 'Creates a new array by applying a function to every element of the original array.', returns: '`Array`', interactiveExample: { initialData: [1, 2, 3], displayCode: `[1, 2, 3].map(num => num * 2)`, transform: (data) => data.map(num => num * 2) } },
+                { name: 'filter()', chainable: true, description: 'Creates a new array containing only the elements that pass a test function.', returns: '`Array`', interactiveExample: { initialData: [1, 2, 3, 4, 5], displayCode: `[1, 2, 3, 4, 5].filter(num => num % 2 === 0)`, transform: (data) => data.filter(num => num % 2 === 0) } },
+                { name: 'slice()', chainable: true, description: 'Returns a shallow copy of a portion of an array into a new array object.', returns: '`Array`', interactiveExample: { initialData: ['Banana', 'Orange', 'Lemon', 'Apple', 'Mango'], displayCode: `['Banana', ...].slice(1, 3)`, transform: (data) => data.slice(1, 3) } },
+                { name: 'concat()', chainable: true, description: 'Merges two or more arrays, returning a new, combined array.', returns: '`Array`', interactiveExample: { initialData: ['a', 'b'], displayCode: `['a', 'b'].concat(['c', 'd'])`, transform: (data) => data.concat(['c', 'd']) } },
+                { name: 'flat()', chainable: true, description: 'Creates a new array with all sub-array elements concatenated into it recursively up to a specified depth.', returns: '`Array`', interactiveExample: { initialData: [1, [2, 3], [4, [5]]], displayCode: `[1, [2, 3], [4, [5]]].flat()`, transform: (data) => data.flat() } },
+                { name: 'flatMap()', chainable: true, description: 'First maps each element using a mapping function, then flattens the result into a new array.', returns: '`Array`', interactiveExample: { initialData: [1, 2, 3], displayCode: `[1, 2, 3].flatMap(x => [x, x * 2])`, transform: (data) => data.flatMap(x => [x, x * 2]) } },
+                { name: 'sort()', chainable: true, description: 'Sorts the elements of an array and returns the sorted array. Warning: This method mutates the original array in place.', returns: '`Array`', interactiveExample: { initialData: [4, 2, 5, 1, 3], displayCode: `[4, 2, 5, 1, 3].sort((a, b) => a - b)`, transform: (data) => data.sort((a, b) => a - b) } },
+                { name: 'reverse()', chainable: true, description: 'Reverses the order of elements in an array and returns the reversed array. Warning: This method also mutates the original array.', returns: '`Array`', interactiveExample: { initialData: ['one', 'two', 'three'], displayCode: `['one', 'two', 'three'].reverse()`, transform: (data) => data.reverse() } },
+                { name: 'forEach()', chainable: false, description: 'Executes a function for each array element. It is used for side effects and does not return anything.', returns: '`undefined`', interactiveExample: { initialData: ["Alice", "Bob"], displayCode: `["Alice", "Bob"].forEach(name => {\n  // See simulated console below\n  console.log('Hello, ' + name);\n})`, transform: (data, consoleLog) => data.forEach(name => consoleLog('Hello, ' + name)) } },
+                { name: 'find()', chainable: false, description: 'Returns the first element in the array that satisfies a testing function.', returns: 'An element from the array, or `undefined` if no element is found.', interactiveExample: { initialData: [10, 25, 30, 45], displayCode: `[10, 25, 30, 45].find(num => num > 20)`, transform: (data) => data.find(num => num > 20) } },
+                { name: 'findIndex()', chainable: false, description: 'Returns the index of the first element in the array that satisfies a testing function.', returns: 'A `number` (the index, or -1 if not found).', interactiveExample: { initialData: ["apple", "banana", "cherry"], displayCode: `["apple", "banana", "cherry"].findIndex(f => f === "banana")`, transform: (data) => data.findIndex(f => f === "banana") } },
+                { name: 'reduce()', chainable: false, description: 'Executes a "reducer" function on each element, resulting in a single accumulated value.', returns: 'The final, single, accumulated value.', interactiveExample: { initialData: [1, 2, 3, 4], displayCode: `[1, 2, 3, 4].reduce((acc, val) => acc + val, 0)`, transform: (data) => data.reduce((acc, val) => acc + val, 0) } },
+                { name: 'some()', chainable: false, description: 'Tests whether at least one element in the array passes a test.', returns: '`boolean` (`true` or `false`).', interactiveExample: { initialData: [65, 88, 92], displayCode: `[65, 88, 92].some(s => s >= 70)`, transform: (data) => data.some(s => s >= 70) } },
+                { name: 'every()', chainable: false, description: 'Tests whether all elements in the array pass a test.', returns: '`boolean` (`true` or `false`).', interactiveExample: { initialData: [22, 31, 19], displayCode: `[22, 31, 19].every(age => age >= 18)`, transform: (data) => data.every(age => age >= 18) } },
+                { name: 'includes()', chainable: false, description: 'Determines whether an array includes a certain value.', returns: '`boolean` (`true` or `false`).', interactiveExample: { initialData: ['cat', 'dog', 'fish'], displayCode: `['cat', 'dog', 'fish'].includes('dog')`, transform: (data) => data.includes('dog') } },
+            ],
+            demo1: {
+                initialData: [ { name: 'Laptop', category: 'electronics', price: 1200, onSale: true }, { name: 'T-Shirt', category: 'clothing', price: 20, onSale: true }, { name: '4K Monitor', category: 'electronics', price: 400, onSale: false }, { name: 'Wireless Mouse', category: 'electronics', price: 50, onSale: true }, { name: 'Sci-Fi Novel', category: 'books', price: 15, onSale: true }, ],
+                steps: [ { name: 'initial', code: 'const products = [...];', transform: data => data }, { name: 'filter', code: `.filter(p => p.category === 'electronics' && p.onSale)`, transform: data => data.filter(p => p.category === 'electronics' && p.onSale) }, { name: 'map', code: `.map(p => p.price * 0.8)`, transform: data => data.map(p => p.price * 0.8) }, { name: 'sort', code: `.sort((a, b) => a - b)`, transform: data => [...data].sort((a, b) => a - b) }, ],
+            },
+            demo2: {
+                initialData: [ { id: 1, name: 'Alice', active: true }, { id: 2, name: 'Bob', active: false }, { id: 3, name: 'Charlie', active: true }, { id: 4, name: 'Diana', active: true } ],
+                steps: [ { name: 'initial', code: 'const users = [...];', transform: data => data }, { name: 'filter', code: `.filter(u => u.active)`, transform: data => data.filter(u => u.active) }, { name: 'map', code: `.map(u => u.name)`, transform: data => data.map(u => u.name) }, { name: 'reverse', code: `.reverse()`, transform: data => [...data].reverse() }, ],
+            },
+            demo3: {
+                initialData: ['hello world', 'this is a test', 'hello typescript'],
+                steps: [ { name: 'initial', code: 'const sentences = [...];', transform: data => data }, { name: 'flatMap', code: `.flatMap(s => s.split(' '))`, transform: data => data.flatMap(s => s.split(' ')) }, { name: 'filter', code: `.filter(word => word.length > 4)`, transform: data => data.filter(word => word.length > 4) }, { name: 'unique', code: `// Get unique values\n[...new Set(data)]`, transform: data => [...new Set(data)] }, ],
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const chainableNav = document.getElementById('chainable-methods-nav');
+            const nonChainableNav = document.getElementById('non-chainable-methods-nav');
+            const methodDetailsContainer = document.getElementById('method-details');
+            
+            function setupChainingDemo(container) {
+                const demoId = container.dataset.demoId;
+                if (!demoId) return;
+
+                const demo = appData[demoId];
+                const codeEl = container.querySelector('.demo-code');
+                const outputEl = container.querySelector('.demo-output');
+                const resetBtn = container.querySelector('.reset-btn');
+                const stepBtns = container.querySelectorAll('.step-btn');
+
+                function formatDataForDisplay(data) {
+                    if (!Array.isArray(data)) return JSON.stringify(data, null, 2);
+                    if (data.length === 0) return '[]';
+                    
+                    const content = data.map(item => {
+                        if (typeof item === 'object' && item !== null) {
+                            return JSON.stringify(item);
+                        }
+                        return JSON.stringify(item);
+                    }).join(',\n  ');
+                    return `[\n  ${content}\n]`;
+                }
+
+                function updateDemo(stepIndex) {
+                    let currentData = JSON.parse(JSON.stringify(demo.initialData));
+                    let codeString = demo.steps[0].code;
+
+                    for (let i = 1; i <= stepIndex; i++) {
+                        currentData = demo.steps[i].transform(currentData);
+                        codeString += `\n  <span class="text-gray-500">${demo.steps[i].code}</span>`;
+                    }
+                    for (let i = stepIndex + 1; i < demo.steps.length; i++) {
+                        codeString += `\n  <span class="text-gray-400 opacity-50">${demo.steps[i].code}</span>`;
+                    }
+                    codeEl.innerHTML = codeString;
+                    outputEl.innerHTML = `<pre class="text-sm text-left">${formatDataForDisplay(currentData)}</pre>`;
+                    stepBtns.forEach((btn, index) => {
+                        btn.classList.toggle('opacity-50', index >= stepIndex);
+                        btn.classList.toggle('opacity-100', index < stepIndex);
+                    });
+                    if (stepIndex > 0) {
+                        stepBtns[stepIndex - 1].classList.add('opacity-100');
+                        stepBtns[stepIndex - 1].classList.remove('opacity-50');
+                    }
+                }
+
+                resetBtn.addEventListener('click', () => updateDemo(0));
+                stepBtns.forEach((btn) => {
+                    btn.addEventListener('click', () => updateDemo(parseInt(btn.dataset.step)));
+                });
+                
+                updateDemo(0);
+            }
+
+            document.querySelectorAll('.interactive-demo').forEach(setupChainingDemo);
+
+            function renderNav() {
+                appData.methods.forEach(method => {
+                    const link = document.createElement('a');
+                    link.href = '#method-details';
+                    link.textContent = method.name;
+                    link.dataset.method = method.name;
+                    link.className = 'nav-item block px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100';
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        renderMethodDetails(method.name);
+                        updateActiveNav(link);
+                        if (window.innerWidth < 1024) {
+                           methodDetailsContainer.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    };
+                    if (method.chainable) { chainableNav.appendChild(link); } 
+                    else { nonChainableNav.appendChild(link); }
+                });
+            }
+
+            function updateActiveNav(activeLink) {
+                document.querySelectorAll('#navigation a').forEach(link => link.classList.remove('active-nav'));
+                activeLink.classList.add('active-nav');
+            }
+
+            function prettyPrint(data) {
+                if (data === undefined) return 'undefined';
+                return JSON.stringify(data, null, 2);
+            }
+
+            function renderMethodDetails(methodName) {
+                const method = appData.methods.find(m => m.name === methodName);
+                if (!method) return;
+                
+                const example = method.interactiveExample;
+                const exampleId = `interactive-example-${method.name.replace('()', '')}`;
+
+                methodDetailsContainer.innerHTML = `
+                    <div class="not-prose">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2 font-mono">${method.name}</h2>
+                        <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full ${method.chainable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${method.chainable ? 'Chainable' : 'Not Chainable'}
+                        </span>
+                    </div>
+                    <p class="mt-4 mb-6">${method.description}</p>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold">Returns</h4>
+                            <p class="font-mono text-sm text-indigo-700">${method.returns}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Interactive Example</h4>
+                            <div id="${exampleId}" class="mt-2 rounded-lg interactive-code-area overflow-hidden">
+                                <div class="p-4">
+                                    <div class="font-mono text-sm text-gray-500 mb-2">Code:</div>
+                                    <pre class="p-3 rounded-md code-block text-sm"><code>${example.displayCode}</code></pre>
+                                </div>
+                                <div class="p-4 border-t border-gray-200 flex items-center space-x-3">
+                                    <button class="run-btn w-full sm:w-auto px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors">Run</button>
+                                    <button class="reset-btn w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">Reset</button>
+                                </div>
+                                <div class="p-4 border-t border-gray-200 bg-white">
+                                    <div class="font-mono text-sm text-gray-500 mb-2">Return Value:</div>
+                                    <pre class="output-area p-3 rounded-md code-block text-sm min-h-[50px] flex items-center text-gray-400">Click 'Run' to see the result</pre>
+                                    <div class="console-log-area mt-2" style="display: none;">
+                                        <div class="font-mono text-sm text-gray-500 mb-2">Console:</div>
+                                        <pre class="console-output p-3 rounded-md font-mono"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const interactiveExampleEl = document.getElementById(exampleId);
+                const runBtn = interactiveExampleEl.querySelector('.run-btn');
+                const resetBtn = interactiveExampleEl.querySelector('.reset-btn');
+                const outputArea = interactiveExampleEl.querySelector('.output-area');
+                const consoleLogArea = interactiveExampleEl.querySelector('.console-log-area');
+                const consoleOutput = interactiveExampleEl.querySelector('.console-output');
+
+                runBtn.onclick = () => {
+                    const dataCopy = JSON.parse(JSON.stringify(example.initialData));
+                    let consoleMessages = [];
+                    const customConsoleLog = (message) => consoleMessages.push(message);
+
+                    const result = example.transform(dataCopy, customConsoleLog);
+
+                    outputArea.textContent = prettyPrint(result);
+                    outputArea.classList.remove('text-gray-400');
+
+                    if (consoleMessages.length > 0) {
+                        consoleOutput.textContent = consoleMessages.join('\n');
+                        consoleLogArea.style.display = 'block';
+                    } else {
+                        consoleLogArea.style.display = 'none';
+                    }
+                };
+                
+                resetBtn.onclick = () => {
+                    outputArea.textContent = "Click 'Run' to see the result";
+                    outputArea.classList.add('text-gray-400');
+                    consoleLogArea.style.display = 'none';
+                    consoleOutput.textContent = '';
+                };
+            }
+            
+            function init() {
+                renderNav();
+                const firstMethodLink = document.querySelector('#navigation a');
+                if (firstMethodLink) {
+                    renderMethodDetails(firstMethodLink.dataset.method);
+                    updateActiveNav(firstMethodLink);
+                }
+            }
+
+            init();
+        });
+    </script>
+  </body>
+</html>
