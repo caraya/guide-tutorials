@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS if() Function Example</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Using Tailwind's @layer directive to organize custom CSS */
+        @layer base {
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+            /* Style for the code block */
+            pre {
+                background-color: #1f2937; /* gray-800 */
+                color: #d1d5db; /* gray-300 */
+                padding: 1rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            code {
+                font-family: inherit;
+            }
+        }
+
+        @layer components {
+            .feature-card {
+                /* 1. Define a custom property to hold our state.
+                      We'll use 0 for 'off' (unchecked) and 1 for 'on' (checked).
+                      The default state is 0.
+                */
+                --is-active: 0;
+
+                /* 2. Use the if() function to conditionally set styles.
+                      Syntax: if( <condition>, <value-if-true>, <value-if-false> )
+                      Here, we check if our --is-active variable is 1.
+                */
+                background-color: if(var(--is-active) = 1, #1e40af, #f3f4f6); /* blue-800 if active, gray-100 if not */
+                color:            if(var(--is-active) = 1, white, #1f2937); /* white if active, gray-800 if not */
+                border-color:     if(var(--is-active) = 1, #3b82f6, #d1d5db); /* blue-500 if active, gray-300 if not */
+
+                /* We can use it for any property, like padding or border-radius */
+                padding:          if(var(--is-active) = 1, 2rem, 1.5rem);
+                border-radius:    if(var(--is-active) = 1, 1rem, 0.5rem); /* more rounded when active */
+
+                /* Add a smooth transition to all properties */
+                transition: all 0.3s ease-in-out;
+            }
+
+            /*
+               3. Use the :has() pseudo-class to update the state.
+                  When the .feature-card container 'has' a checked checkbox inside it,
+                  we update the --is-active custom property to 1.
+                  This change triggers the conditional logic in the if() functions above.
+            */
+            .feature-card:has(input:checked) {
+                --is-active: 1;
+            }
+        }
+    </style>
+  </head>
+  <body class="bg-gray-900 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-2xl mx-auto">
+      <!-- Main component demonstrating the feature -->
+      <div class="feature-card border-2 shadow-lg mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold">Conditional Styling with if()</h2>
+          <!-- The checkbox that controls the state -->
+          <input type="checkbox" class="h-6 w-6 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+        </div>
+        <p class="text-base">
+          Click the checkbox to toggle the state. The background color, text color, padding, and border radius of this card are controlled by the CSS
+          <code>if()</code>
+          function based on the checkbox's state, with no JavaScript.
+        </p>
+        <div class="mt-6 p-4 rounded-lg bg-black bg-opacity-20 text-sm">
+          <p class="font-mono">--is-active:
+            <span class="font-bold">if(input:checked, 1, 0)</span></p>
+          <p class="font-mono mt-1">background-color:
+            <span class="font-bold">if(--is-active = 1, active_color, default_color)</span></p>
+        </div>
+      </div>
+      <!-- Explanatory section -->
+      <div class="text-gray-300 bg-gray-800 p-6 rounded-lg">
+        <h3 class="text-xl font-bold text-white mb-4">How It Works</h3>
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-yellow-400 mb-2">Browser Compatibility</h4>
+          <p>This demo uses the experimental CSS
+            <code>if()</code>
+            function. It will only work in browsers that support this feature. You must enable the "Experimental Web Platform features" flag:</p>
+          <ul class="list-disc list-inside mt-2 pl-2">
+            <li><strong class="text-white">Chrome/Edge 131+</strong>: Go to
+              <code>chrome://flags</code>
+              or
+              <code>edge://flags</code></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-green-400 mb-2">Key CSS Code</h4>
+          <p class="mb-3">The logic is handled entirely in CSS by combining three modern features: custom properties, the
+            <code>:has()</code>
+            selector, and the
+            <code>if()</code>
+            function.</p>
+          <pre><code>.feature-card {
+    --is-active: 0; /* Default state */
+
+    background-color: if(var(--is-active) = 1, #1e40af, #f3f4f6);
+    color:            if(var(--is-active) = 1, white, #1f2937);
+    border-color:     if(var(--is-active) = 1, #3b82f6, #d1d5db);
+    padding:          if(var(--is-active) = 1, 2rem, 1.5rem);
+    border-radius:    if(var(--is-active) = 1, 1rem, 0.5rem);
+    
+    transition: all 0.3s ease-in-out;
+}
+
+/* Update the state when the checkbox is checked */
+.feature-card:has(input:checked) {
+    --is-active: 1;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive PostgreSQL Setup Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Cool Slate" - A calm, professional palette using shades of slate gray, blue, and a light background for readability. -->
+    <!-- Application Structure Plan: The source material is a procedural "how-to" guide, not a data report. Therefore, I have designed the application as an interactive, step-by-step walkthrough. The structure is linear, with clear navigation tabs for each step (Introduction, Create User, etc.). This task-oriented design is optimal for usability, as it guides the user through the technical process logically. Key interactions include tab-based navigation to switch between content sections and one-click "copy" buttons for all code snippets, which directly supports the user's goal of executing the commands. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation Method -> Interaction -> Justification -> Library/Method.
+        1. Entire Guide -> Inform/Guide -> Tabbed Interface -> Click tabs -> Organizes the linear process into manageable, non-scrolling sections for clarity. (HTML/Tailwind/JS)
+        2. SQL/Bash Commands -> Execute -> Code Blocks with "Copy" button -> Click button -> Allows error-free transfer of commands to the user's terminal, which is the primary action. (HTML/Tailwind/JS)
+        3. Overall Process -> Track Progress -> Interactive Checklist in header -> Click checkboxes -> Provides visual feedback on completion, enhancing user engagement and clarity on their position in the process. (HTML/Tailwind/JS)
+        - Justification: Since the source lacks quantitative data, traditional charts (Chart.js/Plotly) are not applicable. The chosen "visualizations" are interactive components that make the textual and code-based information more accessible and actionable, directly aligning with the goal of an interactive guide. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-color: #3b82f6; color: #3b82f6; }
+        .tab-inactive { border-color: transparent; }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            position: relative;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover { background-color: #475569; }
+        .copy-btn-copied { background-color: #16a34a; color: white; }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800">
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+      <header class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Interactive PostgreSQL Setup Guide</h1>
+        <p class="text-slate-600">An interactive walkthrough for creating a new user and database in PostgreSQL.</p>
+      </header>
+      <main>
+        <div id="tabs" class="mb-8 border-b border-slate-200">
+          <nav class="-mb-px flex flex-wrap gap-x-6" aria-label="Tabs">
+            <button data-tab="intro" class="tab py-4 px-1 border-b-2 font-medium text-sm">Introduction</button>
+            <button data-tab="step1" class="tab py-4 px-1 border-b-2 font-medium text-sm">Step 1: Create User</button>
+            <button data-tab="step2" class="tab py-4 px-1 border-b-2 font-medium text-sm">Step 2: Create Database</button>
+            <button data-tab="step3" class="tab py-4 px-1 border-b-2 font-medium text-sm">Step 3: Grant Privileges</button>
+            <button data-tab="step4" class="tab py-4 px-1 border-b-2 font-medium text-sm">Step 4: Import Script</button>
+            <button data-tab="commands" class="tab py-4 px-1 border-b-2 font-medium text-sm">Common Commands</button>
+            <button data-tab="debugging" class="tab py-4 px-1 border-b-2 font-medium text-sm">Debugging</button>
+            <button data-tab="summary" class="tab py-4 px-1 border-b-2 font-medium text-sm">Summary</button>
+          </nav>
+        </div>
+        <div id="tab-content">
+          <div id="content-intro" class="tab-pane space-y-6">
+            <h2 class="text-2xl font-semibold text-slate-900">Introduction</h2>
+            <p class="text-slate-700">This guide will walk you through the process of setting up a new user and database in PostgreSQL. We will cover creating the user, creating the database, granting all privileges on that database to the new user, and finally, how to execute a SQL script to populate the database with tables.</p>
+            <div class="p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg">
+              <h3 class="font-bold">Prerequisites</h3>
+              <p>These commands are typically run using a PostgreSQL interactive terminal like `psql`, or through a database administration tool. You must be connected as a superuser (like the default `postgres` user) to execute these commands.</p>
+            </div>
+          </div>
+          <div id="content-step1" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Step 1: Create a New User (Role)</h2>
+            <p class="text-slate-700">First, we'll create a new user. In PostgreSQL, users are a type of "role". We'll create a role that can log in and has a password. Replace `new_user` with your desired username and `strong_password` with a secure password.</p>
+            <div class="code-block">
+              <pre>CREATE USER new_user WITH PASSWORD 'strong_password';</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+          </div>
+          <div id="content-step2" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Step 2: Create a New Database</h2>
+            <p class="text-slate-700">Next, let's create the new database. It's good practice to set the owner of the database to the user you just created. Remember to replace `new_database` and `new_user` with your chosen names.</p>
+            <div class="code-block">
+              <pre>CREATE DATABASE new_database OWNER new_user;</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+          </div>
+          <div id="content-step3" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Step 3: Grant Privileges</h2>
+            <p class="text-slate-700">Now, we need to grant the `new_user` all permissions for the `new_database`. This allows the user to create, read, update, and delete tables and data within that database.</p>
+            <div class="code-block">
+              <pre>GRANT ALL PRIVILEGES ON DATABASE new_database TO new_user;</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <p class="text-slate-700">While the above command grants general privileges, to allow the user to create tables, you also need to grant privileges on the `public` schema. As the same superuser you are currently logged in as, switch your connection to the new database:</p>
+            <div class="code-block">
+              <pre>\c new_database</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <p class="text-slate-700">Then, grant the privileges on the schema:</p>
+            <div class="code-block">
+              <pre>GRANT ALL ON SCHEMA public TO new_user;</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+          </div>
+          <div id="content-step4" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Step 4: Import a SQL Script</h2>
+            <p class="text-slate-700">To ensure all tables and objects in your script are owned by the correct user, you must run the import as the `new_user` you created. This follows the security best practice known as the "Principle of Least Privilege."</p>
+            <div class="border-t border-slate-200 pt-6">
+              <h3 class="text-lg font-semibold text-slate-800">Method 1: From the Command Line</h3>
+              <p class="text-slate-700 mt-2 mb-4">The `-U new_user` flag ensures this command is run by the correct user. You will be prompted for the user's password.</p>
+              <div class="code-block">
+                <pre>psql -h localhost -d new_database -U new_user -f /path/to/your/script.sql</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+            </div>
+            <div class="border-t border-slate-200 pt-6 mt-8">
+              <h3 class="text-lg font-semibold text-slate-800">Method 2: From Inside psql</h3>
+              <p class="text-slate-700 mt-2 mb-4">If you are currently connected to `psql` as a superuser, you must first switch your connection to be the `new_user` connected to the `new_database`. You can do this in one command:</p>
+              <div class="code-block">
+                <pre>\c new_database new_user</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <p class="text-slate-700 mt-4 mb-4">After you enter the password and the prompt changes, you can now run the import command. The script will be executed by `new_user`.</p>
+              <div class="code-block">
+                <pre>\i /path/to/your/script.sql</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div id="content-commands" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Common Management Commands</h2>
+            <p class="text-slate-700">Here are a few useful `psql` meta-commands to verify your setup and view the state of your PostgreSQL server.</p>
+            <div class="border-t border-slate-200 pt-6">
+              <h3 class="text-lg font-semibold text-slate-800">Show All Users (Roles)</h3>
+              <p class="text-slate-700 mt-2 mb-4">To see a list of all user roles defined in your PostgreSQL instance, use the `\du` command.</p>
+              <div class="code-block">
+                <pre>\du</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+            </div>
+            <div class="border-t border-slate-200 pt-6 mt-8">
+              <h3 class="text-lg font-semibold text-slate-800">Show All Databases</h3>
+              <p class="text-slate-700 mt-2 mb-4">To see a list of all databases on the server, along with their owners and encoding, use the `\l` command.</p>
+              <div class="code-block">
+                <pre>\l</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div id="content-debugging" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Debugging Common Issues</h2>
+            <div class="border-t border-slate-200 pt-6">
+              <h3 class="text-lg font-semibold text-slate-800">Scenario: "How do I know my command worked?"</h3>
+              <p class="text-slate-700 mt-2 mb-4">When you run a command like `CREATE USER` or `GRANT`, you won't get back a table of data like you would with a `SELECT` query. Instead, PostgreSQL gives you a simple, one-word confirmation message.</p>
+              <div class="p-4 bg-green-50 border-l-4 border-green-400 text-green-800 rounded-r-lg">
+                <p>Look for a confirmation like
+                  <code class="font-mono bg-green-100 px-1 rounded">CREATE ROLE</code>,
+                  <code class="font-mono bg-green-100 px-1 rounded">CREATE DATABASE</code>, or
+                  <code class="font-mono bg-green-100 px-1 rounded">GRANT</code>. If you see this message and no
+                  <code class="font-mono bg-red-100 px-1 rounded">ERROR:</code>, the command was successful. You can then use verification commands like `\du` or `\l` to see the results.</p>
+              </div>
+            </div>
+            <div class="border-t border-slate-200 pt-6 mt-8">
+              <h3 class="text-lg font-semibold text-slate-800">Scenario: "Commands fail on macOS with Homebrew (Version Mismatch)"</h3>
+              <p class="text-slate-700 mt-2 mb-4">If you installed a "keg-only" version of PostgreSQL with Homebrew (like `postgresql@17`) and commands fail, you likely have a version mismatch. This happens when your system finds an old `psql` client before the new one.</p>
+              <h4 class="font-medium text-slate-800">Step 1: Diagnose with `which`</h4>
+              <p class="text-slate-700 mt-2 mb-4">Run this command to see the exact file path of the `psql` command your terminal is using.</p>
+              <div class="code-block">
+                <pre>which psql</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <p class="text-slate-700 mt-4 mb-4">If the path does not contain `postgresql@17`, you have confirmed the problem.</p>
+              <h4 class="font-medium text-slate-800">Step 2: Choose Your Solution</h4>
+              <p class="text-slate-700 mt-2 mb-4">You have two good options to fix this: updating your `PATH` (the standard, more robust solution) or creating an `alias` (a simpler, more direct solution).</p>
+              <div class="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                <p class="font-bold">Solution A: Fix Your PATH (Recommended)</p>
+                <p class="mt-2">This method tells your shell to always look in the correct directory for `psql` and other related tools. Run the command that matches your Mac's architecture to add the correct directory to the start of your shell's search path.</p>
+                <p class="font-semibold text-slate-800 mt-4">For Apple Silicon Macs (M1/M2/M3, etc.):</p>
+                <div class="code-block mt-2">
+                  <pre>echo 'export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"' >> ~/.zshrc</pre>
+                  <button class="copy-btn">Copy</button>
+                </div>
+                <p class="font-semibold text-slate-800 mt-4">For Intel Macs:</p>
+                <div class="code-block mt-2">
+                  <pre>echo 'export PATH="/usr/local/opt/postgresql@17/bin:$PATH"' >> ~/.zshrc</pre>
+                  <button class="copy-btn">Copy</button>
+                </div>
+                <div class="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded-r-lg text-sm">
+                  <p><span class="font-semibold">Important Note:</span>
+                    This `PATH` solution only affects your interactive terminal sessions. It will not be read by `brew services`, which runs background processes in a different environment.</p>
+                </div>
+              </div>
+              <div class="p-4 bg-slate-100 border-l-4 border-slate-400 rounded-r-lg mt-4">
+                <p class="font-bold">Solution B: Create an Alias</p>
+                <p class="mt-2">An alias is a simple shortcut. This command tells your shell "whenever I type `psql`, run this specific file instead." This is a very direct fix.</p>
+                <p class="font-semibold text-slate-800 mt-4">For Apple Silicon Macs (M1/M2/M3, etc.):</p>
+                <div class="code-block mt-2">
+                  <pre>echo "alias psql='/opt/homebrew/opt/postgresql@17/bin/psql'" >> ~/.zshrc</pre>
+                  <button class="copy-btn">Copy</button>
+                </div>
+                <p class="font-semibold text-slate-800 mt-4">For Intel Macs:</p>
+                <div class="code-block mt-2">
+                  <pre>echo "alias psql='/usr/local/opt/postgresql@17/bin/psql'" >> ~/.zshrc</pre>
+                  <button class="copy-btn">Copy</button>
+                </div>
+              </div>
+              <h4 class="font-medium text-slate-800 mt-6">Step 3: Apply and Verify</h4>
+              <p class="text-slate-700 mt-2 mb-4">After choosing a solution, you **must** apply the changes. Close and reopen your terminal, or run the command below:</p>
+              <div class="code-block">
+                <pre>source ~/.zshrc</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <p class="text-slate-700 mt-4 mb-4">Now, check the version again. It should report the correct, new version (e.g., 17.x), and your commands will work.</p>
+              <div class="code-block">
+                <pre>psql --version</pre>
+                <button class="copy-btn">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div id="content-summary" class="tab-pane space-y-6 hidden">
+            <h2 class="text-2xl font-semibold text-slate-900">Summary of Commands</h2>
+            <p class="text-slate-700">Here is a quick summary of all the commands covered in this guide for your reference.</p>
+            <div class="code-block">
+              <pre>
+-- Core Setup Commands
+CREATE USER new_user WITH PASSWORD 'strong_password';
+CREATE DATABASE new_database OWNER new_user;
+GRANT ALL PRIVILEGES ON DATABASE new_database TO new_user;
+\c new_database
+GRANT ALL ON SCHEMA public TO new_user;
+
+-- Import Script (from OS terminal)
+psql -h localhost -d new_database -U new_user -f /path/to/your/script.sql
+
+-- Import Script (from inside psql)
+\c new_database new_user
+\i /path/to/your/script.sql
+
+-- Verification & Debugging Commands
+\du               -- List all users/roles
+\l                -- List all databases
+psql --version    -- Check client version
+which psql        -- Find which psql is being used
+</pre>
+              <button class="copy-btn">Copy</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            function showTab(tabId) {
+                tabs.forEach(tab => {
+                    const isActive = tab.dataset.tab === tabId;
+                    tab.classList.toggle('tab-active', isActive);
+                    tab.classList.toggle('text-slate-500', !isActive);
+                    tab.classList.toggle('hover:text-slate-700', !isActive);
+                    tab.classList.toggle('hover:border-slate-300', !isActive);
+                    tab.classList.toggle('tab-inactive', !isActive);
+                });
+
+                tabPanes.forEach(pane => {
+                    pane.classList.toggle('hidden', pane.id !== `content-${tabId}`);
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    showTab(tab.dataset.tab);
+                });
+            });
+            
+            showTab('intro');
+
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.previousElementSibling.innerText;
+                    
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = code;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+
+                    const originalText = button.innerText;
+                    button.innerText = 'Copied!';
+                    button.classList.add('copy-btn-copied');
+                    
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.classList.remove('copy-btn-copied');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+  </body>
+</html>

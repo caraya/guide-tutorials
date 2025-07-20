@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excalibur.js - Proxy-Based Reactivity</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        /* The typography plugin provides its own styles, so custom pre/code styles are less necessary */
+        /* but can be kept for overrides if needed. */
+        .prose :where(pre):not(:where([class~="not-prose"] *)) {
+            background-color: #1f2937; /* bg-gray-800 */
+            border: 1px solid #374151; /* border-gray-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-8">
+
+    <div id="app" class="w-full max-w-2xl mx-auto p-8 space-y-8">
+        <!-- App content will be rendered here -->
+    </div>
+
+    <div id="explanation" class="w-full max-w-2xl mx-auto p-8 space-y-8 mt-8">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-6 prose prose-invert max-w-none">
+            <h2 class="text-cyan-400">How to Use Excalibur.js</h2>
+
+            <p>The library is designed to be general-purpose. To create your own reactive app, you only need to focus on changing the "Application Code" section. The Excalibur.js library code can be reused as-is.</p>
+
+            <div>
+                <h3 class="text-yellow-400">Step 1: Define Your Own Data Store</h3>
+                <p>First, decide what data your application needs. For example, to build a "Task List" app, you would define your own `initialState` object.</p>
+                <pre><code class="language-javascript">// 1. Define your application's initial state
+const myInitialState = {
+    title: 'My To-Do List',
+    tasks: [
+        { id: 1, text: 'Learn Excalibur.js', completed: true },
+        { id: 2, text: 'Build a cool app', completed: false },
+    ],
+    newTaskText: '' // To hold input from a text field
+};</code></pre>
+            </div>
+
+            <div>
+                <h3 class="text-yellow-400">Step 2: Create a Reactive Store</h3>
+                <p>This step is the same. Pass your own state object to the `reactive()` function provided by the library.</p>
+                <pre><code class="language-javascript">// 2. Create a reactive store from your state
+const store = reactive(myInitialState);</code></pre>
+            </div>
+
+            <div>
+                <h3 class="text-yellow-400">Step 3: Write Your UI and Actions</h3>
+                <p>This is where your application comes to life. You connect your reactive data to the DOM using the `watchEffect` function. This function is the heart of the library's reactivity.</p>
+                
+                <h4>How `watchEffect` Works</h4>
+                <p>Think of `watchEffect` as a special box. You put a function inside it, and the library does two things:</p>
+                <ol>
+                    <li>It runs your function immediately one time.</li>
+                    <li>While your function is running, the library pays close attention to every property you access from a reactive store (e.g., `playerStore.user.name`). It "subscribes" your function to each of those properties.</li>
+                    <li>From then on, whenever one of those subscribed properties changes, the library will automatically run your function again to update the UI.</li>
+                </ol>
+
+                <h4>The Render Loop</h4>
+                <p>Inside the `watchEffect`, you define your entire UI as an HTML string and set it using `innerHTML`. This is a simple but effective pattern:</p>
+                <pre><code class="language-javascript">watchEffect(() => {
+    // 1. Read from the store to build the HTML string.
+    //    This automatically creates subscriptions.
+    appElement.innerHTML = `&lt;h1&gt;${playerStore.user.name}&lt;/h1&gt;`;
+
+    // 2. The old HTML is gone, so we must re-attach event listeners.
+    document.getElementById('changeNameBtn').addEventListener('click', () => {
+        // 3. Modify the store. This triggers the effect to run again.
+        playerStore.user.name = 'New Name'; 
+    });
+});</code></pre>
+                <p>This creates a reactive loop: an action modifies the store, which triggers the effect to re-render the UI and re-attach the listeners, ready for the next action.</p>
+            </div>
+
+            <div>
+                <h3 class="text-yellow-400">Why Model it After the Vue Composition API?</h3>
+                <p>The design of `reactive()` and `watchEffect()` is heavily inspired by the <a href="https://vuejs.org/guide/introduction.html#composition-api" target="_blank" rel="noopener noreferrer">Vue.js Composition API</a>. This approach was chosen for several key reasons that make it excellent for beginners and experts alike:</p>
+                <ul>
+                    <li><strong>Declarative and Intuitive:</strong> You declare <em>what</em> the UI should look like based on the current state. You don't have to write complex, manual DOM manipulation code. The code `playerStore.user.level++` is simple, direct, and clearly states its intent. The library handles the "magic" of updating the view.</li>
+                    <li><strong>Low Boilerplate:</strong> Compared to other state management patterns like Redux, there are no mandatory "actions," "reducers," or "dispatchers." You can modify your state directly, which makes the learning curve much gentler and reduces the amount of code you need to write.</li>
+                    <li><strong>High Readability:</strong> The code is clean and easy to follow. The logic for updating state is often right next to the UI that uses it, making it easier to reason about how your application works.</li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-yellow-400">The Complete Excalibur.js Library</h3>
+                <p>You can copy the code below and use it in your own projects. It has no external dependencies.</p>
+                <pre><code class="language-javascript">// Excalibur.js - A mini reactivity library
+let activeEffect = null;
+const targetMap = new WeakMap();
+
+function track(target, key) {
+    if (activeEffect) {
+        let depsMap = targetMap.get(target);
+        if (!depsMap) {
+            depsMap = new Map();
+            targetMap.set(target, depsMap);
+        }
+        let dep = depsMap.get(key);
+        if (!dep) {
+            dep = new Set();
+            depsMap.set(key, dep);
+        }
+        dep.add(activeEffect);
+    }
+}
+
+function trigger(target, key) {
+    const depsMap = targetMap.get(target);
+    if (!depsMap) return;
+    const dep = depsMap.get(key);
+    if (dep) {
+        const effectsToRun = new Set(dep);
+        effectsToRun.forEach(effect => effect());
+    }
+}
+
+function reactive(target) {
+    const handler = {
+        get(target, key, receiver) {
+            const isArray = Array.isArray(target);
+            if (isArray && key === 'length') {
+                track(target, 'length');
+            }
+            const value = Reflect.get(target, key, receiver);
+            track(target, key);
+            if (typeof value === 'object' && value !== null) {
+                return reactive(value);
+            }
+            return value;
+        },
+        set(target, key, value, receiver) {
+            const oldValue = target[key];
+            const hadKey = Array.isArray(target) ? Number(key) < target.length : Object.prototype.hasOwnProperty.call(target, key);
+            const result = Reflect.set(target, key, value, receiver);
+            if (result && oldValue !== value) {
+                trigger(target, key);
+                if (Array.isArray(target) && (hadKey !== (Number(key) < target.length))) {
+                    trigger(target, 'length');
+                }
+            }
+            return result;
+        }
+    };
+    return new Proxy(target, handler);
+}
+
+function watchEffect(effect) {
+    activeEffect = effect;
+    effect();
+    activeEffect = null;
+}
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+
+      // --- Excalibur.js Library ---
+// A mini reactivity library inspired by Vue.js Composition API.
+
+let activeEffect = null;
+const targetMap = new WeakMap();
+
+function track(target, key) {
+    if (activeEffect) {
+        let depsMap = targetMap.get(target);
+        if (!depsMap) {
+            depsMap = new Map();
+            targetMap.set(target, depsMap);
+        }
+
+        let dep = depsMap.get(key);
+        if (!dep) {
+            dep = new Set();
+            depsMap.set(key, dep);
+        }
+        dep.add(activeEffect);
+    }
+}
+
+function trigger(target, key) {
+    const depsMap = targetMap.get(target);
+    if (!depsMap) {
+        return;
+    }
+
+    const dep = depsMap.get(key);
+    if (dep) {
+        const effectsToRun = new Set(dep);
+        effectsToRun.forEach(effect => effect());
+    }
+}
+
+function reactive(target) {
+    const handler = {
+        get(target, key, receiver) {
+            const isArray = Array.isArray(target);
+            if (isArray && key === 'length') {
+                 track(target, 'length');
+            }
+
+            const value = Reflect.get(target, key, receiver);
+            track(target, key);
+
+            if (typeof value === 'object' && value !== null) {
+                return reactive(value);
+            }
+            return value;
+        },
+        set(target, key, value, receiver) {
+            const oldValue = target[key];
+            const hadKey = Array.isArray(target) ? Number(key) < target.length : Object.prototype.hasOwnProperty.call(target, key);
+            const result = Reflect.set(target, key, value, receiver);
+            
+            if (result && oldValue !== value) {
+                 trigger(target, key);
+                 if(Array.isArray(target) && (hadKey !== (Number(key) < target.length))) {
+                    trigger(target, 'length');
+                 }
+            }
+            return result;
+        }
+    };
+
+    return new Proxy(target, handler);
+}
+
+function watchEffect(effect) {
+    activeEffect = effect;
+    effect();
+    activeEffect = null;
+}
+
+
+// --- Application Code ---
+
+// 1. Define the application's initial states for multiple stores
+const initialPlayerState = {
+    user: {
+        name: 'Alice',
+        level: 5,
+    },
+};
+const initialInventoryState = {
+    items: ['Sword', 'Shield', 'Health Potion'],
+};
+const initialGameState = {
+    lastUpdate: new Date().toLocaleTimeString()
+};
+
+
+// Create deep copies for resetting
+const originalPlayerState = JSON.parse(JSON.stringify(initialPlayerState));
+const originalInventoryState = JSON.parse(JSON.stringify(initialInventoryState));
+
+// 2. Create multiple reactive stores
+const playerStore = reactive(initialPlayerState);
+const inventoryStore = reactive(initialInventoryState);
+const gameStore = reactive(initialGameState);
+
+// Function to reset all stores to their original state
+function resetAllStores() {
+    playerStore.user.name = originalPlayerState.user.name;
+    playerStore.user.level = originalPlayerState.user.level;
+    inventoryStore.items.splice(0, inventoryStore.items.length, ...originalInventoryState.items);
+    gameStore.lastUpdate = new Date().toLocaleTimeString();
+}
+
+// 3. Define the main component that renders the UI
+function App() {
+    const appElement = document.getElementById('app');
+
+    watchEffect(() => {
+        // Store the current value of the input to restore it after re-render
+        const inputElement = document.getElementById('newItemInput');
+        const currentInputValue = inputElement ? inputElement.value : '';
+        const focusedElementId = document.activeElement ? document.activeElement.id : null;
+
+
+        appElement.innerHTML = `
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                <h1 class="text-3xl font-bold text-cyan-400 mb-4">Reactive Player Dashboard</h1>
+                <div class="space-y-4">
+                    <p class="text-lg">User: <span class="font-semibold text-yellow-400">${playerStore.user.name}</span></p>
+                    <p class="text-lg">Level: <span class="font-semibold text-yellow-400">${playerStore.user.level}</span></p>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Inventory (${inventoryStore.items.length} items)</h2>
+                
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="newItemInput" class="bg-gray-700 text-white p-2 rounded-lg flex-grow" placeholder="Enter item name...">
+                    <button id="addItemBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg">Add Item</button>
+                </div>
+
+                <ul class="list-disc list-inside space-y-2">
+                    ${inventoryStore.items.map(item => `<li class="text-lg">${item}</li>`).join('')}
+                </ul>
+                 ${inventoryStore.items.length === 0 ? '<p class="text-gray-400 mt-4">Inventory is empty!</p>' : ''}
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                 <h2 class="text-2xl font-bold text-cyan-400 mb-4">Actions</h2>
+                 <div class="flex flex-wrap gap-4">
+                    <button id="levelUpBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Level Up</button>
+                    <button id="changeNameBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Change Name</button>
+                    <button id="addPotionBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Add Potion</button>
+                    <button id="usePotionBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Use Potion</button>
+                    <button id="removeLastItemBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Remove Last Item</button>
+                    <button id="clearInventoryBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all">Clear Inventory</button>
+                    <button id="resetBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition-all">Reset All</button>
+                 </div>
+            </div>
+             <div class="text-center text-gray-500 text-sm mt-4">
+                Last change triggered at: ${gameStore.lastUpdate}
+            </div>
+        `;
+        
+        // Restore input value and focus after re-rendering
+        const newInputElement = document.getElementById('newItemInput');
+        if (newInputElement) {
+            newInputElement.value = currentInputValue;
+            if (focusedElementId === 'newItemInput') {
+                newInputElement.focus();
+            }
+        }
+
+
+        // Re-attach event listeners after every render
+        document.getElementById('levelUpBtn').addEventListener('click', () => {
+            playerStore.user.level++;
+            gameStore.lastUpdate = new Date().toLocaleTimeString();
+        });
+        document.getElementById('changeNameBtn').addEventListener('click', () => {
+            playerStore.user.name = playerStore.user.name === 'Alice' ? 'Bob' : 'Alice';
+            gameStore.lastUpdate = new Date().toLocaleTimeString();
+        });
+
+        // Inventory Listeners
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            const input = document.getElementById('newItemInput');
+            const newItemName = input.value.trim();
+            if (newItemName) {
+               inventoryStore.items.push(newItemName);
+               input.value = ''; // Clear input field
+               gameStore.lastUpdate = new Date().toLocaleTimeString();
+            }
+        });
+        document.getElementById('addPotionBtn').addEventListener('click', () => {
+            inventoryStore.items.push('Health Potion');
+            gameStore.lastUpdate = new Date().toLocaleTimeString();
+        });
+        document.getElementById('usePotionBtn').addEventListener('click', () => {
+            const potionIndex = inventoryStore.items.lastIndexOf('Health Potion');
+            if(potionIndex > -1){
+                inventoryStore.items.splice(potionIndex, 1);
+                gameStore.lastUpdate = new Date().toLocaleTimeString();
+            }
+        });
+        document.getElementById('removeLastItemBtn').addEventListener('click', () => {
+            if (inventoryStore.items.length > 0) {
+                inventoryStore.items.pop();
+                gameStore.lastUpdate = new Date().toLocaleTimeString();
+            }
+        });
+         document.getElementById('clearInventoryBtn').addEventListener('click', () => {
+            inventoryStore.items.length = 0; // .length is a reactive operation
+            gameStore.lastUpdate = new Date().toLocaleTimeString();
+        });
+        document.getElementById('resetBtn').addEventListener('click', resetAllStores);
+    });
+}
+
+// 4. Mount the application
+App();
+
+    </script>
+</body>
+</html>

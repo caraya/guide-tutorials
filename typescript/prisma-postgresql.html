@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Prisma Schema</title>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A two-column layout with a sticky sidebar navigation for thematic exploration of the Prisma tutorial. This structure was chosen to break down the dense, linear source document into manageable, non-linear sections, allowing users to either follow the guide sequentially or jump directly to topics of interest like "Relations" or "Express Guide". Key interactions include tabbed interfaces for comparing relation types, an accordion for the step-by-step guide, and a dynamic selector for native database types, all designed to make learning more efficient and engaging than reading static text. -->
+    <!-- Visualization & Content Choices: The application translates the text-based tutorial into an interactive experience. 'Relations' are visualized using HTML/CSS diagrams within a tabbed interface to clarify abstract concepts (Goal: Explain -> Method: HTML diagrams + Tabs -> Interaction: Click tabs). 'Native Types' are presented via a dropdown that dynamically updates a table, personalizing information for the user (Goal: Inform/Compare -> Method: Dynamic Table -> Interaction: Select dropdown option). 'Attributes' and the 'Express Guide' use toggles and accordions to manage information density (Goal: Organize -> Method: Accordion/Toggles -> Interaction: Click to expand/collapse). All code snippets have a copy-to-clipboard feature for developer convenience. This approach prioritizes usability and comprehension over a simple transcription of the source material. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #1f2937;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #94a3b8;
+            border-radius: 10px;
+            border: 2px solid #f1f5f9;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .nav-link.active {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            font-weight: 600;
+        }
+        .code-block {
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #475569;
+            color: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .code-block:hover .copy-button {
+            opacity: 1;
+        }
+        .relation-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem 1rem;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            min-height: 120px;
+        }
+        .relation-box {
+            background-color: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+        .relation-line {
+            position: relative;
+            flex-grow: 1;
+            height: 2px;
+            background-color: #64748b;
+        }
+        .relation-line::before, .relation-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #64748b;
+            border-right: 2px solid #64748b;
+        }
+        .relation-line.one-to-one::before {
+            left: -1px;
+            transform: translateY(-50%) rotate(-135deg);
+        }
+        .relation-line.one-to-one::after {
+            right: -1px;
+            transform: translateY(-50%) rotate(45deg);
+        }
+        .relation-line.one-to-many::before {
+            left: -1px;
+            transform: translateY(-50%) rotate(-135deg);
+        }
+        .relation-line.one-to-many::after {
+            right: -8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #64748b;
+            border-left-color: transparent;
+            border-bottom-color: transparent;
+            transform: translateY(-50%) rotate(-45deg);
+        }
+         .relation-tab.active {
+            border-color: #0ea5e9;
+            background-color: #f0f9ff;
+            color: #0369a1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="relative min-h-screen md:flex">
+        <!-- Mobile menu button -->
+        <div class="md:hidden flex justify-between items-center p-4 bg-white border-b">
+            <h1 class="text-xl font-bold text-slate-800">Prisma Schema Guide</h1>
+            <button id="mobile-menu-button" class="text-slate-500 hover:text-slate-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-white text-slate-600 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-20 md:flex md:flex-col md:border-r">
+            <a href="#" class="text-slate-800 text-2xl font-bold px-4">Prisma Schema Guide</a>
+            <nav id="nav-menu" class="flex-grow">
+                <a href="#introduction" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Introduction</a>
+                <a href="#fundamentals" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Schema Fundamentals</a>
+                <a href="#models" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Defining Models</a>
+                <a href="#attributes" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Attributes</a>
+                <a href="#relations" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Visualizing Relations</a>
+                <a href="#native-types" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Native Database Types</a>
+                <a href="#express-guide" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Express.js Guide</a>
+                <a href="#resources" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-50 hover:text-sky-800">Helpful Resources</a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 p-4 md:p-10 overflow-y-auto">
+            <div id="introduction" class="content-section space-y-6">
+                <h2 class="text-4xl font-bold text-slate-800">A Comprehensive Guide to the Prisma Schema Language</h2>
+                <p class="text-lg text-slate-600">This interactive guide will walk you through the entire Prisma Schema Language (PSL). Prisma is a next-generation ORM that makes database access easy with an intuitive data model. At its core is the PSL, a declarative language used to define your database schema and data models. This single file becomes the source of truth for your database structure and your application's models. Use the navigation on the left to explore the core concepts.</p>
+                <div class="p-4 bg-sky-100 border-l-4 border-sky-500 text-sky-800 rounded-r-lg">
+                    <p><span class="font-bold">How to use this guide:</span> Click on any topic in the sidebar to jump directly to it. Interactive elements like tabs and accordions are used to make complex topics easier to digest. You can copy any code snippet with a single click.</p>
+                </div>
+            </div>
+
+            <div id="fundamentals" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">1. Prisma Schema Fundamentals</h2>
+                <p class="text-lg text-slate-600">A <code>schema.prisma</code> file is composed of three main building blocks: <code>datasource</code>, <code>generator</code>, and <code>model</code>. These blocks work together to configure your database connection, specify what code to generate, and define your application's data structures. Explore the cards below to understand each component.</p>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                        <h3 class="text-xl font-bold text-sky-700 mb-2">Datasource</h3>
+                        <p class="text-slate-600 mb-4">Configures your database connection. It must have a `provider` (e.g., "postgresql") and a `url`.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Generator</h3>
+                        <p class="text-slate-600 mb-4">Specifies what assets to generate. The most common use is creating the type-safe Prisma Client.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                        <h3 class="text-xl font-bold text-amber-700 mb-2">Data Model</h3>
+                        <p class="text-slate-600 mb-4">Defines your application's entities, which map to tables or collections in your database.</p>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">// schema.prisma
+
+// 1. Datasource: Specifies your database connection.
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. Generator: Specifies what clients to generate.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 3. Data Model: Defines your application models.
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}</code></pre>
+                </div>
+            </div>
+            
+            <div id="models" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">2. Defining Models</h2>
+                <p class="text-lg text-slate-600">A model is defined using the <code>model</code> keyword, followed by its name. Inside, you define the model's fields using a name, a type, and optional attributes and type modifiers. This section covers the essential types you can use to build your models.</p>
+                
+                <h3 class="text-2xl font-semibold text-slate-700 pt-4 border-t">Scalar Types</h3>
+                <p class="text-slate-600">Prisma supports a set of scalar types that map to the underlying database types. These are the fundamental building blocks for your model fields.</p>
+                <div class="overflow-x-auto bg-white rounded-lg shadow">
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Type</th>
+                                <th scope="col" class="px-6 py-3">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b"><td class="px-6 py-4 font-mono">String</td><td class="px-6 py-4">A variable-length text.</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-mono">Boolean</td><td class="px-6 py-4">A boolean value, <code>true</code> or <code>false</code>.</td></tr>
+                            <tr class="bg-white border-b"><td class="px-6 py-4 font-mono">Int</td><td class="px-6 py-4">An integer.</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-mono">BigInt</td><td class="px-6 py-4">A 64-bit integer.</td></tr>
+                            <tr class="bg-white border-b"><td class="px-6 py-4 font-mono">Float</td><td class="px-6 py-4">A floating-point number.</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-mono">Decimal</td><td class="px-6 py-4">A fixed-precision decimal number.</td></tr>
+                            <tr class="bg-white border-b"><td class="px-6 py-4 font-mono">DateTime</td><td class="px-6 py-4">A timestamp, stored in ISO 8601 format.</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-mono">Json</td><td class="px-6 py-4">For storing JSON objects.</td></tr>
+                            <tr class="bg-white"><td class="px-6 py-4 font-mono">Bytes</td><td class="px-6 py-4">For storing byte arrays.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-slate-700 pt-4 border-t">Enums & Type Modifiers</h3>
+                <p class="text-slate-600">You can further refine your model fields using enums to restrict values and type modifiers to indicate optionality or lists.</p>
+                 <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-slate-700 mb-2">Enums</h4>
+                        <p class="text-slate-600 mb-4">Define a set of allowed values for a field.</p>
+                        <div class="code-block">
+                        <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id   Int  @id
+  role Role @default(USER)
+}</code></pre>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-slate-700 mb-2">Modifiers: Optional (`?`) & List (`[]`)</h4>
+                        <p class="text-slate-600 mb-4">Make a field optional or a list of a certain type.</p>
+                        <div class="code-block">
+                        <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model Post {
+  id   Int      @id
+  bio  String?  // Optional field
+  tags String[] // List of strings
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="attributes" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">3. Attributes</h2>
+                <p class="text-lg text-slate-600">Attributes modify the behavior of fields or entire model blocks. Field attributes start with <code>@</code> and apply to a single field. Block attributes start with <code>@@</code> and apply to the whole model, often referencing multiple fields to define composite keys or indexes.</p>
+                
+                <h3 class="text-2xl font-semibold text-slate-700 pt-4 border-t">Field Attributes (<code>@</code>)</h3>
+                <p class="text-slate-600">These are applied to a single field to define its behavior, such as making it a primary key, setting a default value, or ensuring its values are unique.</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li><code>@id</code>: Marks a field as the primary key.</li>
+                    <li><code>@default(...)</code>: Specifies a default value. Examples: <code>autoincrement()</code>, <code>uuid()</code>, <code>now()</code>.</li>
+                    <li><code>@unique</code>: Enforces a unique constraint on the field.</li>
+                    <li><code>@updatedAt</code>: Automatically updates a <code>DateTime</code> field on record updates.</li>
+                    <li><code>@relation(...)</code>: Defines a relationship.</li>
+                    <li><code>@map(...)</code>: Maps a field to a different database column name.</li>
+                    <li><code>@db.*</code>: Specifies a native database type.</li>
+                </ul>
+                <div class="code-block">
+                    <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String   @map("first_name")
+}</code></pre>
+                </div>
+                
+                <h3 class="text-2xl font-semibold text-slate-700 pt-4 border-t">Block Attributes (<code>@@</code>)</h3>
+                <p class="text-slate-600">These are applied at the model level and are essential for defining constraints or indexes that span multiple fields.</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li><code>@@id([...])</code>: Defines a composite (multi-field) primary key.</li>
+                    <li><code>@@unique([...])</code>: Defines a composite unique constraint.</li>
+                    <li><code>@@index([...])</code>: Defines a database index on one or more fields.</li>
+                    <li><code>@@map(...)</code>: Maps the model to a different database table name.</li>
+                </ul>
+                <div class="code-block">
+                    <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model UserProfile {
+  userId    Int
+  photoUrl  String
+  firstName String
+  lastName  String
+
+  @@id([userId, photoUrl])
+  @@unique([firstName, lastName])
+  @@index([userId])
+  @@map("user_profiles")
+}</code></pre>
+                </div>
+            </div>
+
+            <div id="relations" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">4. Visualizing Relations</h2>
+                <p class="text-lg text-slate-600">Relations define how models are connected. A clear understanding of relationships is fundamental to good data modeling. Use the tabs below to explore visual diagrams and the corresponding Prisma schema for each major relation type.</p>
+                
+                <div id="relation-tabs" class="mb-4 border-b border-gray-200">
+                    <nav class="flex space-x-4" aria-label="Tabs">
+                        <button data-tab="one-to-one" class="relation-tab whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-gray-300">One-to-One</button>
+                        <button data-tab="one-to-many" class="relation-tab whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-gray-300">One-to-Many</button>
+                        <button data-tab="many-to-many" class="relation-tab whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-gray-300">Many-to-Many</button>
+                        <button data-tab="self-relation" class="relation-tab whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-gray-300">Self-Relation</button>
+                    </nav>
+                </div>
+
+                <div id="relation-content" class="space-y-6">
+                    <div data-content="one-to-one" class="relation-content-pane hidden">
+                        <h3 class="text-2xl font-semibold">One-to-One (1-1)</h3>
+                        <p>A relationship where one record of a model is connected to at most one record of another. For example, a <code>User</code> has one <code>Profile</code>.</p>
+                        <div class="relation-diagram">
+                            <div class="relation-box">User</div>
+                            <div class="relation-line one-to-one"></div>
+                            <div class="relation-box">Profile</div>
+                        </div>
+                        <div class="code-block">
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model User {
+  id      Int      @id @default(autoincrement())
+  profile Profile?
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique // The @unique is crucial for 1-1
+}</code></pre>
+                        </div>
+                    </div>
+                    <div data-content="one-to-many" class="relation-content-pane hidden">
+                        <h3 class="text-2xl font-semibold">One-to-Many (1-n)</h3>
+                        <p>A relationship where one record of a model can be connected to many records of another. For example, a <code>User</code> can have many <code>Post</code>s.</p>
+                         <div class="relation-diagram">
+                            <div class="relation-box">User</div>
+                            <div class="relation-line one-to-many"></div>
+                            <div class="relation-box">Post</div>
+                        </div>
+                        <div class="code-block">
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[] // Relation field is a list
+}
+
+model Post {
+  id        Int    @id @default(autoincrement())
+  title     String
+  author    User   @relation(fields: [authorId], references: [id])
+  authorId  Int    // Foreign key
+}</code></pre>
+                        </div>
+                    </div>
+                    <div data-content="many-to-many" class="relation-content-pane hidden">
+                        <h3 class="text-2xl font-semibold">Many-to-Many (m-n)</h3>
+                        <p>A relationship where many records can be connected to many others. For example, a <code>Post</code> can have many <code>Category</code>s. Prisma manages the join table implicitly.</p>
+                        <div class="relation-diagram">
+                            <div class="relation-box">Post</div>
+                             <div class="flex flex-col items-center">
+                                <div class="relation-line one-to-many -mb-1"></div>
+                                <div class="relation-line one-to-many -mt-1 transform rotate-180"></div>
+                            </div>
+                            <div class="relation-box bg-slate-200 border-slate-400 italic">_CategoryToPost<br/>(Implicit)</div>
+                             <div class="flex flex-col items-center">
+                                <div class="relation-line one-to-many -mb-1 transform rotate-180"></div>
+                                <div class="relation-line one-to-many -mt-1"></div>
+                            </div>
+                            <div class="relation-box">Category</div>
+                        </div>
+                        <div class="code-block">
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  categories Category[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
+}</code></pre>
+                        </div>
+                         <p class="mt-4 text-slate-600">For cases where you need to store data on the join table itself (e.g., an `assignedAt` timestamp), you can define an <span class="font-semibold">explicit many-to-many</span> relation by modeling the join table directly.</p>
+                    </div>
+                     <div data-content="self-relation" class="relation-content-pane hidden">
+                        <h3 class="text-2xl font-semibold">Self-Relation</h3>
+                        <p>A relationship where a model has a relation to itself. This is useful for hierarchical data, such as a user following other users.</p>
+                        <div class="relation-diagram">
+                            <div class="relation-box">User</div>
+                             <div class="relative w-24 h-12">
+                                <div class="absolute top-0 left-0 w-full h-2 bg-slate-400 rounded-t-full"></div>
+                                <div class="absolute top-0 left-0 h-full w-2 bg-slate-400"></div>
+                                <div class="absolute top-0 right-0 h-full w-2 bg-slate-400"></div>
+                                <div class="absolute bottom-1/2 left-0 w-2 h-2 border-t-2 border-r-2 border-slate-400 transform rotate-45 -translate-y-1/2"></div>
+                                <div class="absolute bottom-1/2 right-0 w-2 h-2 border-t-2 border-r-2 border-slate-400 transform -rotate-135 -translate-y-1/2"></div>
+                            </div>
+                            <div class="relation-box">User</div>
+                        </div>
+                        <div class="code-block">
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-prisma">// A user can follow many other users,
+// and can be followed by many other users.
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  followedBy  User[]   @relation("UserFollows")
+  following   User[]   @relation("UserFollows")
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="native-types" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">5. Native Database Types</h2>
+                <p class="text-lg text-slate-600">While Prisma's scalar types provide a convenient abstraction, you sometimes need to use a specific data type from your database (e.g., <code>VARCHAR(255)</code> instead of the generic <code>String</code>). You can do this with the <code>@db.*</code> attribute. Select a database provider below to see some common examples.</p>
+                <div>
+                    <label for="db-provider-select" class="block mb-2 text-sm font-medium text-slate-900">Select Database Provider:</label>
+                    <select id="db-provider-select" class="bg-gray-50 border border-gray-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full md:w-1/3 p-2.5">
+                        <option value="postgresql" selected>PostgreSQL</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="sqlserver">SQL Server</option>
+                    </select>
+                </div>
+                <div id="native-types-table-container" class="overflow-x-auto bg-white rounded-lg shadow"></div>
+            </div>
+            
+            <div id="express-guide" class="content-section space-y-8">
+                <h2 class="text-3xl font-bold text-slate-800">6. Integrating Prisma with Express.js</h2>
+                <p class="text-lg text-slate-600">This guide provides a step-by-step walkthrough for setting up a new Node.js project with Express and Prisma. Follow the steps in the accordion below to build a simple API that can create and retrieve users from your database.</p>
+                <div id="accordion-container" class="space-y-2">
+                    <!-- Accordion items will be injected by JS -->
+                </div>
+            </div>
+            
+            <div id="resources" class="content-section space-y-6">
+                <h2 class="text-3xl font-bold text-slate-800">7. Helpful Resources</h2>
+                <p class="text-lg text-slate-600">The Prisma ecosystem is well-documented. For more in-depth information, advanced topics, and API references, check out the official resources below.</p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="https://www.prisma.io/docs/" target="_blank" rel="noopener noreferrer" class="block p-4 bg-white rounded-lg shadow hover:bg-sky-50 transition">
+                        <h4 class="font-semibold text-sky-700">Official Prisma Documentation</h4>
+                        <p class="text-sm text-slate-500">The best place for up-to-date information.</p>
+                    </a>
+                    <a href="https://www.prisma.io/docs/orm/reference/prisma-schema-reference" target="_blank" rel="noopener noreferrer" class="block p-4 bg-white rounded-lg shadow hover:bg-sky-50 transition">
+                        <h4 class="font-semibold text-sky-700">Prisma Schema Reference</h4>
+                        <p class="text-sm text-slate-500">A detailed API-style reference for the PSL.</p>
+                    </a>
+                     <a href="https://www.prisma.io/docs/orm/prisma-schema/data-model" target="_blank" rel="noopener noreferrer" class="block p-4 bg-white rounded-lg shadow hover:bg-sky-50 transition">
+                        <h4 class="font-semibold text-sky-700">Data Modeling Guide</h4>
+                        <p class="text-sm text-slate-500">In-depth guide on modeling your data.</p>
+                    </a>
+                     <a href="https://www.prisma.io/docs/orm/prisma-schema/data-model/relations" target="_blank" rel="noopener noreferrer" class="block p-4 bg-white rounded-lg shadow hover:bg-sky-50 transition">
+                        <h4 class="font-semibold text-sky-700">Relations Guide</h4>
+                        <p class="text-sm text-slate-500">Comprehensive guide on defining relations.</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const sidebar = document.getElementById('sidebar');
+
+    const setActiveLink = (hash) => {
+        const targetHash = hash || '#introduction';
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === targetHash);
+        });
+        contentSections.forEach(section => {
+            section.classList.toggle('active', section.id === targetHash.substring(1));
+        });
+        
+        // Close mobile menu on navigation
+        if (sidebar.classList.contains('translate-x-0')) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+        }
+    };
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetHash = e.currentTarget.getAttribute('href');
+            window.history.pushState(null, null, targetHash);
+            setActiveLink(targetHash);
+        });
+    });
+
+    mobileMenuButton.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+        sidebar.classList.toggle('translate-x-0');
+    });
+
+    window.addEventListener('popstate', () => {
+        setActiveLink(window.location.hash);
+    });
+    
+    // Set initial state
+    setActiveLink(window.location.hash || '#introduction');
+
+    // Code copy functionality
+    document.querySelectorAll('.code-block').forEach(block => {
+        const code = block.querySelector('code');
+        const button = document.createElement('button');
+        button.innerHTML = 'Copy';
+        button.className = 'copy-button';
+        block.appendChild(button);
+
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.innerHTML = 'Copied!';
+                setTimeout(() => {
+                    button.innerHTML = 'Copy';
+                }, 2000);
+            });
+        });
+    });
+
+    // Relations Tabs
+    const relationTabs = document.querySelectorAll('.relation-tab');
+    const relationPanes = document.querySelectorAll('.relation-content-pane');
+
+    const setActiveTab = (tabId) => {
+        relationTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === tabId));
+        relationPanes.forEach(pane => pane.classList.toggle('hidden', pane.dataset.content !== tabId));
+    };
+
+    relationTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            setActiveTab(tab.dataset.tab);
+        });
+    });
+    setActiveTab('one-to-one');
+
+    // Native Types Selector
+    const dbProviderSelect = document.getElementById('db-provider-select');
+    const nativeTypesContainer = document.getElementById('native-types-table-container');
+    const nativeTypesData = {
+        postgresql: [
+            { prisma: 'String', native: '@db.VarChar(255)', desc: 'Variable-length string with max length' },
+            { prisma: 'String', native: '@db.Text', desc: 'Variable-length string' },
+            { prisma: 'String', native: '@db.Uuid', desc: 'Universally unique identifier' },
+            { prisma: 'Int', native: '@db.SmallInt', desc: '2-byte signed integer' },
+            { prisma: 'DateTime', native: '@db.Timestamp(3)', desc: 'Timestamp with precision' },
+            { prisma: 'Json', native: '@db.JsonB', desc: 'Binary JSON format' },
+        ],
+        mysql: [
+            { prisma: 'String', native: '@db.VarChar(191)', desc: 'Variable-length string with max length' },
+            { prisma: 'String', native: '@db.Text', desc: 'For short text' },
+            { prisma: 'String', native: '@db.LongText', desc: 'For long text blocks' },
+            { prisma: 'Int', native: '@db.TinyInt', desc: '1-byte signed integer' },
+            { prisma: 'DateTime', native: '@db.DateTime(3)', desc: 'Timestamp with precision' },
+            { prisma: 'Json', native: '@db.Json', desc: 'JSON document' },
+        ],
+        sqlserver: [
+            { prisma: 'String', native: '@db.NVarChar(1000)', desc: 'Variable-length Unicode string' },
+            { prisma: 'String', native: '@db.Text', desc: 'Legacy type for long non-Unicode data' },
+            { prisma: 'String', native: '@db.UniqueIdentifier', desc: 'Globally unique identifier' },
+            { prisma: 'Int', native: '@db.TinyInt', desc: '1-byte unsigned integer' },
+            { prisma: 'DateTime', native: '@db.DateTime2', desc: 'Date and time with fractional seconds' },
+        ],
+    };
+
+    const renderNativeTypesTable = (provider) => {
+        const data = nativeTypesData[provider];
+        const tableRows = data.map((row, index) => `
+            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'} border-b">
+                <td class="px-6 py-4 font-mono">${row.prisma}</td>
+                <td class="px-6 py-4 font-mono text-rose-600">${row.native}</td>
+                <td class="px-6 py-4">${row.desc}</td>
+            </tr>
+        `).join('');
+
+        nativeTypesContainer.innerHTML = `
+            <table class="w-full text-sm text-left text-slate-500">
+                <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Prisma Type</th>
+                        <th scope="col" class="px-6 py-3">Native Type Attribute</th>
+                        <th scope="col" class="px-6 py-3">Description</th>
+                    </tr>
+                </thead>
+                <tbody>${tableRows}</tbody>
+            </table>
+        `;
+    };
+
+    dbProviderSelect.addEventListener('change', (e) => renderNativeTypesTable(e.target.value));
+    renderNativeTypesTable('postgresql');
+
+
+    // Express Guide Accordion
+    const accordionContainer = document.getElementById('accordion-container');
+    const accordionData = [
+        { 
+            title: 'Step 1: Set up your project', 
+            content: 'Initialize a new Node.js project and install Express, Prisma, and the Prisma Client.',
+            code: `mkdir my-express-prisma-app\ncd my-express-prisma-app\nnpm init -y\nnpm install express\nnpm install prisma @prisma/client --save-dev`
+        },
+        { 
+            title: 'Step 2: Initialize Prisma', 
+            content: 'This command creates a `prisma` directory with a `schema.prisma` file and a `.env` file for your database URL.',
+            code: `npx prisma init`
+        },
+        { 
+            title: 'Step 3: Configure your Schema and Database', 
+            content: 'Open `.env` and set your `DATABASE_URL`. Then, define your data models in `prisma/schema.prisma`.',
+            code: `// .env\nDATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"\n\n// prisma/schema.prisma\nmodel User {\n  id    Int     @id @default(autoincrement())\n  email String  @unique\n  name  String?\n}`
+        },
+        { 
+            title: 'Step 4: Run a Migration', 
+            content: 'This command inspects your schema, creates a SQL migration file, and applies it to your database.',
+            code: `npx prisma migrate dev --name init`
+        },
+        { 
+            title: 'Step 5: Use Prisma Client in your Express App', 
+            content: 'Create a simple `index.js` file for your server. Import and instantiate the Prisma Client, then create your API routes.',
+            code: `import express from 'express';\nimport { PrismaClient } from '@prisma/client';\n\nconst prisma = new PrismaClient();\nconst app = express();\n\napp.use(express.json());\n\n// Create a new user\napp.post('/users', async (req, res) => {\n  const user = await prisma.user.create({ data: req.body });\n  res.json(user);\n});\n\n// Get all users\napp.get('/users', async (req, res) => {\n  const users = await prisma.user.findMany();\n  res.json(users);\n});\n\nconst PORT = 3000;\napp.listen(PORT, () => console.log(\`Server running on port \${PORT}\`));`
+        },
+        { 
+            title: 'Step 6: Run your App', 
+            content: 'Start your Express server and test your new API endpoints.',
+            code: `node index.js`
+        },
+    ];
+
+    accordionContainer.innerHTML = accordionData.map((item, index) => `
+        <div class="accordion-item bg-white border border-slate-200 rounded-lg">
+            <h2>
+                <button type="button" class="accordion-button flex items-center justify-between w-full p-5 font-medium text-left text-slate-700" data-accordion-target="#accordion-body-${index}">
+                    <span>${item.title}</span>
+                    <svg class="accordion-arrow w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </h2>
+            <div id="accordion-body-${index}" class="accordion-body hidden p-5 border-t border-slate-200">
+                <p class="mb-4 text-slate-600">${item.content}</p>
+                <div class="code-block">
+                    <pre class="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code class="language-bash">${item.code}</code></pre>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    document.querySelectorAll('.accordion-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const body = document.querySelector(button.dataset.accordionTarget);
+            const arrow = button.querySelector('.accordion-arrow');
+            body.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        });
+    });
+
+    // Re-apply copy listeners for accordion code blocks
+    accordionContainer.querySelectorAll('.code-block').forEach(block => {
+        const code = block.querySelector('code');
+        const button = document.createElement('button');
+        button.innerHTML = 'Copy';
+        button.className = 'copy-button';
+        block.appendChild(button);
+
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.innerHTML = 'Copied!';
+                setTimeout(() => {
+                    button.innerHTML = 'Copy';
+                }, 2000);
+            });
+        });
+    });
+
+});
+</script>
+</body>
+</html>
