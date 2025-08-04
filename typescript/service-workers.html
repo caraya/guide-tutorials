@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Deep Dive into Service Workers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mermaid {
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        pre code {
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #1f2937;
+            color: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        table {
+            width: 100%;
+            margin-top: 1.5rem;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        .support-yes {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .support-no {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .support-partial {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <header class="text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">A Deep Dive into Service Workers</h1>
+        <p class="mt-4 text-lg text-gray-600">A Comprehensive Tutorial</p>
+      </header>
+      <main class="space-y-12">
+        <!-- Section 1: What is a Service Worker? -->
+        <section id="what-is-it">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">1. What is a Service Worker?</h2>
+          <p class="mb-4 text-lg leading-relaxed">A service worker is a script that your browser runs in the background, separate from a web page, opening the door to features that don't need a web page or user interaction. Key characteristics include:</p>
+          <ul class="list-disc list-inside space-y-2 text-lg">
+            <li><strong>JavaScript Worker:</strong>
+              It's a type of web worker, meaning it runs on a separate thread from the main browser UI, so it can perform tasks without blocking the user interface.</li>
+            <li><strong>Proxy Server:</strong>
+              It acts as a programmable network proxy, allowing you to intercept and control how network requests from your application are handled.</li>
+            <li><strong>Event-driven:</strong>
+              It is activated by events, such as network requests or push notifications, and is terminated when not in use to save resources.</li>
+            <li><strong>Secure:</strong>
+              Service workers only run over HTTPS to prevent man-in-the-middle attacks.</li>
+          </ul>
+        </section>
+        <!-- Section 2: The Service Worker Lifecycle -->
+        <section id="lifecycle">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">2. The Service Worker Lifecycle</h2>
+          <p class="mb-6 text-lg leading-relaxed">Understanding the service worker lifecycle is crucial for effective development. It consists of three main phases: registration, installation, and activation. A service worker moves through these states, ensuring that a new version can be installed without disrupting the currently active one.</p>
+          <div class="mermaid">
+            stateDiagram-v2
+                        [*] --> NotInstalled
+                        NotInstalled --> Installing: register()
+                        Installing --> Installed: oninstall event
+                        Installed --> Activating: clients.claim() or no clients on old worker
+                        Activating --> Activated: onactivate event
+                        Activated --> Redundant: new worker installed
+                        Activated --> Activated: handles fetch/push/sync events
+                        Installing --> Redundant: installation failed
+          </div>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Lifecycle Phases Explained</h3>
+          <div class="space-y-4 text-lg">
+            <dl class="space-y-6">
+              <div>
+                <dt class="font-semibold text-gray-800">1. Registration</dt>
+                <dd class="mt-1 ml-4 text-gray-700 leading-relaxed">This is the initial step, triggered by `navigator.serviceWorker.register()` in your main application's JavaScript. This tells the browser where your service worker file lives and kicks off the installation process in the background. The browser downloads, parses, and executes the script.</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-800">2. Installation</dt>
+                <dd class="mt-1 ml-4 text-gray-700 leading-relaxed">The `install` event is the first event a service worker receives, and it only runs once per version of the worker. This is the ideal time to prepare your service worker for use, primarily by caching the static assets your application needs to run offline (the "app shell"). By wrapping this work in `event.waitUntil()`, you tell the browser to wait until your caching is complete before considering the worker installed. If any of the promises passed to `waitUntil()` reject, the installation fails, and the service worker is discarded.</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-800">3. Activation</dt>
+                <dd class="mt-1 ml-4 text-gray-700 leading-relaxed">After a successful installation, the service worker moves to the `installed` state and waits to become active. The `activate` event fires when the old service worker is gone and the new one can take control. This is the perfect place to manage old caches and clean up resources from previous versions. A new service worker won't control open pages until they are reloaded or until you use `clients.claim()` to take control immediately. This waiting step ensures that only one version of your service worker is running at a time, preventing conflicts.</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-800">4. Redundant</dt>
+                <dd class="mt-1 ml-4 text-gray-700 leading-relaxed">A service worker becomes redundant if it fails during installation or if it's replaced by a newer version. It is no longer used.</dd>
+              </div>
+            </dl>
+          </div>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Registration</h3>
+          <p class="mb-4 text-lg leading-relaxed">The first step is to register the service worker in your main JavaScript file. This code checks if the browser supports service workers and, if so, registers the `service-worker.js` file.</p>
+          <pre><code class="language-js">if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      })
+      .catch(error => {
+        console.log('ServiceWorker registration failed: ', error);
+      });
+  });
+}</code></pre>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Installation</h3>
+          <p class="mb-4 text-lg leading-relaxed">Once registered, the `install` event is fired in the service worker file. This is the perfect time to cache static assets. The `event.waitUntil()` method takes a promise to know how long installation takes, and if it was successful.</p>
+          <pre><code class="language-js">// service-worker.js
+const STATIC_CACHE_NAME = 'static-assets-v1';
+const urlsToCache = [
+  '/',
+  '/styles/main.css',
+  '/script/main.js'
+];
+
+self.addEventListener('install', event => {
+  // Perform install steps
+  event.waitUntil(
+    caches.open(STATIC_CACHE_NAME)
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});</code></pre>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Activation</h3>
+          <p class="mb-4 text-lg leading-relaxed">After installation, the service worker enters the `activating` state. The `activate` event is a good place to manage old caches, ensuring your service worker cleans up caches that are no longer needed.</p>
+          <pre><code class="language-js">// service-worker.js
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [STATIC_CACHE_NAME]; // Add other cache names here
+
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});</code></pre>
+        </section>
+        <!-- Section 3: Caching Strategies -->
+        <section id="caching">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">3. Caching Strategies with the Cache API</h2>
+          <p class="mb-4 text-lg leading-relaxed">The Cache API is a system for storing and retrieving network requests and their corresponding responses. It's a key part of creating offline-first web apps. Choosing the right strategy depends on the type of resource you are handling.</p>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Common Caching Patterns</h3>
+          <ul class="list-disc list-inside space-y-2 text-lg">
+            <li><strong>Cache First:</strong>
+              Great for static assets that don't change often.</li>
+            <li><strong>Network First:</strong>
+              Best for requests where having the most up-to-date data is essential.</li>
+            <li><strong>Stale-While-Revalidate:</strong>
+              A good balance. Provides a fast response from the cache while updating it in the background for next time.</li>
+            <li><strong>Cache Only:</strong>
+              For when you only ever want to get things from the cache.</li>
+            <li><strong>Network Only:</strong>
+              For requests that must not be cached, like non-GET requests.</li>
+          </ul>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Cache First</h4>
+          <p class="mb-4 text-lg leading-relaxed">Ideal for static assets. The service worker first checks the cache, and if the resource is not there, it fetches it from the network.</p>
+          <pre><code class="language-js">// Cache First Strategy
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      }
+    )
+  );
+});</code></pre>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Network First</h4>
+          <p class="mb-4 text-lg leading-relaxed">For resources that need to be up-to-date. The service worker tries the network first and falls back to the cache only if the network request fails.</p>
+          <pre><code class="language-js">// Network First Strategy
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(networkResponse => {
+        // If successful, clone it and cache it.
+        const responseClone = networkResponse.clone();
+        caches.open(DYNAMIC_CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return networkResponse;
+      })
+      .catch(() => {
+        // If network fails, try to serve from cache.
+        return caches.match(event.request);
+      })
+  );
+});</code></pre>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Stale-While-Revalidate</h4>
+          <p class="mb-4 text-lg leading-relaxed">This strategy serves content from the cache immediately for a fast response, then checks the network for an update and caches it for the next time the resource is requested.</p>
+          <pre><code class="language-js">// Stale-While-Revalidate Strategy
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      const networkFetch = fetch(event.request).then(networkResponse => {
+        const cacheName = DYNAMIC_CACHE_NAME;
+        const responseClone = networkResponse.clone();
+        caches.open(cacheName).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return networkResponse;
+      });
+
+      // Return cached response immediately, and the network fetch promise
+      // will update the cache in the background.
+      return cachedResponse || networkFetch;
+    })
+  );
+});</code></pre>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Managing Multiple Caches and Expiration</h3>
+          <p class="mb-4 text-lg leading-relaxed">The Cache API does not have a built-in mechanism for resource expiration. You must manage it yourself. A common and effective strategy is to use multiple, versioned caches for different types of content (e.g., static assets, images, API data). By changing the version string in your cache names, the old cache will be automatically deleted during the `activate` event of the new service worker.</p>
+          <pre><code class="language-js">// service-worker.js
+const STATIC_CACHE_VERSION = 'v1';
+const IMAGE_CACHE_VERSION = 'v1';
+const DYNAMIC_CACHE_VERSION = 'v1';
+
+const STATIC_CACHE_NAME = `static-assets-${STATIC_CACHE_VERSION}`;
+const IMAGE_CACHE_NAME = `images-${IMAGE_CACHE_VERSION}`;
+const DYNAMIC_CACHE_NAME = `dynamic-api-${DYNAMIC_CACHE_VERSION}`;
+
+const CURRENT_CACHES = [
+    STATIC_CACHE_NAME,
+    IMAGE_CACHE_NAME,
+    DYNAMIC_CACHE_NAME
+];
+
+// In the 'activate' event, you clean up old caches:
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (!CURRENT_CACHES.includes(cacheName)) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});</code></pre>
+        </section>
+        <!-- Section 4: Fetch API -->
+        <section id="fetch-api">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">4. Intercepting Requests with the Fetch API</h2>
+          <p class="mb-4 text-lg leading-relaxed">The `fetch` event is fired for every request made by the page. This allows you to intercept the request and apply different caching strategies based on the request type.</p>
+          <pre><code class="language-js">self.addEventListener('fetch', event => {
+    // Example: Apply different strategy for images
+    if (event.request.destination === 'image') {
+        event.respondWith(
+            caches.match(event.request).then(response => {
+                return response || fetch(event.request).then(fetchResponse => {
+                    return caches.open(IMAGE_CACHE_NAME).then(cache => {
+                        cache.put(event.request, fetchResponse.clone());
+                        return fetchResponse;
+                    });
+                });
+            })
+        );
+    }
+    // Add other strategies here...
+});</code></pre>
+        </section>
+        <!-- Section 5: Push API -->
+        <section id="push-api">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">5. Push Notifications with the Push API</h2>
+          <p class="mb-4 text-lg leading-relaxed">The Push API allows you to send push notifications to a user even when they are not actively using your website. The process involves subscribing the user, sending the subscription to your server, and then handling the `push` event in the service worker to display a notification.</p>
+          <pre><code class="language-js">// service-worker.js
+self.addEventListener('push', event => {
+  const data = event.data ? event.data.json() : { title: 'New Message', body: 'You have a new message.' };
+  const title = data.title;
+  const options = {
+    body: data.body,
+    icon: 'images/icon.png',
+    badge: 'images/badge.png'
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});</code></pre>
+        </section>
+        <!-- Section 6: Background Sync -->
+        <section id="background-sync">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">6. Background Sync & Periodic Background Sync</h2>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Server Requirement</h3>
+          <p class="mb-4 text-lg leading-relaxed">For both Background Sync and Periodic Background Sync to be useful, you need a server that you control. The service worker needs an endpoint to send data to (for Background Sync) or fetch data from (for Periodic Background Sync). This is almost always your own application's backend server.</p>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Background Sync Example</h3>
+          <p class="mb-4 text-lg leading-relaxed">This is useful for deferring actions, like sending a message in a chat app, until the user has a connection. The process involves registering a sync event from your app and then handling it in the service worker.</p>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">1. Registering the Sync (in `main.js`)</h4>
+          <pre><code class="language-js">// This would typically happen after a `fetch` request fails because the user is offline.
+function queueMessageForSync() {
+  navigator.serviceWorker.ready.then(registration => {
+    if (registration.sync) {
+      return registration.sync.register('send-queued-messages');
+    }
+  }).then(() => {
+    console.log('Sync event registered for sending messages.');
+  }).catch(err => {
+    console.error('Background sync registration failed:', err);
+  });
+}
+
+// Example of trying to send a message
+fetch('/api/messages', { method: 'POST', body: JSON.stringify(newMessage) })
+  .catch(err => {
+    // If the fetch fails, we assume it's an offline issue
+    console.log('Fetch failed; queuing message for background sync.');
+    // In a real app, you would save the message to IndexedDB first
+    // saveMessageToOutbox(newMessage); 
+    queueMessageForSync();
+  });</code></pre>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">2. Handling the Sync (in `service-worker.js`)</h4>
+          <pre><code class="language-js">self.addEventListener('sync', event => {
+  if (event.tag === 'send-queued-messages') {
+    event.waitUntil(
+      // This function would get data from IndexedDB and send it
+      sendQueuedMessagesToServer() 
+    );
+  }
+});
+
+async function sendQueuedMessagesToServer() {
+  // This is a simplified example. In a real app, you'd use IndexedDB.
+  // const messages = getMessagesFromOutbox(); // Function to get data from IndexedDB
+  
+  // for (const message of messages) {
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        // body: JSON.stringify(message)
+      });
+
+      if (response.ok) {
+        console.log('Queued message sent successfully.');
+        // Remove the message from the outbox after sending
+        // removeMessageFromOutbox(message.id); 
+      }
+    } catch (error) {
+      console.error('Failed to send queued message:', error);
+      // If it fails again, it will be retried later.
+      throw error;
+    }
+  // }
+}</code></pre>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Periodic Background Sync Example</h3>
+          <p class="mb-4 text-lg leading-relaxed">This is useful for pre-fetching content, like the latest news articles, so the app is up-to-date when the user opens it.</p>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">1. Registering the Periodic Sync (in `main.js`)</h4>
+          <pre><code class="language-js">async function registerPeriodicNewsSync() {
+  const registration = await navigator.serviceWorker.ready;
+  try {
+    await registration.periodicSync.register('get-latest-news', {
+      // An interval of 1 day
+      minInterval: 24 * 60 * 60 * 1000, 
+    });
+    console.log('Periodic news sync registered.');
+  } catch (err) {
+    console.error('Periodic background sync registration failed:', err);
+  }
+}
+
+// You might call this after the user grants notification permissions or opts-in
+registerPeriodicNewsSync();</code></pre>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">2. Handling the Periodic Sync (in `service-worker.js`)</h4>
+          <pre><code class="language-js">self.addEventListener('periodicsync', event => {
+  if (event.tag === 'get-latest-news') {
+    event.waitUntil(
+      fetchLatestNewsAndUpdateCache()
+    );
+  }
+});
+
+async function fetchLatestNewsAndUpdateCache() {
+  console.log('Fetching latest news for periodic sync...');
+  try {
+    const response = await fetch('/api/latest-news');
+    const articles = await response.json();
+    
+    const cache = await caches.open(DYNAMIC_CACHE_NAME);
+    // Cache the main API response
+    await cache.put('/api/latest-news', new Response(JSON.stringify(articles)));
+    
+    // Optionally, cache individual article pages or images
+    // for (const article of articles) {
+    //   await cache.add(article.url);
+    // }
+    console.log('Latest news cached successfully.');
+  } catch (error) {
+    console.error('Periodic sync failed:', error);
+  }
+}</code></pre>
+        </section>
+        <!-- Section 7: Save for Later Feature -->
+        <section id="save-for-later">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">7. "Save for Later" Feature</h2>
+          <p class="mb-4 text-lg leading-relaxed">A powerful use case for service workers is allowing users to save individual articles or pages for offline reading. This pattern creates a much richer user experience than simply caching the entire application shell.</p>
+          <p class="mb-4 text-lg leading-relaxed"><strong>Note:</strong>
+            This feature is most effective within a **Progressive Web App (PWA)**. While it can work in a standard browser tab, the experience is seamless in a PWA, where the user expects app-like capabilities, including reliable offline access to saved content.</p>
+          <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-3">Implementation Steps</h3>
+          <p class="mb-4 text-lg leading-relaxed">The core idea is to create a special request that the service worker can identify. When a user clicks "Save for Later," the app sends this request, and the service worker intercepts it, fetches all necessary assets for that page, and stores them in a dedicated cache.</p>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">1. Triggering the Save (in `main.js`)</h4>
+          <p class="mb-4 text-lg leading-relaxed">Add a "Save for Later" button to your posts. The click handler constructs a special URL and uses `fetch` to send it. The service worker will catch this request.</p>
+          <pre><code class="language-js">// Assuming you have buttons with a 'data-post-url' attribute
+document.querySelectorAll('.save-for-later-btn').forEach(button => {
+  button.addEventListener('click', event => {
+    const postUrl = event.target.dataset.postUrl;
+    
+    // Create a special URL for the service worker to intercept.
+    // The 'save-for-later' part is a custom flag.
+    const saveUrl = `${postUrl}?save-for-later=true`;
+
+    console.log(`Requesting to save: ${postUrl}`);
+    
+    // We don't care about the response, just that the SW gets the request.
+    fetch(saveUrl).then(() => {
+        alert('Post saved for offline reading!');
+    }).catch(err => {
+        console.error('Save request failed:', err);
+        alert('Could not save post.');
+    });
+  });
+});</code></pre>
+          <h4 class="text-xl font-semibold text-gray-700 mt-6 mb-3">2. Handling the Save (in `service-worker.js`)</h4>
+          <p class="mb-4 text-lg leading-relaxed">In the `fetch` event listener, check for your special URL parameter. If found, prevent the default network request, fetch the page and its assets, and add them to a dedicated "saved articles" cache.</p>
+          <pre><code class="language-js">const SAVED_ARTICLES_CACHE_NAME = 'saved-articles-v1';
+
+// Add SAVED_ARTICLES_CACHE_NAME to your CURRENT_CACHES array for cleanup.
+
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Check if this is a "save for later" request.
+  if (url.searchParams.has('save-for-later')) {
+    // Intercept the request and handle the saving logic.
+    event.respondWith(
+      savePageForOffline(event.request)
+    );
+    return; // Important: stop further processing.
+  }
+
+  // ... other fetch strategies
+});
+
+async function savePageForOffline(request) {
+  const url = new URL(request.url);
+  // Get the original URL of the page to save.
+  const pageUrl = url.origin + url.pathname;
+
+  try {
+    const cache = await caches.open(SAVED_ARTICLES_CACHE_NAME);
+    const response = await fetch(pageUrl);
+    
+    // In a real app, you'd parse the HTML response to find
+    // and fetch other assets like CSS, JS, and images.
+    // For simplicity, we'll just cache the main HTML page here.
+    
+    await cache.put(pageUrl, response.clone());
+    console.log(`Successfully cached page: ${pageUrl}`);
+
+    // Return a success response to the client.
+    return new Response(JSON.stringify({ status: 'ok' }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error(`Failed to save page ${pageUrl}:`, error);
+    // Return an error response.
+    return new Response(JSON.stringify({ status: 'failed' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}</code></pre>
+          <p class="mt-4 text-lg leading-relaxed">To view the saved article, your main `fetch` handler would simply need to check the `SAVED_ARTICLES_CACHE_NAME` first when a user navigates to that article's URL.</p>
+        </section>
+        <!-- Section 8: Complete Example -->
+        <section id="complete-example">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">8. Complete Service Worker Example</h2>
+          <p class="mb-4 text-lg leading-relaxed">Here is a complete `service-worker.js` file that demonstrates how to use these APIs together. It includes multiple cache management, different fetching strategies, and handlers for push and sync events.</p>
+          <pre><code class="language-js">// service-worker.js
+
+// --- Cache Versioning ---
+const STATIC_CACHE_VERSION = 'v1.1';
+const IMAGE_CACHE_VERSION = 'v1.1';
+const DYNAMIC_CACHE_VERSION = 'v1.1';
+const SAVED_ARTICLES_CACHE_VERSION = 'v1.1';
+
+const STATIC_CACHE_NAME = `static-assets-${STATIC_CACHE_VERSION}`;
+const IMAGE_CACHE_NAME = `images-${IMAGE_CACHE_VERSION}`;
+const DYNAMIC_CACHE_NAME = `dynamic-api-${DYNAMIC_CACHE_VERSION}`;
+const SAVED_ARTICLES_CACHE_NAME = `saved-articles-${SAVED_ARTICLES_CACHE_VERSION}`;
+
+const CURRENT_CACHES = [
+    STATIC_CACHE_NAME,
+    IMAGE_CACHE_NAME,
+    DYNAMIC_CACHE_NAME,
+    SAVED_ARTICLES_CACHE_NAME
+];
+
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/styles/main.css',
+  '/scripts/main.js',
+  '/offline.html' // A fallback page for offline access
+];
+
+// --- Lifecycle Events ---
+
+// INSTALL: Pre-cache static assets
+self.addEventListener('install', event => {
+  console.log('[Service Worker] Installing...');
+  event.waitUntil(
+    caches.open(STATIC_CACHE_NAME).then(cache => {
+      console.log('[Service Worker] Pre-caching static assets');
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
+  self.skipWaiting(); // Force the waiting service worker to become the active service worker.
+});
+
+// ACTIVATE: Clean up old caches
+self.addEventListener('activate', event => {
+  console.log('[Service Worker] Activating...');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (!CURRENT_CACHES.includes(cacheName)) {
+            console.log('[Service Worker] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim(); // Become the service worker for all open tabs.
+});
+
+
+// --- Functional Events ---
+
+// FETCH: Apply caching strategies
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Strategy: Save for Later
+  if (url.searchParams.has('save-for-later')) {
+    event.respondWith(savePageForOffline(request));
+    return;
+  }
+
+  // Strategy: Network first for API calls
+  if (request.url.includes('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // If successful, cache the response
+          const responseClone = response.clone();
+          caches.open(DYNAMIC_CACHE_NAME).then(cache => {
+            cache.put(request.url, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // If network fails, try the cache
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Strategy: Cache first for images
+  if (request.destination === 'image') {
+    event.respondWith(
+      caches.match(request).then(cachedResponse => {
+        return cachedResponse || fetch(request).then(networkResponse => {
+          const responseClone = networkResponse.clone();
+          caches.open(IMAGE_CACHE_NAME).then(cache => {
+            cache.put(request, responseClone);
+          });
+          return networkResponse;
+        });
+      })
+    );
+    return;
+  }
+  
+  // Strategy: Cache first for everything else (including saved articles)
+  event.respondWith(
+    caches.match(request).then(cachedResponse => {
+      return cachedResponse || fetch(request)
+        .catch(() => caches.match('/offline.html')); // Fallback for navigation requests
+    })
+  );
+});
+
+// PUSH: Handle incoming push notifications
+self.addEventListener('push', event => {
+  console.log('[Service Worker] Push Received.');
+  const data = event.data ? event.data.json() : { title: 'Default Title', body: 'Default body text.'};
+  const title = data.title;
+  const options = {
+    body: data.body,
+    icon: 'images/icon-96x96.png',
+    badge: 'images/badge-72x72.png'
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// SYNC: Handle background sync events
+self.addEventListener('sync', event => {
+  console.log('[Service Worker] Background sync event:', event.tag);
+  if (event.tag === 'send-queued-messages') {
+    event.waitUntil(
+      // Here you would implement the logic to send queued data to the server
+      // For example, reading from IndexedDB and sending via fetch()
+      console.log('Processing background sync for queued messages...')
+    );
+  }
+});
+
+// PERIODIC SYNC: Handle periodic background sync events
+self.addEventListener('periodicsync', event => {
+  console.log('[Service Worker] Periodic sync event:', event.tag);
+  if (event.tag === 'get-latest-news') {
+    event.waitUntil(
+      // Here you would fetch new content and update the cache
+      console.log('Fetching latest news for periodic sync...')
+    );
+  }
+});</code></pre>
+        </section>
+        <!-- Section 9: Browser Support -->
+        <section id="browser-support">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">9. Browser Support</h2>
+          <p class="mb-4 text-lg leading-relaxed">Browser support for service worker-related APIs is strong in modern browsers, but some of the newer features are still limited. Always check compatibility for your target audience. (Support accurate as of late 2025).</p>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Chrome</th>
+                  <th>Firefox</th>
+                  <th>Safari</th>
+                  <th>Edge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Service Worker</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+                <tr>
+                  <td>Cache API</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+                <tr>
+                  <td>Fetch API</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+                <tr>
+                  <td>Push API</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-partial">Partial¹</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+                <tr>
+                  <td>Background Sync</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-no">No</td>
+                  <td class="support-no">No</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+                <tr>
+                  <td>Periodic Background Sync</td>
+                  <td class="support-yes">Yes</td>
+                  <td class="support-no">No</td>
+                  <td class="support-no">No</td>
+                  <td class="support-yes">Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-4 text-sm text-gray-600">¹ Safari supports web push notifications but uses its own Apple Push Notification service (APNs) and does not fully implement the Push API standard.</p>
+        </section>
+        <!-- Section 10: Conclusion -->
+        <section id="conclusion">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">10. Conclusion</h2>
+          <p class="text-lg leading-relaxed">Service workers are a fundamental part of modern web development, enabling a more robust and engaging user experience. By mastering the concepts of the service worker lifecycle, caching, and the associated APIs, you can build web applications that are fast, reliable, and work offline.</p>
+        </section>
+      </main>
+      <footer class="text-center mt-16 text-gray-500">
+      </footer>
+    </div>
+    <p class="text-center text-gray-500 text-sm">Licensed under the MIT License</p>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

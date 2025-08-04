@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to AbortController</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (Stone, Amber, Sky) -->
+    <!-- Application Structure Plan: The application is structured as a single-page, top-down narrative to guide the user from concept to practice. It starts with a high-level introduction (Hero), explains the fundamental building blocks (Core Concepts) with a custom visual diagram, then provides two distinct, hands-on interactive demos (Event Toggling & Fetch Cancellation). It concludes with a scannable FAQ section using an accordion for detailed rules. This structure was chosen to build knowledge progressively, making a technical topic digestible. It prioritizes learning by doing over simply presenting the report's text, allowing users to see the cause and effect of their actions in real-time via integrated logs. -->
+    <!-- Visualization & Content Choices: 1. Core Concepts Diagram: Goal is to organize and explain the relationship between Controller and Signal. A custom HTML/CSS diagram is used instead of static text for better visual memory retention. Interaction is implicit (learning). Justification: A visual flow is easier to grasp than text alone. 2. Interactive Demos (Events & Fetch): Goal is to let users experience the change/process. The presentation uses interactive buttons and a "live log" text area. Interaction involves clicking buttons to see immediate state changes and log outputs. Justification: Active participation solidifies understanding of the one-time-use nature of controllers and the error handling for fetch. 3. FAQ Section: Goal is to organize detailed information. An HTML/JS accordion is used to present questions and answers. Interaction is clicking to expand/collapse. Justification: This prevents information overload and allows users to focus on specific questions, making the page feel less dense. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+        }
+        .font-code {
+            font-family: 'Source Code Pro', monospace;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-button.open .accordion-arrow {
+            transform: rotate(180deg);
+        }
+    </style>
+  </head>
+  <body class="text-stone-800">
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+      <!-- Header Section -->
+      <header class="text-center mb-12 md:mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-stone-900 mb-3">An Interactive Guide to AbortController</h1>
+        <p class="text-lg md:text-xl text-stone-600 max-w-3xl mx-auto">Go beyond the theory. Learn how to create cancellable events and network requests with hands-on examples.</p>
+      </header>
+      <!-- Core Concepts Section -->
+      <section id="concepts" class="mb-12 md:mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8">The Core Idea</h2>
+        <div class="bg-white p-8 rounded-2xl shadow-lg border border-stone-200">
+          <p class="text-center text-stone-700 mb-8">The `AbortController` API splits the ability to cancel an operation from the operation itself. You create a controller, pass its "signal" to one or more asynchronous tasks (like event listeners or fetch requests), and then call the controller's `.abort()` method to cancel all of them at once.</p>
+          <!-- Custom HTML/CSS Diagram -->
+          <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6 text-center">
+            <!-- Step 1: Controller -->
+            <div class="flex flex-col items-center">
+              <div class="bg-sky-100 text-sky-800 p-4 rounded-lg shadow-sm w-48">
+                <h3 class="font-bold">1. AbortController</h3>
+                <p class="text-sm">You create this object.</p>
+              </div>
+              <div class="font-code text-sm mt-2 bg-stone-100 p-2 rounded">controller.abort()</div>
+            </div>
+            <!-- Arrow -->
+            <div class="text-4xl text-stone-400 transform rotate-90 md:rotate-0">→</div>
+            <!-- Step 2: Signal -->
+            <div class="flex flex-col items-center">
+              <div class="bg-amber-100 text-amber-800 p-4 rounded-lg shadow-sm w-48">
+                <h3 class="font-bold">2. AbortSignal</h3>
+                <p class="text-sm">You get this from the controller.</p>
+              </div>
+              <div class="font-code text-sm mt-2 bg-stone-100 p-2 rounded">const signal = controller.signal</div>
+            </div>
+            <!-- Arrow -->
+            <div class="text-4xl text-stone-400 transform rotate-90 md:rotate-0">→</div>
+            <!-- Step 3: Listener/Task -->
+            <div class="flex flex-col items-center">
+              <div class="bg-stone-200 text-stone-800 p-4 rounded-lg shadow-sm w-48">
+                <h3 class="font-bold">3. Async Task</h3>
+                <p class="text-sm">You pass the signal to it.</p>
+              </div>
+              <div class="font-code text-sm mt-2 bg-stone-100 p-2 rounded">{ signal }</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Demo 1: Event Listener Toggle -->
+      <section id="demo-events" class="mb-12 md:mb-16">
+        <h2 class="text-3xl font-bold text-center mb-2">Demo 1: Toggling Event Listeners</h2>
+        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">This example demonstrates the primary rule: `AbortController` is single-use. To re-enable listeners after an abort, you must create a new controller. Click "Activate" and move your mouse over the box, then "Deactivate" and try again.</p>
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+          <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Interactive UI -->
+            <div class="flex flex-col items-center">
+              <div id="interactiveBox1" class="w-full h-48 bg-stone-200 rounded-lg border-2 border-dashed border-stone-400 flex items-center justify-center mb-6 text-center transition-colors duration-300">
+                <div>
+                  <p id="statusText1" class="text-lg font-medium text-stone-600">Listeners are Inactive</p>
+                  <p class="text-sm text-stone-500">Move mouse here</p>
+                </div>
+              </div>
+              <div class="flex justify-center space-x-4">
+                <button id="activateBtn1" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-5 rounded-lg shadow transition-all transform hover:scale-105">Activate</button>
+                <button id="deactivateBtn1" class="bg-stone-500 hover:bg-stone-600 text-white font-bold py-2 px-5 rounded-lg shadow transition-all transform hover:scale-105" disabled>Deactivate</button>
+              </div>
+            </div>
+            <!-- Live Log -->
+            <div>
+              <h3 class="font-semibold mb-2 text-center md:text-left">Live Action Log</h3>
+              <div id="log1" class="font-code text-sm bg-stone-900 text-stone-300 p-4 rounded-md h-64 overflow-y-auto border border-stone-700">
+                <p class="text-stone-500">Waiting for actions...</p>
+              </div>
+            </div>
+          </div>
+          <!-- Code Snippet -->
+          <div class="mt-8">
+            <h3 class="font-semibold mb-2">JavaScript Code</h3>
+            <div class="font-code text-sm bg-stone-900 text-stone-300 p-4 rounded-md overflow-x-auto border border-stone-700">
+              <pre><code>let controller1;
+
+function activateListeners() {
+  // Create a NEW controller each time
+  controller1 = new AbortController();
+  const signal = controller1.signal;
+  
+  // Add listeners with the new signal
+  el.addEventListener('mouseenter', fn1, { signal });
+  el.addEventListener('mouseleave', fn2, { signal });
+}
+
+function deactivateListeners() {
+  // Abort the current controller
+  if (controller1) {
+    controller1.abort();
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Demo 2: Cancellable Fetch -->
+      <section id="demo-fetch" class="mb-12 md:mb-16">
+        <h2 class="text-3xl font-bold text-center mb-2">Demo 2: Cancelling a Fetch Request</h2>
+        <p class="text-center text-stone-600 mb-8 max-w-3xl mx-auto">Here we use `AbortController` for its original purpose: cancelling a network request. Click "Fetch Data" to start a simulated 5-second download, and try cancelling it midway.</p>
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+          <div class="flex justify-center space-x-4 mb-6">
+            <button id="fetchBtn2" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-5 rounded-lg shadow transition-all transform hover:scale-105">Fetch Data</button>
+            <button id="cancelBtn2" class="bg-stone-500 hover:bg-stone-600 text-white font-bold py-2 px-5 rounded-lg shadow transition-all transform hover:scale-105" disabled>Cancel Fetch</button>
+          </div>
+          <!-- Code Snippet -->
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">JavaScript Code</h3>
+            <div class="font-code text-sm bg-stone-900 text-stone-300 p-4 rounded-md overflow-x-auto border border-stone-700">
+              <pre><code>let controller2;
+
+async function fetchData() {
+  controller2 = new AbortController();
+  const signal = controller2.signal;
+
+  try {
+    // Pass signal to fetch options
+    const res = await fetch(URL, { signal });
+  } catch (err) {
+    // Check if the error was an abort
+    if (err.name === 'AbortError') {
+      console.log('Fetch aborted!');
+    }
+  }
+}
+
+function cancelFetch() {
+  if (controller2) {
+    controller2.abort();
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">Request Status & Output</h3>
+            <div id="output2" class="font-code text-sm bg-stone-900 text-stone-300 p-4 rounded-md min-h-[12rem] overflow-y-auto border border-stone-700">
+              <p id="fetchStatus2" class="text-stone-500">Click "Fetch Data" to begin.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- FAQ Section -->
+      <section id="faq">
+        <h2 class="text-3xl font-bold text-center mb-8">Key Takeaways & FAQ</h2>
+        <div class="space-y-4 max-w-3xl mx-auto">
+          <!-- FAQ Item 1 -->
+          <div class="bg-white border border-stone-200 rounded-lg shadow-sm">
+            <button class="accordion-button w-full flex justify-between items-center text-left p-5 font-semibold">
+              <span>When should I use AbortController vs. removeEventListener?</span>
+              <span class="accordion-arrow transition-transform duration-300">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="p-5 pt-0 text-stone-700 space-y-2">
+                <p><strong class="text-stone-900">Use AbortController when:</strong>
+                  cleaning up multiple listeners at once (e.g., in a component), using anonymous functions as listeners, or coordinating cancellation with a `fetch` request.</p>
+                <p><strong class="text-stone-900">Use removeEventListener when:</strong>
+                  you only need to toggle a single, named event listener. It's slightly more direct for simple cases.</p>
+              </div>
+            </div>
+          </div>
+          <!-- FAQ Item 2 -->
+          <div class="bg-white border border-stone-200 rounded-lg shadow-sm">
+            <button class="accordion-button w-full flex justify-between items-center text-left p-5 font-semibold">
+              <span>What happens after I abort? Can I reuse the controller?</span>
+              <span class="accordion-arrow transition-transform duration-300">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="p-5 pt-0 text-stone-700 space-y-2">
+                <p>No. Once `.abort()` is called, the controller is permanently in an "aborted" state. It cannot be reset or reused.</p>
+                <p>Any task attached to its signal is cancelled forever. To re-add listeners or make another cancellable request, you **must create a new `AbortController` instance**.</p>
+              </div>
+            </div>
+          </div>
+          <!-- FAQ Item 3 -->
+          <div class="bg-white border border-stone-200 rounded-lg shadow-sm">
+            <button class="accordion-button w-full flex justify-between items-center text-left p-5 font-semibold">
+              <span>How does it work with TypeScript?</span>
+              <span class="accordion-arrow transition-transform duration-300">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="p-5 pt-0 text-stone-700 space-y-2">
+                <p>It works perfectly out of the box. TypeScript includes all the necessary type definitions for `AbortController` and `AbortSignal`, so you get full type safety and autocompletion with no extra configuration.</p>
+                <pre class="bg-stone-100 p-3 rounded-md mt-2 font-code text-sm"><code>const controller = new AbortController();
+// controller is typed as AbortController
+
+const signal = controller.signal;
+// signal is typed as AbortSignal</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      // --- Demo 1: Event Listener Toggle ---
+        const interactiveBox1 = document.getElementById('interactiveBox1');
+        const statusText1 = document.getElementById('statusText1');
+        const activateBtn1 = document.getElementById('activateBtn1');
+        const deactivateBtn1 = document.getElementById('deactivateBtn1');
+        const log1 = document.getElementById('log1');
+        let controller1;
+
+        const logMessage1 = (message, color = 'text-stone-300') => {
+            if (log1.children.length === 1 && log1.children[0].textContent === 'Waiting for actions...') {
+                log1.innerHTML = '';
+            }
+            const p = document.createElement('p');
+            p.textContent = `> ${message}`;
+            p.className = color;
+            log1.appendChild(p);
+            log1.scrollTop = log1.scrollHeight;
+        };
+
+        const handleMouseEnter1 = () => {
+            interactiveBox1.classList.remove('bg-stone-200', 'border-stone-400');
+            interactiveBox1.classList.add('bg-amber-200', 'border-amber-400');
+            statusText1.textContent = 'Event Fired: mouseenter';
+        };
+
+        const handleMouseLeave1 = () => {
+            interactiveBox1.classList.add('bg-stone-200', 'border-stone-400');
+            interactiveBox1.classList.remove('bg-amber-200', 'border-amber-400');
+            statusText1.textContent = 'Listeners are Active';
+        };
+
+        const activateListeners1 = () => {
+            logMessage1('Activating listeners...', 'text-sky-400');
+            controller1 = new AbortController();
+            const signal = controller1.signal;
+            logMessage1('New AbortController created.');
+            interactiveBox1.addEventListener('mouseenter', handleMouseEnter1, { signal });
+            interactiveBox1.addEventListener('mouseleave', handleMouseLeave1, { signal });
+            logMessage1('Listeners attached to box.');
+            statusText1.textContent = 'Listeners are Active';
+            activateBtn1.disabled = true;
+            deactivateBtn1.disabled = false;
+        };
+
+        const deactivateListeners1 = () => {
+            logMessage1('Deactivating listeners...', 'text-amber-400');
+            if (controller1) {
+                controller1.abort();
+                logMessage1('controller.abort() called.');
+            }
+            statusText1.textContent = 'Listeners are Inactive';
+            activateBtn1.disabled = false;
+            deactivateBtn1.disabled = true;
+            interactiveBox1.classList.add('bg-stone-200', 'border-stone-400');
+            interactiveBox1.classList.remove('bg-amber-200', 'border-amber-400');
+        };
+
+        activateBtn1.addEventListener('click', activateListeners1);
+        deactivateBtn1.addEventListener('click', deactivateListeners1);
+
+        // --- Demo 2: Cancellable Fetch ---
+        const fetchBtn2 = document.getElementById('fetchBtn2');
+        const cancelBtn2 = document.getElementById('cancelBtn2');
+        const output2 = document.getElementById('output2');
+        const fetchStatus2 = document.getElementById('fetchStatus2');
+        let controller2;
+
+        const fetchData2 = async () => {
+            controller2 = new AbortController();
+            const signal = controller2.signal;
+
+            fetchBtn2.disabled = true;
+            cancelBtn2.disabled = false;
+            output2.innerHTML = '<p id="fetchStatus2" class="text-amber-400">Fetching data (simulated 5s delay)...</p>';
+
+            try {
+                const response = await fetch('https://httpbin.org/delay/5', { signal });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                output2.innerHTML = '<p class="text-sky-400 font-semibold">Fetch Complete!</p>';
+                const pre = document.createElement('pre');
+                pre.textContent = JSON.stringify(data, null, 2);
+                output2.appendChild(pre);
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    output2.innerHTML = '<p class="text-red-500 font-semibold">Fetch request was successfully aborted!</p>';
+                } else {
+                    output2.innerHTML = `<p class="text-red-500 font-semibold">An error occurred: ${error.message}</p>`;
+                }
+            } finally {
+                fetchBtn2.disabled = false;
+                cancelBtn2.disabled = true;
+            }
+        };
+
+        const cancelFetch2 = () => {
+            if (controller2) {
+                controller2.abort();
+            }
+        };
+
+        fetchBtn2.addEventListener('click', fetchData2);
+        cancelBtn2.addEventListener('click', cancelFetch2);
+
+        // --- FAQ Accordion Logic ---
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                button.classList.toggle('open');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+  </body>
+</html>

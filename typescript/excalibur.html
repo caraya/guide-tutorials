@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excalibur.js - Proxy-Based Reactivity</title>
@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+      body {
             font-family: 'Inter', sans-serif;
         }
         .transition-all {
@@ -22,23 +22,18 @@
             border: 1px solid #374151; /* border-gray-700 */
         }
     </style>
-</head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-8">
-
+  </head>
+  <body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-8">
     <div id="app" class="w-full max-w-2xl mx-auto p-8 space-y-8">
-        <!-- App content will be rendered here -->
     </div>
-
     <div id="explanation" class="w-full max-w-2xl mx-auto p-8 space-y-8 mt-8">
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-6 prose prose-invert max-w-none">
-            <h2 class="text-cyan-400">How to Use Excalibur.js</h2>
-
-            <p>The library is designed to be general-purpose. To create your own reactive app, you only need to focus on changing the "Application Code" section. The Excalibur.js library code can be reused as-is.</p>
-
-            <div>
-                <h3 class="text-yellow-400">Step 1: Define Your Own Data Store</h3>
-                <p>First, decide what data your application needs. For example, to build a "Task List" app, you would define your own `initialState` object.</p>
-                <pre><code class="language-javascript">// 1. Define your application's initial state
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-6 prose prose-invert max-w-none">
+        <h2 class="text-cyan-400">How to Use Excalibur.js</h2>
+        <p>The library is designed to be general-purpose. To create your own reactive app, you only need to focus on changing the "Application Code" section. The Excalibur.js library code can be reused as-is.</p>
+        <div>
+          <h3 class="text-yellow-400">Step 1: Define Your Own Data Store</h3>
+          <p>First, decide what data your application needs. For example, to build a "Task List" app, you would define your own `initialState` object.</p>
+          <pre><code class="language-javascript">// 1. Define your application's initial state
 const myInitialState = {
     title: 'My To-Do List',
     tasks: [
@@ -47,30 +42,26 @@ const myInitialState = {
     ],
     newTaskText: '' // To hold input from a text field
 };</code></pre>
-            </div>
-
-            <div>
-                <h3 class="text-yellow-400">Step 2: Create a Reactive Store</h3>
-                <p>This step is the same. Pass your own state object to the `reactive()` function provided by the library.</p>
-                <pre><code class="language-javascript">// 2. Create a reactive store from your state
+        </div>
+        <div>
+          <h3 class="text-yellow-400">Step 2: Create a Reactive Store</h3>
+          <p>This step is the same. Pass your own state object to the `reactive()` function provided by the library.</p>
+          <pre><code class="language-javascript">// 2. Create a reactive store from your state
 const store = reactive(myInitialState);</code></pre>
-            </div>
-
-            <div>
-                <h3 class="text-yellow-400">Step 3: Write Your UI and Actions</h3>
-                <p>This is where your application comes to life. You connect your reactive data to the DOM using the `watchEffect` function. This function is the heart of the library's reactivity.</p>
-                
-                <h4>How `watchEffect` Works</h4>
-                <p>Think of `watchEffect` as a special box. You put a function inside it, and the library does two things:</p>
-                <ol>
-                    <li>It runs your function immediately one time.</li>
-                    <li>While your function is running, the library pays close attention to every property you access from a reactive store (e.g., `playerStore.user.name`). It "subscribes" your function to each of those properties.</li>
-                    <li>From then on, whenever one of those subscribed properties changes, the library will automatically run your function again to update the UI.</li>
-                </ol>
-
-                <h4>The Render Loop</h4>
-                <p>Inside the `watchEffect`, you define your entire UI as an HTML string and set it using `innerHTML`. This is a simple but effective pattern:</p>
-                <pre><code class="language-javascript">watchEffect(() => {
+        </div>
+        <div>
+          <h3 class="text-yellow-400">Step 3: Write Your UI and Actions</h3>
+          <p>This is where your application comes to life. You connect your reactive data to the DOM using the `watchEffect` function. This function is the heart of the library's reactivity.</p>
+          <h4>How `watchEffect` Works</h4>
+          <p>Think of `watchEffect` as a special box. You put a function inside it, and the library does two things:</p>
+          <ol>
+            <li>It runs your function immediately one time.</li>
+            <li>While your function is running, the library pays close attention to every property you access from a reactive store (e.g., `playerStore.user.name`). It "subscribes" your function to each of those properties.</li>
+            <li>From then on, whenever one of those subscribed properties changes, the library will automatically run your function again to update the UI.</li>
+          </ol>
+          <h4>The Render Loop</h4>
+          <p>Inside the `watchEffect`, you define your entire UI as an HTML string and set it using `innerHTML`. This is a simple but effective pattern:</p>
+          <pre><code class="language-javascript">watchEffect(() => {
     // 1. Read from the store to build the HTML string.
     //    This automatically creates subscriptions.
     appElement.innerHTML = `&lt;h1&gt;${playerStore.user.name}&lt;/h1&gt;`;
@@ -81,23 +72,27 @@ const store = reactive(myInitialState);</code></pre>
         playerStore.user.name = 'New Name'; 
     });
 });</code></pre>
-                <p>This creates a reactive loop: an action modifies the store, which triggers the effect to re-render the UI and re-attach the listeners, ready for the next action.</p>
-            </div>
-
-            <div>
-                <h3 class="text-yellow-400">Why Model it After the Vue Composition API?</h3>
-                <p>The design of `reactive()` and `watchEffect()` is heavily inspired by the <a href="https://vuejs.org/guide/introduction.html#composition-api" target="_blank" rel="noopener noreferrer">Vue.js Composition API</a>. This approach was chosen for several key reasons that make it excellent for beginners and experts alike:</p>
-                <ul>
-                    <li><strong>Declarative and Intuitive:</strong> You declare <em>what</em> the UI should look like based on the current state. You don't have to write complex, manual DOM manipulation code. The code `playerStore.user.level++` is simple, direct, and clearly states its intent. The library handles the "magic" of updating the view.</li>
-                    <li><strong>Low Boilerplate:</strong> Compared to other state management patterns like Redux, there are no mandatory "actions," "reducers," or "dispatchers." You can modify your state directly, which makes the learning curve much gentler and reduces the amount of code you need to write.</li>
-                    <li><strong>High Readability:</strong> The code is clean and easy to follow. The logic for updating state is often right next to the UI that uses it, making it easier to reason about how your application works.</li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="text-yellow-400">The Complete Excalibur.js Library</h3>
-                <p>You can copy the code below and use it in your own projects. It has no external dependencies.</p>
-                <pre><code class="language-javascript">// Excalibur.js - A mini reactivity library
+          <p>This creates a reactive loop: an action modifies the store, which triggers the effect to re-render the UI and re-attach the listeners, ready for the next action.</p>
+        </div>
+        <div>
+          <h3 class="text-yellow-400">Why Model it After the Vue Composition API?</h3>
+          <p>The design of `reactive()` and `watchEffect()` is heavily inspired by the
+            <a href="https://vuejs.org/guide/introduction.html#composition-api" target="_blank" rel="noopener noreferrer">Vue.js Composition API</a>. This approach was chosen for several key reasons that make it excellent for beginners and experts alike:</p>
+          <ul>
+            <li><strong>Declarative and Intuitive:</strong>
+              You declare
+              <em>what</em>
+              the UI should look like based on the current state. You don't have to write complex, manual DOM manipulation code. The code `playerStore.user.level++` is simple, direct, and clearly states its intent. The library handles the "magic" of updating the view.</li>
+            <li><strong>Low Boilerplate:</strong>
+              Compared to other state management patterns like Redux, there are no mandatory "actions," "reducers," or "dispatchers." You can modify your state directly, which makes the learning curve much gentler and reduces the amount of code you need to write.</li>
+            <li><strong>High Readability:</strong>
+              The code is clean and easy to follow. The logic for updating state is often right next to the UI that uses it, making it easier to reason about how your application works.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-yellow-400">The Complete Excalibur.js Library</h3>
+          <p>You can copy the code below and use it in your own projects. It has no external dependencies.</p>
+          <pre><code class="language-javascript">// Excalibur.js - A mini reactivity library
 let activeEffect = null;
 const targetMap = new WeakMap();
 
@@ -143,11 +138,11 @@ function reactive(target) {
         },
         set(target, key, value, receiver) {
             const oldValue = target[key];
-            const hadKey = Array.isArray(target) ? Number(key) < target.length : Object.prototype.hasOwnProperty.call(target, key);
+            const hadKey = Array.isArray(target) ? Number(key) &lt; target.length : Object.prototype.hasOwnProperty.call(target, key);
             const result = Reflect.set(target, key, value, receiver);
             if (result && oldValue !== value) {
                 trigger(target, key);
-                if (Array.isArray(target) && (hadKey !== (Number(key) < target.length))) {
+                if (Array.isArray(target) && (hadKey !== (Number(key) &lt; target.length))) {
                     trigger(target, 'length');
                 }
             }
@@ -163,13 +158,10 @@ function watchEffect(effect) {
     activeEffect = null;
 }
 </code></pre>
-            </div>
         </div>
+      </div>
     </div>
-
-
     <script type="module">
-
       // --- Excalibur.js Library ---
 // A mini reactivity library inspired by Vue.js Composition API.
 
@@ -224,12 +216,12 @@ function reactive(target) {
         },
         set(target, key, value, receiver) {
             const oldValue = target[key];
-            const hadKey = Array.isArray(target) ? Number(key) < target.length : Object.prototype.hasOwnProperty.call(target, key);
+            const hadKey = Array.isArray(target) ? Number(key) &lt; target.length : Object.prototype.hasOwnProperty.call(target, key);
             const result = Reflect.set(target, key, value, receiver);
             
             if (result && oldValue !== value) {
                  trigger(target, key);
-                 if(Array.isArray(target) && (hadKey !== (Number(key) < target.length))) {
+                 if(Array.isArray(target) && (hadKey !== (Number(key) &lt; target.length))) {
                     trigger(target, 'length');
                  }
             }
@@ -389,7 +381,6 @@ function App() {
 
 // 4. Mount the application
 App();
-
     </script>
-</body>
+  </body>
 </html>
