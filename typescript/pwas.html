@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Progressive Web Apps (PWAs)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 
+        Chosen Palette: Calm Harmony (Light Slate/Gray background, Dark Slate text, Cyan accent)
+        Application Structure Plan: A single-page application with a fixed sidebar for navigation. This structure allows users to quickly jump between the dense sections of the PWA guide without losing context, which is superior to linear scrolling for a technical reference document. The main content area uses interactive tabs for the API section to prevent overwhelming the user with information.
+        Visualization & Content Choices: The guide is text-heavy. Key information is presented using structured HTML (lists, tables) and interactive components. Tables are used for browser compatibility and the PWA vs. IWA comparison for clear, direct comparison. A tabbed interface is used for the Core APIs section to organize related but distinct topics, allowing the user to focus on one API at a time. Code snippets are made interactive with a copy-to-clipboard feature for developer utility. No charts are needed. Confirmed NO SVG/Mermaid.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+      body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-block {
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            color: white;
+            background-color: #0891b2;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .code-block:hover .copy-button {
+            opacity: 1;
+        }
+        .copy-button:active {
+            background-color: #0e7490;
+        }
+        .sidebar-link.active {
+            background-color: #e2e8f0;
+            color: #064e3b;
+            font-weight: 600;
+        }
+        .api-tab.active {
+            border-color: #0891b2;
+            color: #0891b2;
+            background-color: #f0f9ff;
+        }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800">
+    <div class="flex">
+      <aside class="w-64 h-screen fixed top-0 left-0 bg-white border-r border-slate-200 p-6 hidden lg:block">
+        <h2 class="text-lg font-bold text-cyan-800 mb-6">PWA Guide</h2>
+        <nav id="sidebar-nav" class="flex flex-col space-y-2">
+          <a href="#introduction" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">Introduction</a>
+          <a href="#getting-started" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">Getting Started</a>
+          <a href="#core-apis" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">Core APIs</a>
+          <a href="#platform-landscape" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">Platform Landscape</a>
+          <a href="#limitations" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">Limitations</a>
+          <a href="#the-future" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">The Future</a>
+          <a href="#pwa-vs-iwa" class="sidebar-link text-slate-600 hover:bg-slate-100 rounded-md px-3 py-2 text-sm font-medium transition-colors">PWA vs. IWA</a>
+        </nav>
+      </aside>
+      <main class="lg:ml-64 p-6 md:p-10 w-full">
+        <div class="max-w-4xl mx-auto">
+          <section id="introduction" class="mb-16 scroll-mt-20">
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">A Comprehensive Guide to Progressive Web Apps</h1>
+            <p class="text-lg text-slate-600 mb-8">This guide provides a complete overview of Progressive Web Apps (PWAs), from the core concepts to advanced capabilities and future trends.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <h2 class="text-2xl font-bold mb-4">What is a PWA?</h2>
+              <p class="mb-4">A Progressive Web App (PWA) is a type of application software delivered through the web, built using common web technologies including HTML, CSS, and JavaScript. They are intended to work on any platform that uses a standards-compliant browser, including both desktop and mobile devices.</p>
+              <p class="mb-6">PWAs are an evolution of websites, offering an app-like experience to users without the need for them to visit an app store. The "progressive" in PWA means they are built with progressive enhancement as a core tenet, working for every user, regardless of browser choice.</p>
+              <h3 class="text-xl font-semibold mb-3">Key Characteristics</h3>
+              <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700">
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Reliable & Fast</li>
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Engaging & App-like</li>
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Installable & Linkable</li>
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Network Independent</li>
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Discoverable & Safe</li>
+                <li class="flex items-center"><span class="text-cyan-500 mr-3">✓</span>Re-engageable</li>
+              </ul>
+            </div>
+          </section>
+          <section id="getting-started" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">Getting Started: Build a Basic PWA</h2>
+            <p class="text-slate-600 mb-6">Let's build a simple PWA from scratch. This example will be a basic "Hello World" application that can be installed and will work offline.</p>
+            <div class="space-y-8">
+              <div>
+                <h3 class="text-xl font-semibold mb-2">Step 1: HTML Structure (`index.html`)</h3>
+                <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                  <button class="copy-button">Copy</button>
+                  <pre class="p-4 text-sm overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My First PWA&lt;/title&gt;
+    &lt;link rel="stylesheet" href="style.css"&gt;
+    &lt;link rel="manifest" href="manifest.json"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, PWA!&lt;/h1&gt;
+    &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-2">Step 2: Register Service Worker (`app.js`)</h3>
+                <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                  <button class="copy-button">Copy</button>
+                  <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, err => {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}</code></pre>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-2">Step 3: Web App Manifest (`manifest.json`)</h3>
+                <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                  <button class="copy-button">Copy</button>
+                  <pre class="p-4 text-sm overflow-x-auto"><code class="language-json">{
+  "name": "My First PWA",
+  "short_name": "PWA",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}</code></pre>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-2">Step 4: Create the Service Worker (`sw.js`)</h3>
+                <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                  <button class="copy-button">Copy</button>
+                  <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">const CACHE_NAME = 'my-pwa-cache-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/style.css',
+  '/app.js',
+  '/icon-192x192.png',
+  '/icon-512x512.png'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response; // Cache hit
+        }
+        return fetch(event.request);
+      }
+    )
+  );
+});</code></pre>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="core-apis" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">Core PWA APIs</h2>
+            <p class="text-slate-600 mb-6">PWAs are powered by a set of modern web APIs. Explore the most important ones below.</p>
+            <div class="bg-white rounded-lg shadow-sm">
+              <div id="api-tabs" class="border-b border-slate-200 flex flex-wrap">
+                <button data-tab="sw" class="api-tab p-4 border-b-2 border-transparent text-slate-500 hover:text-cyan-600 transition-colors active">Service Worker</button>
+                <button data-tab="manifest" class="api-tab p-4 border-b-2 border-transparent text-slate-500 hover:text-cyan-600 transition-colors">Manifest</button>
+                <button data-tab="push" class="api-tab p-4 border-b-2 border-transparent text-slate-500 hover:text-cyan-600 transition-colors">Push & Notifications</button>
+                <button data-tab="cache" class="api-tab p-4 border-b-2 border-transparent text-slate-500 hover:text-cyan-600 transition-colors">Cache</button>
+                <button data-tab="sync" class="api-tab p-4 border-b-2 border-transparent text-slate-500 hover:text-cyan-600 transition-colors">Background Sync</button>
+              </div>
+              <div class="p-6">
+                <div id="sw-content" class="api-content">
+                  <h3 class="text-xl font-semibold mb-3">Service Worker API</h3>
+                  <p class="mb-4">The Service Worker is the heart of a PWA. It's a script that runs in the background, separate from the main browser thread, acting as a proxy between the web app, the browser, and the network. This enables offline functionality, push notifications, and more.</p>
+                  <h4 class="font-semibold mb-2">Example: Network-First Caching Strategy</h4>
+                  <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                    <button class="copy-button">Copy</button>
+                    <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
+});</code></pre>
+                  </div>
+                </div>
+                <div id="manifest-content" class="api-content hidden">
+                  <h3 class="text-xl font-semibold mb-3">Web App Manifest</h3>
+                  <p class="mb-4">The manifest is a JSON file that gives you control over how your app appears when installed. It defines the app's name, icons, start URL, display mode, and theme colors, enabling a native-like installation experience.</p>
+                  <h4 class="font-semibold mb-2">Key Members</h4>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li>`name` & `short_name`: The application's names.</li>
+                    <li>`icons`: Array of icons for different contexts.</li>
+                    <li>`start_url`: The entry point of your application.</li>
+                    <li>`display`: `standalone`, `fullscreen`, etc.</li>
+                    <li>`theme_color`: Sets the toolbar color.</li>
+                  </ul>
+                </div>
+                <div id="push-content" class="api-content hidden">
+                  <h3 class="text-xl font-semibold mb-3">Push & Notifications APIs</h3>
+                  <p class="mb-4">These two APIs work together to enable re-engagement. The Push API allows a service worker to receive messages from a server, and the Notifications API allows it to display system notifications to the user, even when the app isn't active.</p>
+                  <h4 class="font-semibold mb-2">Example: Showing a Push Notification</h4>
+                  <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                    <button class="copy-button">Copy</button>
+                    <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">self.addEventListener('push', event => {
+  const title = 'New Message';
+  const options = {
+    body: 'You have a new message!',
+    icon: 'icon-192x192.png'
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});</code></pre>
+                  </div>
+                </div>
+                <div id="cache-content" class="api-content hidden">
+                  <h3 class="text-xl font-semibold mb-3">Cache API</h3>
+                  <p class="mb-4">The Cache API provides a storage mechanism for Request/Response object pairs. It's controlled by your service worker and is the key to creating robust offline experiences by letting you store and serve assets directly from the user's device.</p>
+                  <h4 class="font-semibold mb-2">Example: Clearing Old Caches on Activation</h4>
+                  <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                    <button class="copy-button">Copy</button>
+                    <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">self.addEventListener('activate', event => {
+  const cacheWhitelist = ['my-pwa-cache-v2'];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});</code></pre>
+                  </div>
+                </div>
+                <div id="sync-content" class="api-content hidden">
+                  <h3 class="text-xl font-semibold mb-3">Background Sync API</h3>
+                  <p class="mb-4">This API lets you defer actions until the user has a stable internet connection. If a user performs an action while offline (like sending a message), the service worker can register a 'sync' event that the browser will fire once connectivity is restored, ensuring the action is completed.</p>
+                  <h4 class="font-semibold mb-2">Example: Registering a Sync Event</h4>
+                  <div class="code-block bg-slate-800 text-white rounded-lg overflow-hidden">
+                    <button class="copy-button">Copy</button>
+                    <pre class="p-4 text-sm overflow-x-auto"><code class="language-javascript">// In your app.js
+navigator.serviceWorker.ready.then(swRegistration => {
+  return swRegistration.sync.register('my-sync-event');
+});
+
+// In your sw.js
+self.addEventListener('sync', event => {
+  if (event.tag === 'my-sync-event') {
+    event.waitUntil(doSomeStuff());
+  }
+});</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="platform-landscape" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">Platform Landscape</h2>
+            <p class="text-slate-600 mb-6">PWA support varies across browsers and platforms. Here's an overview of compatibility and specific enhancements.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm overflow-x-auto">
+              <h3 class="text-xl font-semibold mb-4">Browser Compatibility</h3>
+              <table class="w-full text-sm text-left text-slate-500">
+                <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">API</th>
+                    <th scope="col" class="px-6 py-3 text-center">Chrome</th>
+                    <th scope="col" class="px-6 py-3 text-center">Firefox</th>
+                    <th scope="col" class="px-6 py-3 text-center">Safari</th>
+                    <th scope="col" class="px-6 py-3 text-center">Edge</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Service Worker</th>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                  </tr>
+                  <tr class="bg-slate-50 border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Web App Manifest</th>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                  </tr>
+                  <tr class="bg-white border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Push API</th>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-orange-500">Partial</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                  </tr>
+                  <tr class="bg-slate-50 border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Background Sync</th>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-red-600">No</td>
+                    <td class="px-6 py-4 text-center text-red-600">No</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                  </tr>
+                  <tr class="bg-white">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">File System Access</th>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                    <td class="px-6 py-4 text-center text-red-600">No</td>
+                    <td class="px-6 py-4 text-center text-red-600">No</td>
+                    <td class="px-6 py-4 text-center text-green-600">Yes</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section id="limitations" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">Limitations of PWAs</h2>
+            <p class="text-slate-600 mb-6">While powerful, PWAs have limitations compared to native applications that are important to understand.</p>
+            <div class="space-y-4">
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-lg mb-2">First Load Performance</h3>
+                <p>The performance benefits of a PWA, such as instant loading, are only realized on the second visit. On the first visit, the service worker must be installed and assets cached, making the initial load time similar to a traditional website.</p>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-lg mb-2">iOS/Safari Limitations</h3>
+                <p>Apple's support for PWAs on iOS still lags behind other platforms. Key limitations include no standard web push notifications (it doesn't support the Web Push API), more limited storage, and lack of support for advanced APIs like Background Sync.</p>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-lg mb-2">Hardware & OS Integration</h3>
+                <p>PWAs have more restricted access to device hardware and OS features compared to native apps. Access to contacts, calendars, or advanced sensors is often limited. While they can be "installed," their integration with the OS (e.g., share menus) is not as deep.</p>
+              </div>
+            </div>
+          </section>
+          <section id="the-future" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">The Future: Upcoming APIs</h2>
+            <p class="text-slate-600 mb-6">The web platform is constantly evolving, with a major focus on closing the capability gap between web and native applications. This effort is largely driven by
+              <a href="https://developer.chrome.com/docs/capabilities/" target="_blank" rel="noopener noreferrer" class="text-cyan-600 hover:underline">Project Fugu 🐡</a>.</p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-lg mb-2">Window Management API</h3>
+                <p class="text-sm mb-3">Gives PWAs more control over managing multiple windows and displays, enabling powerful, multi-screen experiences.</p>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window_Management_API" target="_blank" rel="noopener noreferrer" class="text-sm text-cyan-600 hover:underline">Learn more &rarr;</a>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-lg mb-2">Local Font Access API</h3>
+                <p class="text-sm mb-3">Allows a web application to access a user's locally installed fonts, a game-changer for design and creative tools.</p>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Local_Font_Access_API" target="_blank" rel="noopener noreferrer" class="text-sm text-cyan-600 hover:underline">Learn more &rarr;</a>
+              </div>
+            </div>
+          </section>
+          <section id="pwa-vs-iwa" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">PWA vs. Isolated Web App (IWA)</h2>
+            <p class="text-slate-600 mb-6">A new concept emerging from the Chrome team is the
+              <a href="https://github.com/WICG/isolated-web-apps" target="_blank" rel="noopener noreferrer" class="text-cyan-600 hover:underline">Isolated Web App (IWA)</a>. While built with web technologies, IWAs have a fundamentally different security model based on **trust and isolation**.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm overflow-x-auto">
+              <table class="w-full text-sm text-left text-slate-500">
+                <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">Feature</th>
+                    <th scope="col" class="px-6 py-3">Progressive Web App (PWA)</th>
+                    <th scope="col" class="px-6 py-3">Isolated Web App (IWA)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900">Hosting</th>
+                    <td class="px-6 py-4">Live web server (`https://`)</td>
+                    <td class="px-6 py-4">Packaged & signed Web Bundle (`isolated-app://`)</td>
+                  </tr>
+                  <tr class="bg-slate-50 border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900">Security Model</th>
+                    <td class="px-6 py-4">Standard web trust (server can change code)</td>
+                    <td class="px-6 py-4">High-trust (code is signed and verifiable)</td>
+                  </tr>
+                  <tr class="border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900">Capabilities</th>
+                    <td class="px-6 py-4">Standard PWA APIs</td>
+                    <td class="px-6 py-4">Can access more powerful, riskier APIs</td>
+                  </tr>
+                  <tr class="bg-slate-50">
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900">Use Case</th>
+                    <td class="px-6 py-4">Most web apps (e-commerce, content, social)</td>
+                    <td class="px-6 py-4">High-security apps (crypto, sensitive data)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('section');
+            const apiTabs = document.querySelectorAll('.api-tab');
+            const apiContents = document.querySelectorAll('.api-content');
+            const copyButtons = document.querySelectorAll('.copy-button');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        sidebarLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            apiTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+
+                    apiTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    apiContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(target + '-content').classList.remove('hidden');
+                });
+            });
+
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.nextElementSibling.querySelector('code').innerText;
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    }
+                    document.body.removeChild(textarea);
+                });
+            });
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Astro Tutorial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Dev Slate -->
+    <!-- Application Structure Plan: A single-page application with a fixed sidebar navigation for desktop and a stacked layout for mobile. Each navigation link smoothly scrolls to the corresponding content section. This structure was chosen to break the linear tutorial into logical, accessible chunks, allowing users to either follow step-by-step or jump directly to a topic of interest, which is a superior user experience for technical documentation compared to a simple long-scroll page. -->
+    <!-- Visualization & Content Choices: The tutorial content is primarily text and code. The goal is to inform and enable. Presentation uses semantic HTML for structure, TailwindCSS for styling, and JavaScript for interactivity. Code snippets are presented in formatted blocks with a 'copy to clipboard' button. This interaction is crucial for a developer tutorial, as it streamlines the process of using the provided code. No charts or complex visualizations are needed; the focus is on clarity and utility. All elements are created with standard HTML/CSS/JS, confirming no SVG or Mermaid is used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      html {
+            scroll-padding-top: 5rem; /* Offset for sticky header/nav */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            position: relative;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #475569;
+            color: #cbd5e1;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #64748b;
+        }
+        .copy-btn.copied {
+            background-color: #16a34a;
+            color: white;
+        }
+        .sidebar-link {
+            transition: all 0.2s;
+            border-left: 2px solid transparent;
+        }
+        .sidebar-link.active {
+            color: #4f46e5;
+            font-weight: 600;
+            border-left-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        /* Custom styling for inline code blocks to make them more prominent */
+        .prose :where(code):not(:where([class~="not-prose"] *)) {
+            font-weight: 500;
+            background-color: #e2e8f0; /* slate-200 */
+            color: #1e293b; /* slate-800 */
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.375rem;
+            font-size: 0.875em;
+        }
+        /* Ensure strong tags are distinctly bold */
+        .prose strong {
+            color: #0f172a; /* slate-900 */
+            font-weight: 600;
+        }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header class="py-8 md:py-12 border-b border-slate-200">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Getting Started with Astro</h1>
+        <p class="mt-4 text-lg text-slate-600">An interactive guide to building your first Astro application. Explore the core concepts and get your project up and running in minutes.</p>
+      </header>
+      <div class="md:grid md:grid-cols-[16rem_1fr] md:gap-x-12 mt-8">
+        <!-- Sidebar Navigation -->
+        <aside class="md:sticky md:top-8 h-fit mb-8 md:mb-0">
+          <nav id="sidebar-nav" class="flex flex-col space-y-1">
+            <a href="#setup" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Project Setup</a>
+            <a href="#pages" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Adding Pages</a>
+            <a href="#components" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Using Components</a>
+            <a href="#dynamic-routes" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Dynamic Routes</a>
+            <a href="#integrations" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Integrations</a>
+            <a href="#tailwind" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Adding Tailwind CSS</a>
+            <a href="#markdown" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Markdown & MDX</a>
+            <a href="#collections" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Content Collections</a>
+            <a href="#pwa" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">PWA Support</a>
+            <a href="#find-plugins" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Finding Plugins</a>
+          </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="prose prose-slate max-w-none min-w-0">
+          <section id="setup" class="mb-16 scroll-mt-20">
+            <h2>1. Setting Up a New Astro Project</h2>
+            <p>Getting an Astro project up and running is simple with the official command-line interface (CLI). First, make sure you have Node.js (version 18.14.1 or higher) installed. Then, open your terminal and run the following command:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code># create a new project with npm
+npm create astro@latest</code></pre>
+            </div>
+            <p class="mt-4">This command kicks off a setup wizard that will guide you through a few questions:</p>
+            <ol>
+              <li><strong>Where should we create your new project?</strong>
+                You can type
+                <code>.</code>
+                to use the current directory or provide a new folder name (e.g.,
+                <code>./my-astro-site</code>).</li>
+              <li><strong>Which template would you like to use?</strong>
+                For this tutorial, select the "Empty" template to start from scratch.</li>
+              <li><strong>Would you like to install dependencies?</strong>
+                Press
+                <code>y</code>
+                to let Astro install the necessary packages.</li>
+              <li><strong>Would you like to initialize a new git repository?</strong>
+                Press
+                <code>y</code>
+                if you plan to use Git for version control.</li>
+            </ol>
+            <h3 class="mt-8">TypeScript Support by Default</h3>
+            <p>Astro is a JavaScript framework that comes with first-class TypeScript support out of the box. During the setup wizard, you'll be asked to choose a TypeScript strictness level (Strict, Strictest, or Relaxed). You can start writing TypeScript in your
+              <code>.astro</code>
+              and
+              <code>.ts</code>
+              files immediately with no extra configuration. Of course, if you prefer, you can write plain JavaScript instead—Astro supports both seamlessly.</p>
+            <h3 class="mt-8">Using Command-Line Flags</h3>
+            <p>For automated setups, you can bypass the interactive wizard by providing flags directly in the command line. If using npm, you must add
+              <code>--</code>
+              before the flags.</p>
+            <ul>
+              <li><code>--template &lt;name&gt;</code>: Specifies a starter template (e.g.,
+                <code>minimal</code>,
+                <code>blog</code>).</li>
+              <li><code>--install</code>
+                or
+                <code>--no-install</code>: Skips or forces dependency installation.</li>
+              <li><code>--git</code>
+                or
+                <code>--no-git</code>: Skips or forces Git repository initialization.</li>
+              <li><code>--skip-houston</code>: Skips the wizard entirely.</li>
+            </ul>
+            <p>For example, to create a new project named
+              <code>my-silent-app</code>
+              using the minimal template and skipping installation, you would run:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npm create astro@latest my-silent-app -- --template minimal --skip-houston --no-install</code></pre>
+            </div>
+            <p class="mt-4">Once the setup is complete, navigate into your new project directory and start the development server:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>cd your-project-name
+npm run dev</code></pre>
+            </div>
+            <p class="mt-4">You can now view your new site running live at
+              <a href="http://localhost:4321" target="_blank" rel="noopener noreferrer">http://localhost:4321</a>.</p>
+          </section>
+          <section id="pages" class="mb-16 scroll-mt-20">
+            <h2>2. How to Add a Page</h2>
+            <p>Astro uses a file-based routing system, which means every
+              <code>.astro</code>,
+              <code>.md</code>, or
+              <code>.html</code>
+              file you create in the
+              <code>src/pages/</code>
+              directory automatically becomes a page on your website. Let's create an "About" page:</p>
+            <ol>
+              <li>Create a new file inside the
+                <code>src/pages/</code>
+                directory named
+                <code>about.astro</code>.</li>
+              <li>Add the following content to your new file:</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/pages/about.astro
+---
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width" /&gt;
+  &lt;title&gt;About Me&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;About Me&lt;/h1&gt;
+  &lt;p&gt;This is the about page for my new Astro site!&lt;/p&gt;
+  &lt;a href="/"&gt;Go back home&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="mt-4">Now, if you visit
+              <code>http://localhost:4321/about</code>
+              in your browser, you will see your new page. It's that simple!</p>
+          </section>
+          <section id="components" class="mb-16 scroll-mt-20">
+            <h2>3. How to Add a Component</h2>
+            <p>Components are reusable pieces of UI that you can use across multiple pages. It's a best practice to keep them in the
+              <code>src/components/</code>
+              directory. Let's create a reusable
+              <code>Header</code>
+              component:</p>
+            <ol>
+              <li>Create a new directory named
+                <code>src/components/</code>.</li>
+              <li>Inside
+                <code>src/components/</code>, create a new file named
+                <code>Header.astro</code>.</li>
+              <li>Add the following code to
+                <code>Header.astro</code>:</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/components/Header.astro
+export interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+&lt;header&gt;
+  &lt;h1&gt;{title}&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;a href="/"&gt;Home&lt;/a&gt;
+    &lt;a href="/about"&gt;About&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+&lt;style&gt;
+  header {
+    background: #f7f7f7;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  nav a {
+    margin-right: 1rem;
+  }
+&lt;/style&gt;</code></pre>
+            </div>
+            <p class="mt-4">Now, you can import and use this component in any of your pages. Let's update
+              <code>index.astro</code>:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/pages/index.astro
+import Header from '../components/Header.astro';
+---
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width" /&gt;
+  &lt;title&gt;My Astro Site&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;Header title="Welcome to my Astro Site!" /&gt;
+  &lt;main&gt;
+    &lt;p&gt;This is the homepage.&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </section>
+          <section id="dynamic-routes" class="mb-16 scroll-mt-20">
+            <h2>4. How to Create Dynamic Routes</h2>
+            <p>Dynamic routing allows you to generate pages programmatically from a single file. This is perfect for blog posts or product pages. Let's create dynamic pages for a series of blog posts.</p>
+            <ol>
+              <li>Create a file at
+                <code>src/pages/posts/[id].astro</code>. The square brackets
+                <code>[id]</code>
+                signify a dynamic parameter.</li>
+              <li>Add the following code. This file is responsible for fetching the data and defining which routes to generate.</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/pages/posts/[id].astro
+import Header from '../../components/Header.astro';
+
+export async function getStaticPaths() {
+  const posts = [
+    { id: '1', title: 'My First Post', content: 'This is the content of my very first post.' },
+    { id: '2', title: 'Astro is Awesome', content: 'I am really enjoying learning Astro.' },
+    { id: '3', title: 'Building with Components', content: 'Components make everything so much easier.' }
+  ];
+
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width" /&gt;
+  &lt;title&gt;{post.title}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;Header title="My Blog" /&gt;
+  &lt;main style="padding: 1rem;"&gt;
+    &lt;h2&gt;{post.title}&lt;/h2&gt;
+    &lt;p&gt;{post.content}&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="mt-4">With this single file, Astro will generate three pages:
+              <code>/posts/1</code>,
+              <code>/posts/2</code>, and
+              <code>/posts/3</code>. The
+              <code>getStaticPaths</code>
+              function returns an array of objects, where each object defines the
+              <code>params</code>
+              (the URL) and
+              <code>props</code>
+              (the data) for a specific page.</p>
+            <h3 class="mt-8">Linking to External Pages</h3>
+            <p>It's important to note that dynamic routing with
+              <code>getStaticPaths</code>
+              is specifically for
+              <strong>generating pages on your own site</strong>. It cannot be used to create redirects or links that point to external websites.</p>
+            <p>To create a dynamic list of external links, you would use a standard Astro page. In the frontmatter, you can fetch or define your list of links, and then use the
+              <code>.map()</code>
+              function in the template to render them as standard
+              <code>&lt;a&gt;</code>
+              tags.</p>
+            <p>For example, to create a page listing your social media profiles:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/pages/socials.astro
+const socialProfiles = [
+  { name: 'GitHub', url: 'https://github.com/withastro' },
+  { name: 'Twitter', url: 'https://twitter.com/astrodotbuild' },
+  { name: 'Discord', url: 'https://astro.build/chat' }
+];
+---
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Our Socials&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Follow us!&lt;/h1&gt;
+    &lt;ul&gt;
+      {socialProfiles.map(profile => (
+        &lt;li&gt;
+          &lt;a href={profile.url} target="_blank" rel="noopener noreferrer"&gt;
+            {profile.name}
+          &lt;/a&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </section>
+          <section id="integrations" class="mb-16 scroll-mt-20">
+            <h2>5. How to Use Plugins (Integrations)</h2>
+            <p>Astro has a powerful system for adding new features and integrations with other tools. In Astro, these are called
+              <strong>Integrations</strong>. You can add features like React components, Tailwind CSS, and sitemaps.</p>
+            <p>You can add an official integration automatically with the
+              <code>astro add</code>
+              command. For example, to add the React integration, you would run:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npx astro add react</code></pre>
+            </div>
+            <p class="mt-4">This command will automatically install the necessary packages and update your
+              <code>astro.config.mjs</code>
+              file.</p>
+            <h3 class="mt-8">Performance Impact</h3>
+            <p>A key benefit of Astro's architecture is that most integrations are
+              <strong>build-time only</strong>. This means they do their work during development and add
+              <strong>zero client-side JavaScript</strong>
+              to your published site. For example, integrations for Tailwind, sitemaps, or MDX processing won't slow down your users. Integrations for UI frameworks like React or Vue are special; they only add JavaScript to the page if you specifically mark a component as interactive using a
+              <code>client:*</code>
+              directive, giving you full control over your site's performance.</p>
+          </section>
+          <section id="tailwind" class="mb-16 scroll-mt-20">
+            <h2>6. How to Add Tailwind CSS</h2>
+            <p>Tailwind CSS is a first-class citizen in the Astro ecosystem and provides a fantastic developer experience for styling your site. You can add it using the
+              <a href="https://docs.astro.build/en/guides/integrations-guide/tailwind/" target="_blank" rel="noopener noreferrer">Astro Tailwind integration</a>:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npx astro add tailwind</code></pre>
+            </div>
+            <p class="mt-4">This command will install Tailwind, create a
+              <code>tailwind.config.mjs</code>
+              file, and add the integration to your
+              <code>astro.config.mjs</code>. You can then start using Tailwind's utility classes throughout your project.</p>
+            <p>For beautiful default typography styles for long-form content (like blog posts or this tutorial), you can use the official
+              <strong>Tailwind CSS Typography</strong>
+              plugin. It provides the
+              <code>prose</code>
+              classes which style your text automatically.</p>
+          </section>
+          <section id="markdown" class="mb-16 scroll-mt-20">
+            <h2>7. How to Add Markdown Parser Plugins</h2>
+            <p>Astro's Markdown processing is highly extensible. While the MDX integration is popular for embedding components, you can also add plugins to support new syntax (like tables or footnotes) or to modify the final HTML output.</p>
+            <p>This is done using
+              <strong>remark</strong>
+              and
+              <strong>rehype</strong>
+              plugins.
+              <ul>
+                <li><strong>Remark plugins</strong>
+                  transform the Markdown itself (e.g., adding support for GitHub Flavored Markdown tables with
+                  <code>remark-gfm</code>).</li>
+                <li><strong>Rehype plugins</strong>
+                  manipulate the final HTML output (e.g., automatically adding
+                  <code>id</code>s to headings for anchor links).</li>
+              </ul></p>
+            <p>You can add these plugins in your
+              <code>astro.config.mjs</code>
+              file. First, install the desired plugin, then import it and add it to the configuration:</p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import remarkGfm from 'remark-gfm';
+
+export default defineConfig({
+  markdown: {
+    remarkPlugins: [remarkGfm],
+    // rehypePlugins: [],
+  },
+});
+</code></pre>
+            </div>
+            <p class="mt-4">You can find extensive lists of available plugins to explore:</p>
+            <ul>
+              <li><a href="https://github.com/remarkjs/remark/blob/main/doc/plugins.md#list-of-plugins" target="_blank" rel="noopener noreferrer"><strong>List of Remark Plugins</strong></a></li>
+              <li><a href="https://github.com/rehypejs/rehype/blob/main/doc/plugins.md#list-of-plugins" target="_blank" rel="noopener noreferrer"><strong>List of Rehype Plugins</strong></a></li>
+            </ul>
+          </section>
+          <section id="collections" class="mb-16 scroll-mt-20">
+            <h2>8. Organizing Content with Collections</h2>
+            <p>For content-heavy sites, Astro provides a powerful feature called
+              <strong>Content Collections</strong>. This is the best way to manage related content, like blog posts, by enforcing a common configuration and providing full TypeScript support.</p>
+            <p>Instead of placing posts in
+              <code>src/pages/</code>, you place them in a dedicated
+              <code>src/content/</code>
+              directory. You then define a schema that validates the front matter of each entry.</p>
+            <ol>
+              <li>Create a file at
+                <code>src/content/config.ts</code>
+                and define a schema for your blog posts. This ensures every post has a title, description, and publish date.</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+const blogCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishDate: z.date(),
+  }),
+});
+
+export const collections = {
+  'blog': blogCollection,
+};
+</code></pre>
+            </div>
+            <p class="mt-4">
+              <ol>
+                <li>Move your Markdown posts into
+                  <code>src/content/blog/</code>. Now, Astro will validate each post against your schema.</li>
+                <li>Use the
+                  <code>getCollection()</code>
+                  API on a page (like
+                  <code>src/pages/blog.astro</code>) to query all your posts and render a list.</li>
+              </ol>
+            </p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>---
+// src/pages/blog.astro
+import { getCollection } from 'astro:content';
+
+const allBlogPosts = await getCollection('blog');
+---
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;My Blog&lt;/h1&gt;
+    &lt;ul&gt;
+      {allBlogPosts.map(post => (
+        &lt;li&gt;&lt;a href={`/blog/${post.slug}/`}&gt;{post.data.title}&lt;/a&gt;&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+            </div>
+            <p class="mt-4">This approach provides a robust, type-safe way to manage and query your content, making it the recommended method for any project with multiple pieces of similar content.</p>
+          </section>
+          <section id="pwa" class="mb-16 scroll-mt-20">
+            <h2>9. How to Add PWA and Service Worker Support</h2>
+            <p>You can enhance your Astro site to work offline and make it installable like a native app by turning it into a Progressive Web App (PWA). This is handled by a
+              <strong>service worker</strong>. While you could write a service worker script manually, the recommended approach is to use the
+              <a href="https://vite-pwa-org.netlify.app/frameworks/astro" target="_blank" rel="noopener noreferrer"><code>@vite-pwa/astro</code>
+                integration</a>.</p>
+            <ol>
+              <li><strong>Add the integration:</strong>
+                Run the following command in your project's terminal:</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npm install -D @vite-pwa/astro</code></pre>
+            </div>
+            <p class="mt-4">
+              <ul>
+                <li><strong>Configure it:</strong>
+                  After installation, you need to add and configure the integration in your
+                  <code>astro.config.mjs</code>
+                  file. The integration uses Google's Workbox library under the hood, giving you powerful control over caching with sensible defaults.</li>
+              </ul>
+            </p>
+            <h3 class="mt-8">Handling the Web Manifest</h3>
+            <p>The
+              <code>@vite-pwa/astro</code>
+              integration also handles the creation and injection of the
+              <strong>web manifest for you</strong>. Typically, you create a base
+              <code>manifest.json</code>
+              file in your project where you define your app's name, icons, and colors. The integration then processes this file during the build and automatically adds the correct
+              <code>&lt;link rel="manifest" ...&gt;</code>
+              tag into the
+              <code>&lt;head&gt;</code>
+              of your pages. This automates a key part of the PWA setup.</p>
+          </section>
+          <section id="find-plugins" class="mb-16 scroll-mt-20">
+            <h2>10. Where to Find Information About Available Plugins</h2>
+            <p>The Astro team and community maintain a large collection of official and community-built integrations. You can explore all the available options in the official integrations directory.</p>
+            <p><a href="https://astro.build/integrations/" target="_blank" rel="noopener noreferrer"><strong>Explore all Astro Integrations &rarr;</strong></a></p>
+            <p>This is the best place to find integrations for:</p>
+            <ul>
+              <li>UI Frameworks (React, Vue, Svelte)</li>
+              <li>CSS & Styling (Tailwind, Sass)</li>
+              <li>Adapters for deploying to different hosts (Vercel, Netlify)</li>
+              <li>Site utilities (Sitemaps, RSS feeds)</li>
+              <li>And much more!</li>
+            </ul>
+          </section>
+        </main>
+      </div>
+    </div>
+    <footer class="text-center py-8 mt-16 border-t border-slate-200">
+      <p class="text-slate-500">Interactive tutorial created from the official Astro documentation.</p>
+    </footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+            // Copy button functionality
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeBlock = button.nextElementSibling;
+                    const code = codeBlock.querySelector('code').innerText;
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        button.textContent = 'Copied!';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    }
+                    document.body.removeChild(textarea);
+                });
+            });
+
+            // Sidebar active state on scroll
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('#sidebar-nav a');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+  </body>
+</html>
