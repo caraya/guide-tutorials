@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Interactive Guide to Inversion of Control (IoC)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cool Slate -->
+    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, guiding the user from foundational concepts to practical implementations. The architecture is thematic, not a mirror of the report's linear structure. It starts with a high-level "What & Why" section to establish context, followed by a "Problem" section illustrating tight coupling. The core is the "Solutions" section, using interactive tabs to compare Pure DI, Legacy Decorators, and Modern Decorators side-by-side. This tabbed structure is crucial for usability, allowing users to directly compare implementation styles without scrolling. An interactive "Key Benefits" section concludes the journey, reinforcing the value proposition. This design was chosen to transform a text-heavy document into an exploratory learning tool, where users can actively engage with concepts rather than passively reading. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: High-level IoC concept -> Goal: Inform -> Viz: Interactive toggle diagram -> Interaction: User toggles between "Traditional Control" and "Inverted Control" to see responsibility shift. -> Justification: Provides an immediate, simple visual metaphor for the core principle. -> Method: HTML/CSS/JS.
+        - Report Info: Tight coupling example -> Goal: Compare/Problem ID -> Viz: HTML/CSS diagram -> Interaction: Static visual representation. -> Justification: Visually demonstrates the "welded together" nature of tightly coupled code. -> Method: HTML/CSS.
+        - Report Info: Division of labor in IoC -> Goal: Inform/Proportion -> Viz: Donut Chart -> Interaction: Hovering shows percentages of work done by App vs. Framework. -> Justification: Quantifies the abstract idea of the framework "taking over." -> Method: Chart.js.
+        - Report Info: Code examples for different DI styles -> Goal: Compare/Organize -> Viz: Tabbed code blocks with syntax highlighting. -> Interaction: User switches tabs to see code change. A "Copy" button is provided. -> Justification: Allows for direct, one-to-one comparison of different implementation patterns, which is key to understanding their trade-offs. -> Method: HTML/CSS/JS.
+        - Report Info: IoC Container flow diagram -> Goal: Organize/Change -> Viz: Static Flowchart Diagram -> Interaction: None (static visual). -> Justification: Provides a clear, at-a-glance representation of the container's internal process. -> Method: HTML/CSS.
+        - Report Info: Key benefits (Decoupling, Testability) -> Goal: Inform -> Viz: Interactive cards -> Interaction: Clicking a card flips it to reveal a detailed explanation. -> Justification: Engages the user and presents summary information first, with details available on demand. -> Method: HTML/CSS/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #334155; /* slate-700 */
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link.active {
+            color: #4f46e5; /* indigo-600 */
+            font-weight: 600;
+        }
+        .tab.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .code-block {
+            background-color: #1e293b; /* slate-800 */
+            color: #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            position: relative;
+            overflow-x: auto;
+        }
+        .code-block .token-keyword { color: #93c5fd; } /* blue-300 */
+        .code-block .token-class { color: #6ee7b7; } /* emerald-300 */
+        .code-block .token-function { color: #f9a8d4; } /* pink-300 */
+        .code-block .token-comment { color: #9ca3af; } /* gray-400 */
+        .code-block .token-string { color: #fde047; } /* yellow-300 */
+        .code-block .token-decorator { color: #d8b4fe; } /* purple-300 */
+        .diagram-node {
+            border: 2px solid #94a3b8; /* slate-400 */
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+        }
+        .diagram-node.highlight {
+            border-color: #4f46e5;
+            background-color: #e0e7ff; /* indigo-100 */
+            transform: scale(1.05);
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+        }
+        .diagram-arrow {
+            position: absolute;
+            background-color: #94a3b8;
+            transition: background-color 0.2s;
+        }
+        .diagram-arrow.highlight {
+            background-color: #4f46e5;
+        }
+        .benefit-card-inner {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .benefit-card.flipped .benefit-card-inner {
+            transform: rotateY(180deg);
+        }
+        .benefit-card-front, .benefit-card-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        .benefit-card-back {
+            transform: rotateY(180deg);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 350px;
+            }
+        }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <span class="text-2xl font-bold text-indigo-600">IoC Explained</span>
+          </div>
+          <nav class="hidden md:flex space-x-8">
+            <a href="#what-is-ioc" class="nav-link text-slate-600 hover:text-indigo-600">What & Why</a>
+            <a href="#the-problem" class="nav-link text-slate-600 hover:text-indigo-600">The Problem</a>
+            <a href="#the-solution" class="nav-link text-slate-600 hover:text-indigo-600">The Solution</a>
+            <a href="#key-benefits" class="nav-link text-slate-600 hover:text-indigo-600">Key Benefits</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section id="what-is-ioc" class="mb-24 scroll-mt-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">What is Inversion of Control?</h2>
+          <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">This section introduces the core principle of IoC. Instead of your code controlling everything, you delegate control to an external framework. The interactive diagram below lets you explore this shift in responsibility, which is the foundation for building flexible and maintainable software.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div class="prose prose-lg text-slate-600">
+            <p><strong>Inversion of Control (IoC)</strong>
+              is a design principle where you hand over the control of object creation and dependency management to a container or framework. It "inverts" the normal flow where your objects create the other objects they need.</p>
+            <p>This is usually achieved through a pattern called
+              <strong>Dependency Injection (DI)</strong>, where an object's dependencies are "injected" from the outside rather than created internally.</p>
+          </div>
+          <div class="bg-slate-100 p-6 rounded-lg">
+            <h3 class="text-center font-semibold text-slate-800 mb-4">The Shift in Responsibility</h3>
+            <div class="flex justify-center mb-6">
+              <div class="flex items-center bg-white rounded-full p-1 shadow-inner">
+                <button id="control-toggle-traditional" class="px-4 py-1 text-sm font-semibold rounded-full transition-colors">Traditional</button>
+                <button id="control-toggle-inverted" class="px-4 py-1 text-sm font-semibold rounded-full transition-colors">Inverted</button>
+              </div>
+            </div>
+            <div id="diagram-control-flow" class="relative h-48 flex flex-col justify-around items-center"></div>
+          </div>
+        </div>
+      </section>
+      <section id="the-problem" class="mb-24 scroll-mt-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">The Problem: Tight Coupling</h2>
+          <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">This section demonstrates the core issue that IoC solves: tight coupling. When classes create their own dependencies directly, they become rigidly connected, making the system brittle and hard to change. The diagram and code below illustrate this problem using a simple Car and Engine example.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div class="relative flex justify-center items-center h-64 bg-slate-100 rounded-lg p-6">
+            <div id="coupling-diagram-car" class="diagram-node z-10">Car</div>
+            <div id="coupling-diagram-engine" class="diagram-node z-10">Engine</div>
+            <div class="absolute w-1/3 h-1 bg-red-500 z-0"></div>
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+              <div class="font-mono text-red-600 font-semibold">creates()</div>
+              <div class="text-xs text-red-500">(Rigid Connection)</div>
+            </div>
+          </div>
+          <div class="prose prose-lg text-slate-600">
+            <p>Without IoC, the `Car` class is responsible for creating its own `Engine` instance. This creates a **tight coupling** between them.</p>
+            <p>If the `Engine`'s creation process changes (e.g., it now needs a `SparkPlug`), you must modify the `Car` class itself. This creates a ripple effect of changes, making the code hard to maintain and test.</p>
+          </div>
+        </div>
+        <div class="mt-8">
+          <div class="code-block font-mono text-sm">
+            <pre><code id="code-tight-coupling"></code></pre>
+          </div>
+        </div>
+      </section>
+      <section id="the-solution" class="mb-24 scroll-mt-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">The Solution: Decoupling with DI</h2>
+          <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">This section explores different ways to implement Dependency Injection to solve the tight coupling problem. Use the tabs below to compare three common styles: Pure DI (manual injection), Legacy Decorators (used in older frameworks), and Modern TC39 Decorators (the current standard). Each tab provides a code example and a flowchart diagram illustrating the workflow.</p>
+        </div>
+        <div class="flex justify-center mb-6 border-b border-slate-200">
+          <button data-tab="pure-di" class="tab px-4 py-2 font-semibold text-slate-600">Pure DI</button>
+          <button data-tab="legacy" class="tab px-4 py-2 font-semibold text-slate-600">Legacy Decorators</button>
+          <button data-tab="modern" class="tab px-4 py-2 font-semibold text-slate-600">Modern Decorators</button>
+        </div>
+        <div id="tab-content-container">
+          <div id="pure-di-content" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-12">
+              <div>
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4">Pure DI (Manual Injection)</h3>
+                <p class="text-slate-600 mb-4">With Pure DI, you follow the pattern of depending on abstractions, but you perform the "injection" yourself without a container library. A single place in your app, the
+                  <strong>Composition Root</strong>, is responsible for creating and wiring all objects together.</p>
+                <p class="text-slate-600">This approach is simple, powerful, and has zero third-party dependencies, making it great for many applications.</p>
+                <div class="mt-8 chart-container">
+                  <canvas id="pureDiChart"></canvas>
+                </div>
+              </div>
+              <div class="code-block font-mono text-sm">
+                <pre><code id="code-pure-di"></code></pre>
+                <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-semibold py-1 px-2 rounded">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div id="legacy-content" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-12">
+              <div>
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4">Legacy Decorators & `reflect-metadata`</h3>
+                <p class="text-slate-600 mb-4">This style, used in frameworks like Angular and NestJS, relies on the non-standard `emitDecoratorMetadata` TypeScript feature. It allows a container to automatically discover dependencies from a class's constructor type hints.</p>
+                <p class="text-slate-600">While convenient, it's not part of the official JavaScript standard.</p>
+                <div class="mt-8 p-6 bg-slate-100 rounded-lg flex justify-center items-start">
+                  <div class="flex flex-col items-center space-y-2 text-sm">
+                    <div class="diagram-node">Ask for Car</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node highlight">resolve(Car)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">Get Constructor Deps<br>(via reflect-metadata)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node highlight">Recursively resolve(IEngine)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">new Car(engineInstance)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">Return Car Instance</div>
+                  </div>
+                </div>
+              </div>
+              <div class="code-block font-mono text-sm">
+                <pre><code id="code-legacy"></code></pre>
+                <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-semibold py-1 px-2 rounded">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div id="modern-content" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-12">
+              <div>
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4">Modern TC39 Decorators</h3>
+                <p class="text-slate-600 mb-4">The official JavaScript standard for decorators does not support metadata emission. Therefore, we must be more explicit, using a parameter decorator like
+                  <strong>`@Inject(Token)`</strong>
+                  to tell the container which dependency to provide.</p>
+                <p class="text-slate-600">This is the recommended, standards-compliant approach for new projects.</p>
+                <div class="mt-8 p-6 bg-slate-100 rounded-lg flex justify-center items-start">
+                  <div class="flex flex-col items-center space-y-2 text-sm">
+                    <div class="diagram-node">Ask for Car</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node highlight">resolve(Car)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">Get Constructor Deps<br>(from @Inject metadata)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node highlight">Recursively resolve(EngineToken)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">new Car(engineInstance)</div>
+                    <div class="text-slate-500 text-2xl font-light">↓</div>
+                    <div class="diagram-node">Return Car Instance</div>
+                  </div>
+                </div>
+              </div>
+              <div class="code-block font-mono text-sm">
+                <pre><code id="code-modern"></code></pre>
+                <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs font-semibold py-1 px-2 rounded">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="key-benefits" class="scroll-mt-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Why Does This Matter?</h2>
+          <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">This section summarizes the crucial advantages of using Inversion of Control. These benefits are the reason IoC is a cornerstone of modern software architecture. Click on each card to reveal more details about how IoC improves your codebase.</p>
+        </div>
+        <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="benefit-card perspective-[1000px] cursor-pointer">
+            <div class="benefit-card-inner relative w-full h-64">
+              <div class="benefit-card-front absolute w-full h-full bg-white rounded-lg shadow-md p-6 flex flex-col justify-center items-center text-center border-2 border-indigo-200">
+                <div class="text-5xl mb-4">🔗</div>
+                <h3 class="text-xl font-semibold text-slate-800">Decoupling</h3>
+                <p class="text-slate-500 mt-2">Components are not rigidly tied together.</p>
+              </div>
+              <div class="benefit-card-back absolute w-full h-full bg-indigo-600 text-white rounded-lg shadow-lg p-6 flex flex-col justify-center">
+                <h4 class="font-bold text-lg mb-2">Loose Coupling</h4>
+                <p class="text-indigo-100 text-sm">Classes depend on abstractions (interfaces), not concrete implementations. You can swap components (like changing a database or payment provider) without modifying the classes that use them.</p>
+              </div>
+            </div>
+          </div>
+          <div class="benefit-card perspective-[1000px] cursor-pointer">
+            <div class="benefit-card-inner relative w-full h-64">
+              <div class="benefit-card-front absolute w-full h-full bg-white rounded-lg shadow-md p-6 flex flex-col justify-center items-center text-center border-2 border-emerald-200">
+                <div class="text-5xl mb-4">🧪</div>
+                <h3 class="text-xl font-semibold text-slate-800">Testability</h3>
+                <p class="text-slate-500 mt-2">Isolating components for testing is simple.</p>
+              </div>
+              <div class="benefit-card-back absolute w-full h-full bg-emerald-600 text-white rounded-lg shadow-lg p-6 flex flex-col justify-center">
+                <h4 class="font-bold text-lg mb-2">Easier Testing</h4>
+                <p class="text-emerald-100 text-sm">During unit tests, you can easily "inject" mock or fake dependencies. This allows you to test a component's logic in complete isolation, leading to more reliable and robust tests.</p>
+              </div>
+            </div>
+          </div>
+          <div class="benefit-card perspective-[1000px] cursor-pointer">
+            <div class="benefit-card-inner relative w-full h-64">
+              <div class="benefit-card-front absolute w-full h-full bg-white rounded-lg shadow-md p-6 flex flex-col justify-center items-center text-center border-2 border-sky-200">
+                <div class="text-5xl mb-4">🧩</div>
+                <h3 class="text-xl font-semibold text-slate-800">Flexibility</h3>
+                <p class="text-slate-500 mt-2">The system is easier to maintain and extend.</p>
+              </div>
+              <div class="benefit-card-back absolute w-full h-full bg-sky-600 text-white rounded-lg shadow-lg p-6 flex flex-col justify-center">
+                <h4 class="font-bold text-lg mb-2">Maintainability</h4>
+                <p class="text-sky-100 text-sm">Since changes are contained, the codebase is easier to manage. New features can be added by creating new components that follow existing contracts, without breaking the old code.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+    const codeSnippets = {
+        tightCoupling: `
+<span class="token-comment">// The Engine class</span>
+<span class="token-keyword">class</span> <span class="token-class">Engine</span> {
+  <span class="token-keyword">public</span> <span class="token-function">start</span>(): <span class="token-class">void</span> { <span class="token-comment">/*...*/</span> }
+}
+
+<span class="token-comment">// The Car class creates its own dependency</span>
+<span class="token-keyword">class</span> <span class="token-class">Car</span> {
+  <span class="token-comment">// Tightly coupled dependency creation</span>
+  <span class="token-keyword">private</span> engine: <span class="token-class">Engine</span> = <span class="token-keyword">new</span> <span class="token-class">Engine</span>();
+
+  <span class="token-keyword">public</span> <span class="token-function">drive</span>(): <span class="token-class">void</span> {
+    <span class="token-keyword">this</span>.engine.<span class="token-function">start</span>();
+    console.<span class="token-function">log</span>(<span class="token-string">'Car is driving...'</span>);
+  }
+}`,
+        pureDi: `
+<span class="token-comment">// --- Configuration ---</span>
+<span class="token-keyword">const</span> config = { engineType: <span class="token-string">'ELECTRIC'</span> };
+
+<span class="token-comment">// --- Abstractions ---</span>
+<span class="token-keyword">interface</span> <span class="token-class">IPowerSource</span> { <span class="token-function">checkStatus</span>(): <span class="token-class">void</span>; }
+<span class="token-keyword">interface</span> <span class="token-class">IEngine</span> { <span class="token-function">start</span>(): <span class="token-class">void</span>; }
+
+<span class="token-comment">// --- Implementations ---</span>
+<span class="token-keyword">class</span> <span class="token-class">Battery</span> <span class="token-keyword">implements</span> <span class="token-class">IPowerSource</span> { <span class="token-function">checkStatus</span>() {<span class="token-comment">/*...*/</span>} }
+<span class="token-keyword">class</span> <span class="token-class">ElectricEngine</span> <span class="token-keyword">implements</span> <span class="token-class">IEngine</span> {
+  <span class="token-keyword">constructor</span>(<span class="token-keyword">private</span> powerSource: <span class="token-class">IPowerSource</span>) {}
+  <span class="token-function">start</span>() { <span class="token-keyword">this</span>.powerSource.<span class="token-function">checkStatus</span>(); <span class="token-comment">/*...*/</span> }
+}
+<span class="token-keyword">class</span> <span class="token-class">Car</span> {
+  <span class="token-keyword">constructor</span>(<span class="token-keyword">private</span> engine: <span class="token-class">IEngine</span>) {}
+  <span class="token-function">drive</span>() { <span class="token-keyword">this</span>.engine.<span class="token-function">start</span>(); <span class="token-comment">/*...*/</span> }
+}
+
+<span class="token-comment">// --- Composition Root ---</span>
+<span class="token-keyword">function</span> <span class="token-function">main</span>() {
+  <span class="token-keyword">let</span> powerSource = <span class="token-keyword">new</span> <span class="token-class">Battery</span>();
+  <span class="token-keyword">let</span> engine = <span class="token-keyword">new</span> <span class="token-class">ElectricEngine</span>(powerSource);
+  <span class="token-keyword">const</span> car = <span class="token-keyword">new</span> <span class="token-class">Car</span>(engine);
+  car.<span class="token-function">drive</span>();
+}
+<span class="token-function">main</span>();
+`,
+        legacy: `
+<span class="token-comment">// Setup: import "reflect-metadata";</span>
+<span class="token-keyword">import</span> "reflect-metadata";
+
+<span class="token-keyword">export</span> <span class="token-keyword">function</span> <span class="token-function">Injectable</span>(): <span class="token-class">ClassDecorator</span> { <span class="token-keyword">return</span> target => {}; }
+
+<span class="token-keyword">class</span> <span class="token-class">Container</span> {
+  <span class="token-function">resolve</span>&lt;T&gt;(token: <span class="token-class">any</span>): T {
+    <span class="token-keyword">const</span> concrete = <span class="token-keyword">this</span>.deps.get(token) || token;
+    <span class="token-comment">// This is the key part: it reads type info</span>
+    <span class="token-keyword">const</span> params = Reflect.<span class="token-function">getMetadata</span>(
+        <span class="token-string">'design:paramtypes'</span>, concrete) || [];
+    <span class="token-keyword">const</span> resolved = params.<span class="token-function">map</span>(p => <span class="token-keyword">this</span>.<span class="token-function">resolve</span>(p));
+    <span class="token-keyword">return</span> <span class="token-keyword">new</span> concrete(...resolved);
+  }
+}
+`,
+        modern: `
+<span class="token-keyword">type</span> <span class="token-class">Token</span> = <span class="token-class">object</span>;
+<span class="token-keyword">const</span> injectionTokens = <span class="token-keyword">new</span> <span class="token-class">Map</span>&lt;<span class="token-class">Function</span>, <span class="token-class">Map</span>&lt;<span class="token-class">number</span>, <span class="token-class">Token</span>&gt;&gt;();
+
+<span class="token-comment">// A marker decorator for the class</span>
+<span class="token-keyword">export</span> <span class="token-keyword">function</span> <span class="token-function">Injectable</span>(): <span class="token-class">ClassDecorator</span> {
+  <span class="token-keyword">return</span> (target, context) => {};
+}
+
+<span class="token-comment">// A parameter decorator to specify the token</span>
+<span class="token-keyword">export</span> <span class="token-keyword">function</span> <span class="token-function">Inject</span>(token: <span class="token-class">Token</span>): <span class="token-class">ParameterDecorator</span> {
+  <span class="token-keyword">return</span> (target, ctx, index) => {
+    <span class="token-keyword">if</span> (!injectionTokens.<span class="token-function">has</span>(target)) {
+      injectionTokens.<span class="token-function">set</span>(target, <span class="token-keyword">new</span> <span class="token-class">Map</span>());
+    }
+    injectionTokens.<span class="token-function">get</span>(target)!.<span class="token-function">set</span>(index, token);
+  };
+}
+
+<span class="token-decorator">@Injectable</span>()
+<span class="token-keyword">class</span> <span class="token-class">ElectricEngine</span> <span class="token-keyword">implements</span> <span class="token-class">IEngine</span> {
+  <span class="token-comment">// Explicit injection via decorator</span>
+  <span class="token-keyword">constructor</span>(
+    <span class="token-decorator">@Inject</span>(PowerSourceToken) 
+    <span class="token-keyword">private</span> powerSource: <span class="token-class">IPowerSource</span>
+  ) {}
+}
+`
+    };
+
+    document.getElementById('code-tight-coupling').innerHTML = codeSnippets.tightCoupling;
+    document.getElementById('code-pure-di').innerHTML = codeSnippets.pureDi;
+    document.getElementById('code-legacy').innerHTML = codeSnippets.legacy;
+    document.getElementById('code-modern').innerHTML = codeSnippets.modern;
+
+    const controlToggleTraditional = document.getElementById('control-toggle-traditional');
+    const controlToggleInverted = document.getElementById('control-toggle-inverted');
+    const diagramControlFlow = document.getElementById('diagram-control-flow');
+
+    function renderControlDiagram(isInverted) {
+        diagramControlFlow.innerHTML = '';
+        const carNode = document.createElement('div');
+        carNode.className = 'diagram-node';
+        carNode.textContent = 'Car';
+
+        const engineNode = document.createElement('div');
+        engineNode.className = 'diagram-node';
+        engineNode.textContent = 'Engine';
+
+        if (isInverted) {
+            controlToggleInverted.classList.add('bg-indigo-600', 'text-white');
+            controlToggleTraditional.classList.remove('bg-indigo-600', 'text-white');
+
+            const containerNode = document.createElement('div');
+            containerNode.className = 'diagram-node highlight';
+            containerNode.textContent = 'IoC Container';
+            
+            diagramControlFlow.append(containerNode, carNode, engineNode);
+            
+            const arrow1 = document.createElement('div');
+            arrow1.className = 'diagram-arrow highlight';
+            arrow1.style.cssText = 'position: absolute; left: 50%; top: 25%; width: 2px; height: 15%; transform: translateX(-50%);';
+            
+            const arrow2 = document.createElement('div');
+            arrow2.className = 'diagram-arrow highlight';
+            arrow2.style.cssText = 'position: absolute; left: 50%; top: 75%; width: 2px; height: 15%; transform: translate(-50%, -100%);';
+            
+            diagramControlFlow.append(arrow1, arrow2);
+        } else {
+            controlToggleTraditional.classList.add('bg-indigo-600', 'text-white');
+            controlToggleInverted.classList.remove('bg-indigo-600', 'text-white');
+            
+            carNode.classList.add('highlight');
+            diagramControlFlow.append(carNode, engineNode);
+
+            const arrow = document.createElement('div');
+            arrow.className = 'diagram-arrow highlight';
+            arrow.style.cssText = 'position: absolute; left: 50%; top: 50%; width: 2px; height: 30%; transform: translate(-50%, -50%);';
+            diagramControlFlow.append(arrow);
+        }
+    }
+
+    controlToggleTraditional.addEventListener('click', () => renderControlDiagram(false));
+    controlToggleInverted.addEventListener('click', () => renderControlDiagram(true));
+    renderControlDiagram(false);
+
+    const tabs = document.querySelectorAll('.tab');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            tabPanels.forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            const activePanel = document.getElementById(`${tab.dataset.tab}-content`);
+            activePanel.classList.remove('hidden');
+        });
+    });
+    tabs[0].click();
+
+    new Chart(document.getElementById('pureDiChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Your Code (Wiring)', 'Framework/Container'],
+            datasets: [{
+                data: [100, 0],
+                backgroundColor: ['#4f46e5', '#e0e7ff'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}% of the work`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    document.querySelectorAll('.benefit-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const code = e.target.previousElementSibling.textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        });
+    });
+    
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tutorial: CSS @function</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <style>
+      /*
+        * In this tutorial, we are exploring the new CSS @function at-rule.
+        * This feature allows for the creation of custom functions directly in CSS,
+        * making stylesheets more dynamic, reusable, and organized.
+        *
+        * Browser Support Note: This is an experimental feature and is currently
+        * only supported in Chrome 139+
+        */
+
+        /*
+        * @function --generate-shade:
+        * This function takes a base color and a percentage, then mixes it with black
+        * to create a darker shade. It's great for generating color palettes.
+        * --base-color: The starting color.
+        * --percentage: How much black to mix in.
+        */
+        @function --generate-shade(--base-color, --percentage) {
+            result: color-mix(in srgb, var(--base-color), black var(--percentage));
+        }
+
+        /*
+        * @function --generate-tint:
+        * Similar to the shade function, but this one mixes the base color with white
+        * to create a lighter tint.
+        * --base-color: The starting color.
+        * --percentage: How much white to mix in.
+        */
+        @function --generate-tint(--base-color, --percentage) {
+            result: color-mix(in srgb, var(--base-color), white var(--percentage));
+        }
+
+        /*
+        * @function --calculate-spacing:
+        * This function takes a base spacing unit and a multiplier to create
+        * a consistent, scalable spacing system.
+        * --base-unit: The base spacing value (e.g., 1rem).
+        * --multiplier: The factor to scale the base unit by.
+        */
+        @function --calculate-spacing(--base-unit, --multiplier) {
+            result: calc(var(--base-unit) * var(--multiplier));
+        }
+
+        /*
+        * @function --fluid-typography:
+        * Creates a fluid font size that scales between a min and max size
+        * based on the viewport width.
+        * --min-size: The minimum font size.
+        * --max-size: The maximum font size.
+        * --min-vw: The viewport width at which the min font size is applied.
+        * --max-vw: The viewport width at which the max font size is applied.
+        */
+        @function --fluid-typography(--min-size, --max-size, --min-vw, --max-vw) {
+            result: clamp(var(--min-size),
+                           calc(var(--min-size) + (var(--max-size) - var(--min-size)) * ((100vw - var(--min-vw)) / (var(--max-vw) - var(--min-vw)))),
+                           var(--max-size));
+        }
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* We set the base color and spacing unit here using custom properties */
+            --base-color: #3b82f6;
+            --base-spacing: 1rem;
+        }
+
+        /* Applying the functions to create our theme */
+        .themed {
+            --primary-color: var(--base-color);
+            --primary-color-dark: --generate-shade(var(--base-color), 20%);
+            --primary-color-light: --generate-tint(var(--base-color), 20%);
+            --primary-color-lighter: --generate-tint(var(--base-color), 80%);
+        }
+
+        /* Applying the spacing function */
+        .dynamic-spacing {
+            /*
+             * CORRECTION: Just like the color example, to make this interactive,
+             * we must use the dynamic function `calc()` directly. Calling the
+             * @function is a one-time, static operation.
+            */
+            --spacing-sm: calc(var(--base-spacing) * 0.5);
+            --spacing-md: var(--base-spacing);
+            --spacing-lg: calc(var(--base-spacing) * 2);
+            --spacing-xl: calc(var(--base-spacing) * 4);
+        }
+
+        /* Applying the fluid typography function */
+        .fluid-text-container {
+            --fluid-font-size: --fluid-typography(1rem, 3rem, 320px, 1200px);
+            font-size: var(--fluid-font-size);
+        }
+        
+        /* Custom styles for Prism.js to match the page */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800 p-4 sm:p-8">
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 prose lg:prose-xl">
+      <header class="text-center mb-12 not-prose">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Deep Dive: CSS `@function`</h1>
+        <p class="text-lg text-gray-600">An interactive tutorial on the future of dynamic CSS.</p>
+        <div class="mt-4 inline-flex items-center bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1-4a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+          Experimental Feature: Only in Chrome 139+
+        </div>
+      </header>
+      <!-- Section 1: Introduction -->
+      <section class="mb-12">
+        <h2>What is `@function`?</h2>
+        <p>
+          The `@function` at-rule introduces the ability to define custom functions directly within your CSS. Think of them like JavaScript functions, but for your styles. They can take arguments, perform calculations, and return a value. This opens up a new world of possibilities for creating more maintainable, powerful, and dynamic stylesheets without relying on pre-processors like Sass.
+        </p>
+      </section>
+      <!-- Section 2: Interactive Themer -->
+      <section class="mb-12 not-prose">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Example 1: The Themer</h2>
+        <p class="text-gray-700 mb-6">
+          Here, we define two functions,
+          <code>--generate-shade</code>
+          and
+          <code>--generate-tint</code>, to create variations of a base color. The color picker will change the base color variable, but you'll notice the tints and shades do not update.
+        </p>
+        <pre><code class="language-css">
+@function --generate-shade(--base-color, --percentage) {
+    result: color-mix(in srgb, var(--base-color), black var(--percentage));
+}
+
+/* Usage */
+.themed {
+    --primary-color-dark: --generate-shade(var(--base-color), 20%);
+}
+</code></pre>
+        <div class="flex items-center my-6">
+          <label for="colorPicker" class="mr-4 font-medium text-gray-700">Base Color:</label>
+          <input type="color" id="colorPicker" value="#3b82f6" class="w-12 h-12 p-1 border border-gray-300 rounded-lg cursor-pointer">
+        </div>
+        <div id="themed-container" class="grid grid-cols-1 md:grid-cols-4 gap-4 text-white text-center font-medium themed">
+          <div class="p-8 rounded-lg" style="background-color: var(--primary-color-dark)">Dark Shade</div>
+          <div class="p-8 rounded-lg" style="background-color: var(--primary-color)">Base Color</div>
+          <div class="p-8 rounded-lg" style="background-color: var(--primary-color-light)">Light Tint</div>
+          <div class="p-8 rounded-lg border border-gray-200" style="background-color: var(--primary-color-lighter)">Lighter Tint</div>
+        </div>
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 class="text-xl font-semibold text-blue-800">Key Concept: Parse-Time vs. Real-Time</h3>
+          <p class="text-blue-700 mt-2">
+            The reason the tints and shades don't update is fundamental to how `@function` currently works. The browser evaluates a `@function` only once, when it first parses the CSS file. It calculates the result based on the initial value of `--base-color` and then treats it as a static, fixed value.
+          </p>
+          <p class="text-blue-700 mt-2">
+            It is
+            <strong>not reactive</strong>. Unlike `calc()` or standard CSS variables, it does not automatically re-calculate its value when the variables it depends on are changed by JavaScript. This makes it ideal for setting up a static design system but not for building dynamic, interactive components like this themer.
+          </p>
+        </div>
+      </section>
+      <!-- Section 3: Dynamic Spacing -->
+      <section class="mb-12 not-prose">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Example 2: Dynamic Spacing System</h2>
+        <p class="text-gray-700 mb-6">
+          Here we use the standard, dynamic `calc()` function to create a modular spacing scale. Adjust the base spacing unit with the slider to see how all the elements resize proportionally.
+        </p>
+        <pre><code class="language-css">
+/* This @function is defined but not used for the interactive demo */
+@function --calculate-spacing(--base-unit, --multiplier) {
+    result: calc(var(--base-unit) * var(--multiplier));
+}
+
+/* For the demo to be interactive, we use calc() directly */
+.dynamic-spacing {
+    --spacing-sm: calc(var(--base-spacing) * 0.5);
+    --spacing-lg: calc(var(--base-spacing) * 2);
+}
+</code></pre>
+        <div class="flex items-center my-6">
+          <label for="spacingSlider" class="mr-4 font-medium text-gray-700">Base Spacing:
+            <span id="spacingValue">16</span>px</label>
+          <input type="range" id="spacingSlider" min="8" max="32" value="16" class="w-64">
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg space-y-4 dynamic-spacing">
+          <div class="bg-blue-200 p-2 rounded" style="margin-bottom: var(--spacing-sm);">Small Margin Bottom</div>
+          <div class="bg-green-200 p-2 rounded" style="padding: var(--spacing-md);">Medium Padding</div>
+          <div class="bg-purple-200 p-2 rounded" style="margin: var(--spacing-lg);">Large Margin</div>
+          <div class="bg-pink-200 p-2 rounded" style="padding: var(--spacing-xl);">Extra Large Padding</div>
+        </div>
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 class="text-xl font-semibold text-blue-800">Key Concept: Parse-Time vs. Real-Time</h3>
+          <p class="text-blue-700 mt-2">
+            Just like the color example, if we had used `--calculate-spacing()` here, it would not be interactive. The `@function` is computed once with the initial value of `--base-spacing`. To ensure the demo is interactive and correctly demonstrates modern CSS, we use `calc()` directly, which **is** reactive and updates in real-time when the slider changes the variable.
+          </p>
+        </div>
+      </section>
+      <!-- Section 4: Fluid Typography -->
+      <section class="not-prose">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Example 3: Fluid Typography</h2>
+        <p class="text-gray-700 mb-6">
+          Our
+          <code>--fluid-typography</code>
+          function makes responsive text easy. The interactivity here comes from the browser itself.
+          <strong>To see it work, resize the container by dragging its bottom-right corner, or resize your entire browser window.</strong>
+        </p>
+        <pre><code class="language-css">
+@function --fluid-typography(--min-size, --max-size, --min-vw, --max-vw) {
+    result: clamp(var(--min-size),
+                   calc(var(--min-size) + (var(--max-size) - var(--min-size)) * ((100vw - var(--min-vw)) / (var(--max-vw) - var(--min-vw)))),
+                   var(--max-size));
+}
+</code></pre>
+        <div class="fluid-text-container bg-gray-800 text-white p-8 rounded-lg overflow-hidden resize-x mt-6" style="min-width: 320px;">
+          <h3 class="font-bold">This text scales fluidly!</h3>
+        </div>
+        <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <h3 class="text-xl font-semibold text-green-800">Key Concept: Returning a Dynamic Function</h3>
+          <p class="text-green-700 mt-2">
+            This example
+            <strong>is interactive</strong>
+            because the `@function` returns a `clamp()` expression that contains `vw` (viewport width) units. The browser is built to re-evaluate functions like `clamp()` and `calc()` whenever the viewport size changes.
+          </p>
+          <p class="text-green-700 mt-2">
+            The `@function` is still only parsed once, but the complex `clamp()` expression it produces remains "live" and responsive to browser resizing. This is a perfect use case for `@function`: simplifying complex, but inherently dynamic, CSS logic.
+          </p>
+        </div>
+      </section>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+      // JavaScript for interactivity - this part is just to update the CSS custom properties.
+        // The core logic is all in the CSS.
+
+        // Color Picker
+        const colorPicker = document.getElementById('colorPicker');
+        colorPicker.addEventListener('input', (e) => {
+            // We only need to update the base variable.
+            // The @function values for color will not change dynamically.
+            document.documentElement.style.setProperty('--base-color', e.target.value);
+        });
+
+        // Spacing Slider
+        const spacingSlider = document.getElementById('spacingSlider');
+        const spacingValue = document.getElementById('spacingValue');
+        spacingSlider.addEventListener('input', (e) => {
+            const pxValue = e.target.value;
+            const remValue = pxValue / 16;
+            document.documentElement.style.setProperty('--base-spacing', `${remValue}rem`);
+            spacingValue.textContent = pxValue;
+        });
+    </script>
+  </body>
+</html>

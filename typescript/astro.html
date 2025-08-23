@@ -93,6 +93,7 @@
             <a href="#tailwind" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Adding Tailwind CSS</a>
             <a href="#markdown" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Markdown & MDX</a>
             <a href="#collections" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Content Collections</a>
+            <a href="#storybook" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Integrating Storybook</a>
             <a href="#pwa" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">PWA Support</a>
             <a href="#find-plugins" class="sidebar-link px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Finding Plugins</a>
           </nav>
@@ -503,8 +504,55 @@ const allBlogPosts = await getCollection('blog');
             </div>
             <p class="mt-4">This approach provides a robust, type-safe way to manage and query your content, making it the recommended method for any project with multiple pieces of similar content.</p>
           </section>
+          <section id="storybook" class="mb-16 scroll-mt-20">
+            <h2>9. Integrating with Storybook.js</h2>
+            <p>Storybook is a powerful tool for developing UI components in isolation. Astro provides an official integration to make setting it up seamless.</p>
+            <ol>
+              <li><strong>Add the integration:</strong>
+                Run the following command in your project's terminal:</li>
+            </ol>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npx astro add storybook</code></pre>
+            </div>
+            <p class="mt-4">This command will install all necessary dependencies, create configuration files in a new
+              <code>.storybook/</code>
+              directory, and add the required scripts to your
+              <code>package.json</code>.</p>
+            <p>
+              <ul>
+                <li><strong>Create a story:</strong>
+                  A "story" is a file that demonstrates a single state of a component. For a component located at
+                  <code>src/components/Button.astro</code>, you would create a story at
+                  <code>src/components/Button.stories.js</code>.</li>
+              </ul>
+            </p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>// src/components/Button.stories.js
+import Button from './Button.astro';
+
+export default {
+  title: 'Components/Button',
+};
+
+export const Primary = () => &lt;Button label="Primary Button" /&gt;;
+export const Secondary = () => &lt;Button label="Secondary Button" variant="secondary" /&gt;;
+</code></pre>
+            </div>
+            <p class="mt-4">
+              <ul>
+                <li><strong>Run Storybook:</strong>
+                  Start the Storybook development server to view and interact with your components.</li>
+              </ul>
+            </p>
+            <div class="code-block">
+              <button class="copy-btn">Copy</button>
+              <pre><code>npm run storybook</code></pre>
+            </div>
+          </section>
           <section id="pwa" class="mb-16 scroll-mt-20">
-            <h2>9. How to Add PWA and Service Worker Support</h2>
+            <h2>10. How to Add PWA and Service Worker Support</h2>
             <p>You can enhance your Astro site to work offline and make it installable like a native app by turning it into a Progressive Web App (PWA). This is handled by a
               <strong>service worker</strong>. While you could write a service worker script manually, the recommended approach is to use the
               <a href="https://vite-pwa-org.netlify.app/frameworks/astro" target="_blank" rel="noopener noreferrer"><code>@vite-pwa/astro</code>
@@ -519,10 +567,10 @@ const allBlogPosts = await getCollection('blog');
             </div>
             <p class="mt-4">
               <ul>
-                <li><strong>Configure it:</strong>
-                  After installation, you need to add and configure the integration in your
-                  <code>astro.config.mjs</code>
-                  file. The integration uses Google's Workbox library under the hood, giving you powerful control over caching with sensible defaults.</li>
+                <li><strong>Configure it:</strong></li>
+                After installation, you need to add and configure the integration in your
+                <code>astro.config.mjs</code>
+                file. The integration uses Google's Workbox library under the hood, giving you powerful control over caching with sensible defaults.
               </ul>
             </p>
             <h3 class="mt-8">Handling the Web Manifest</h3>
@@ -538,7 +586,7 @@ const allBlogPosts = await getCollection('blog');
               of your pages. This automates a key part of the PWA setup.</p>
           </section>
           <section id="find-plugins" class="mb-16 scroll-mt-20">
-            <h2>10. Where to Find Information About Available Plugins</h2>
+            <h2>11. Where to Find Information About Available Plugins</h2>
             <p>The Astro team and community maintain a large collection of official and community-built integrations. You can explore all the available options in the official integrations directory.</p>
             <p><a href="https://astro.build/integrations/" target="_blank" rel="noopener noreferrer"><strong>Explore all Astro Integrations &rarr;</strong></a></p>
             <p>This is the best place to find integrations for:</p>
