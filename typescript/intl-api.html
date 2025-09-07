@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to the JavaScript Intl API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Sky Blue accent -->
+    <!-- Application Structure Plan: A single-page application with a fixed sidebar for navigation and a main content area. Each section of the Intl API is a separate, interactive "playground" where users can modify inputs (locales, options, values) and see the output update in real-time. This structure is chosen over a linear document to promote active learning and quick experimentation, which is more effective for understanding a complex API. The user can jump to any section instantly, compare different APIs, and test edge cases without scrolling. -->
+    <!-- Visualization & Content Choices: The guide's content is primarily code and its text output. Therefore, no charts are needed. The chosen presentation method is an interactive form/playground for each API section. Goal: Explore -> Presentation: Interactive Form -> Interaction: User modifies inputs (text fields, dropdowns, checkboxes) which trigger real-time updates to code snippets and formatted results. Justification: This hands-on approach is superior to static code examples for learning an API, as it provides immediate feedback and encourages experimentation. Library/Method: Vanilla JavaScript for all logic. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #0284c7; /* sky-600 */
+            color: white;
+            transform: translateX(4px);
+        }
+        .playground-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+        }
+         .result-box {
+            background-color: #cffafe; /* cyan-100 */
+            border: 1px solid #67e8f9; /* cyan-300 */
+            color: #0e7490; /* cyan-700 */
+            font-weight: 600;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@js-temporal/polyfill@0.4.4/dist/index.umd.js" defer></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800">
+    <div class="flex min-h-screen">
+      <!-- Sidebar Navigation -->
+      <aside class="w-64 bg-white/80 backdrop-blur-lg border-r border-slate-200 p-6 fixed top-0 left-0 h-full overflow-y-auto hidden md:block">
+        <h1 class="text-xl font-bold text-sky-700 mb-6">JS Intl API Guide</h1>
+        <nav id="main-nav" class="flex flex-col space-y-2">
+          <a href="#introduction" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100 active">Introduction</a>
+          <a href="#finding-tags" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">Finding Tags</a>
+          <a href="#datetimeformat" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">DateTimeFormat</a>
+          <a href="#numberformat" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">NumberFormat</a>
+          <a href="#collator" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">Collator</a>
+          <a href="#pluralrules" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">PluralRules</a>
+          <a href="#relativetimeformat" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">RelativeTimeFormat</a>
+          <a href="#listformat" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">ListFormat</a>
+          <a href="#displaynames" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">DisplayNames</a>
+          <a href="#segmenter" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">Segmenter</a>
+          <a href="#locale" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">Locale</a>
+          <a href="#temporal" class="nav-link p-2 rounded-lg font-medium text-slate-700 hover:bg-sky-100">The Future: Temporal</a>
+        </nav>
+      </aside>
+      <!-- Mobile Header -->
+      <header class="md:hidden w-full bg-white/80 backdrop-blur-lg border-b border-slate-200 p-4 sticky top-0 z-10">
+        <h1 class="text-xl font-bold text-sky-700">JS Intl API Guide</h1>
+        <select id="mobile-nav" class="mt-2 w-full p-2 border border-slate-300 rounded-lg">
+          <option value="#introduction">Introduction</option>
+          <option value="#finding-tags">Finding Tags</option>
+          <option value="#datetimeformat">DateTimeFormat</option>
+          <option value="#numberformat">NumberFormat</option>
+          <option value="#collator">Collator</option>
+          <option value="#pluralrules">PluralRules</option>
+          <option value="#relativetimeformat">RelativeTimeFormat</option>
+          <option value="#listformat">ListFormat</option>
+          <option value="#displaynames">DisplayNames</option>
+          <option value="#segmenter">Segmenter</option>
+          <option value="#locale">Locale</option>
+          <option value="#temporal">The Future: Temporal</option>
+        </select>
+      </header>
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-4 sm:p-8 mt-16 md:mt-0">
+        <div id="content-container">
+          <!-- Introduction Section -->
+          <section id="introduction" class="content-section space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Welcome to the Interactive Intl Guide</h2>
+            <p class="text-lg">The
+              <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl" target="_blank" class="text-sky-600 hover:underline">`Intl` object</a>
+              is the namespace for the
+              <a href="https://tc39.es/ecma402/" target="_blank" class="text-sky-600 hover:underline">ECMAScript Internationalization API (ECMA-402)</a>. It's a powerful part of JavaScript for language-sensitive operations like string comparison, number formatting, and date/time formatting. This guide provides an interactive playground to explore its features.</p>
+            <div class="bg-sky-100 border-l-4 border-sky-500 text-sky-800 p-4 rounded-r-lg">
+              <p><strong class="font-semibold">How to use this guide:</strong>
+                Select an API from the navigation on the left. Each section provides a live playground. Change the inputs, locales, and options to see how the output changes in real time. This hands-on approach is the best way to learn!</p>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 pt-4">Further Reading & Official Documentation</h3>
+            <p>For a deeper dive and the official specification, refer to these essential resources:</p>
+            <ul class="list-disc list-inside space-y-1 my-2">
+              <li><a href="https://tc39.es/ecma402/" target="_blank" class="text-sky-600 hover:underline font-medium">Official ECMA-402 Specification</a> &ndash; The source of truth for the API.</li>
+              <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl" target="_blank" class="text-sky-600 hover:underline font-medium">MDN Web Docs for Intl</a> &ndash; Comprehensive documentation with examples.</li>
+            </ul>
+            <h3 class="text-2xl font-bold text-slate-900 pt-4">Core Concepts</h3>
+            <p>Almost all `Intl` constructors share a common signature: `new Intl.Constructor(locales, options)`.</p>
+            <ul class="list-disc list-inside space-y-2">
+              <li><strong>`locales`</strong>: A string or array of strings representing
+                <a href="https://en.wikipedia.org/wiki/IETF_language_tag" target="_blank" class="text-sky-600 hover:underline">BCP 47 language tags</a>
+                (e.g., "en-US", "de-DE"). The environment picks the best-supported locale.</li>
+              <li><strong>`options`</strong>: An object with configuration properties specific to the constructor.</li>
+            </ul>
+            <h4 class="text-xl font-bold text-slate-800 pt-3">What are BCP 47 Language Tags?</h4>
+            <div class="space-y-2 text-slate-700">
+              <p>A
+                <strong>BCP 47 language tag</strong>
+                is a standardized code used to identify human languages. "BCP" stands for "Best Current Practice," and this standard ensures different systems can reliably understand which language and regional conventions to use.</p>
+              <p>The tags are built from smaller pieces called "subtags," separated by hyphens. The most common are:</p>
+              <ul class="list-disc list-inside ml-4 space-y-1 bg-slate-100 p-4 rounded-lg">
+                <li><strong>Language:</strong>
+                  A required two or three-letter code (e.g.,
+                  <code class="bg-slate-200 px-1 rounded">en</code>
+                  for English,
+                  <code class="bg-slate-200 px-1 rounded">es</code>
+                  for Spanish).</li>
+                <li><strong>Script (Optional):</strong>
+                  A four-letter code for the writing system (e.g.,
+                  <code class="bg-slate-200 px-1 rounded">Hans</code>
+                  for Simplified Chinese script).</li>
+                <li><strong>Region (Optional):</strong>
+                  A two-letter country code (e.g.,
+                  <code class="bg-slate-200 px-1 rounded">US</code>
+                  for the United States,
+                  <code class="bg-slate-200 px-1 rounded">GB</code>
+                  for Great Britain).</li>
+              </ul>
+              <p>Examples:</p>
+              <ul class="list-disc list-inside ml-4 space-y-1">
+                <li><code class="font-mono">en-US</code>: English (en) as used in the United States (US).</li>
+                <li><code class="font-mono">es-CL</code>: Spanish (es) as used in Chile (CL).</li>
+                <li><code class="font-mono">zh-Hans-CN</code>: Chinese (zh), written in the Simplified (Hans) script, as used in mainland China (CN).</li>
+              </ul>
+              <p>These tags allow the
+                <code>Intl</code>
+                API to apply specific regional formats for dates, numbers, currencies, and sorting rules.</p>
+            </div>
+          </section>
+          <!-- Finding Tags Section -->
+          <section id="finding-tags" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Finding Locales & Time Zones</h2>
+            <p class="text-lg">To use the `Intl` API effectively, you need to provide valid BCP 47 language tags for locales and IANA identifiers for time zones. Here are some resources to find them.</p>
+            <h3 class="text-2xl font-bold text-slate-900 pt-4">Finding BCP 47 Language Tags</h3>
+            <div class="space-y-2 text-slate-700">
+              <p>While you can often guess common tags (like `en-US` or `fr-FR`), the definitive list is maintained by the IANA (Internet Assigned Numbers Authority).</p>
+              <ul class="list-disc list-inside space-y-2">
+                <li>
+                  <strong>Official Registry:</strong>
+                  The complete list of all valid language, region, and script subtags can be found at the
+                  <a href="https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry" target="_blank" class="text-sky-600 hover:underline">IANA Language Subtag Registry</a>. This is the ultimate source of truth but can be dense to read.
+                </li>
+                <li>
+                  <strong>User-Friendly Lists:</strong>
+                  For a more accessible reference, you can find searchable lists on various websites. A common resource is the
+                  <a href="https://r12a.github.io/app-subtags/" target="_blank" class="text-sky-600 hover:underline">Language Subtag Lookup tool</a>.
+                </li>
+              </ul>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 pt-4">Finding Time Zone Identifiers</h3>
+            <div class="space-y-2 text-slate-700">
+              <p>Time zone names used by `Intl.DateTimeFormat` come from the
+                <a href="https://www.iana.org/time-zones" target="_blank" class="text-sky-600 hover:underline">IANA Time Zone Database</a>. These identifiers follow an `Area/Location` format.</p>
+              <ul class="list-disc list-inside space-y-2">
+                <li>
+                  <strong>Complete List:</strong>
+                  Wikipedia maintains an easy-to-read
+                  <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" class="text-sky-600 hover:underline">List of tz database time zones</a>.
+                </li>
+                <li>
+                  <strong>Programmatic Access:</strong>
+                  You can get an array of all time zones supported by the user's browser by running the following command in the browser's developer console:
+                </li>
+              </ul>
+              <pre><code class="language-js">
+console.log(Intl.supportedValuesOf('timeZone'));
+                        </code></pre>
+              <p>Common examples include
+                <code class="bg-slate-200 px-1 rounded">America/New_York</code>,
+                <code class="bg-slate-200 px-1 rounded">Europe/London</code>,
+                <code class="bg-slate-200 px-1 rounded">Asia/Tokyo</code>, and
+                <code class="bg-slate-200 px-1 rounded">Australia/Sydney</code>.</p>
+            </div>
+          </section>
+          <!-- DateTimeFormat Section -->
+          <section id="datetimeformat" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.DateTimeFormat</h2>
+            <p class="text-lg">Formats dates and times in a locale-sensitive way. This is one of the most powerful and commonly used features of the Intl API.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Displaying an article's publication date in a user-friendly format.</li>
+                <li>Showing event start and end times in a calendar application.</li>
+                <li>Formatting timestamps for chat messages or activity logs.</li>
+                <li>Displaying dates on a booking website, respecting local conventions.</li>
+              </ul>
+            </div>
+            <p class="text-lg">Experiment below with various locales and formatting options to see how the output changes.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <!-- Controls -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="dtf-locale" class="block font-medium">Locale</label>
+                  <select id="dtf-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>en-GB</option><option>de-DE</option><option>fr-FR</option><option>ja-JP</option><option>ar-EG</option><option>es-CL</option><option>es-ES</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="dtf-datestyle" class="block font-medium">dateStyle</label>
+                  <select id="dtf-datestyle" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option value="undefined">none</option><option>full</option><option>long</option><option>medium</option><option>short</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="dtf-timestyle" class="block font-medium">timeStyle</label>
+                  <select id="dtf-timestyle" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option value="undefined">none</option><option>full</option><option>long</option><option>medium</option><option>short</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="dtf-timezone" class="block font-medium">Time Zone (e.g., America/New_York)</label>
+                  <input id="dtf-timezone" class="w-full p-2 border border-slate-300 rounded-lg" value="UTC">
+                </div>
+              </div>
+              <!-- Output -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="dtf-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Result</h3>
+                <p id="dtf-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <!-- NumberFormat Section -->
+          <section id="numberformat" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.NumberFormat</h2>
+            <p class="text-lg">Formats numbers, currencies, and units.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Formatting product prices on an e-commerce site (e.g., `$1,299.99` vs. `1.299,99 €`).</li>
+                <li>Displaying large numbers with compact notation (e.g., "1.2M followers").</li>
+                <li>Showing percentages in analytics dashboards.</li>
+                <li>Formatting scientific or technical data with units (e.g., "120 km/h").</li>
+              </ul>
+            </div>
+            <p class="text-lg">Notice how decimal separators, grouping, and currency symbols change based on the selected locale and options.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <!-- Controls -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="nf-locale" class="block font-medium">Locale</label>
+                  <select id="nf-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>de-DE</option><option>en-IN</option><option>fr-FR</option><option>es-CL</option><option>es-ES</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="nf-number" class="block font-medium">Number</label>
+                  <input id="nf-number" type="number" class="w-full p-2 border border-slate-300 rounded-lg" value="123456.789">
+                </div>
+                <div>
+                  <label for="nf-style" class="block font-medium">Style</label>
+                  <select id="nf-style" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>decimal</option><option>currency</option><option>unit</option>
+                  </select>
+                </div>
+                <div id="nf-currency-options" class="hidden space-y-2">
+                  <label for="nf-currency" class="block font-medium">Currency</label>
+                  <input id="nf-currency" class="w-full p-2 border border-slate-300 rounded-lg" value="USD">
+                </div>
+                <div id="nf-unit-options" class="hidden space-y-2">
+                  <label for="nf-unit" class="block font-medium">Unit</label>
+                  <input id="nf-unit" class="w-full p-2 border border-slate-300 rounded-lg" value="kilometer-per-hour">
+                </div>
+                <div>
+                  <label for="nf-notation" class="block font-medium">Notation</label>
+                  <select id="nf-notation" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>standard</option><option>compact</option><option>scientific</option><option>engineering</option>
+                  </select>
+                </div>
+              </div>
+              <!-- Output -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="nf-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Result</h3>
+                <p id="nf-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <!-- Collator Section -->
+          <section id="collator" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.Collator</h2>
+            <p class="text-lg">Provides language-sensitive string comparison for sorting. Default JavaScript `sort()` uses Unicode code points, which is often incorrect for alphabetical sorting in many languages.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Sorting a list of user names alphabetically in a contacts list.</li>
+                <li>Ordering product names in a dropdown filter on an e-commerce site.</li>
+                <li>Alphabetizing a list of countries or cities.</li>
+                <li>Correctly sorting file names that contain accented characters.</li>
+              </ul>
+            </div>
+            <p class="text-lg">Select a locale to see how the list re-sorts correctly.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <!-- Controls -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="collator-locale" class="block font-medium">Locale</label>
+                  <select id="collator-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option value="default">Default .sort()</option>
+                    <option value="de-DE">de-DE (German)</option>
+                    <option value="sv-SE">sv-SE (Swedish)</option>
+                    <option value="en-US">en-US (US English)</option>
+                    <option value="es-CL">es-CL (Chilean Spanish)</option>
+                    <option value="es-ES">es-ES (Peninsular Spanish)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="collator-sensitivity" class="block font-medium">Sensitivity</label>
+                  <select id="collator-sensitivity" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option value="variant">variant (case & accents)</option>
+                    <option value="accent">accent</option>
+                    <option value="case">case</option>
+                    <option value="base">base (ignore case & accents)</option>
+                  </select>
+                </div>
+                <h3 class="font-semibold text-lg mt-4">Original List</h3>
+                <ul class="list-disc list-inside p-2 bg-slate-100 rounded-lg">
+                  <li>émilie</li><li>Eva</li><li>emil</li><li>Äpple</li><li>apple</li><li>Zulu</li>
+                </ul>
+              </div>
+              <!-- Output -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="collator-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Sorted Result</h3>
+                <ul id="collator-result" class="list-decimal list-inside p-4 rounded-lg text-xl result-box"></ul>
+              </div>
+            </div>
+          </section>
+          <!-- PluralRules Section -->
+          <section id="pluralrules" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.PluralRules</h2>
+            <p class="text-lg">Determines which plural category a number belongs to in a given language. English has "one" and "other", but other languages like Polish or Arabic have more complex rules.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Generating dynamic UI text like "You have 1 new message" vs. "You have 5 new messages".</li>
+                <li>Displaying search result counts: "Found 1 result" vs. "Found 10 results".</li>
+                <li>Handling complex pluralization for translation libraries (e.g., in Polish: "1 plik", "2 pliki", "5 plików").</li>
+              </ul>
+            </div>
+            <p class="text-lg">This is essential for correct translations in applications that support multiple languages.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="pr-locale" class="block font-medium">Locale</label>
+                  <select id="pr-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>ar-EG</option><option>pl-PL</option><option>sl-SI</option><option>es-CL</option><option>es-ES</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="pr-number" class="block font-medium">Number</label>
+                  <input id="pr-number" type="number" class="w-full p-2 border border-slate-300 rounded-lg" value="1">
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="pr-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Resulting Plural Category</h3>
+                <p id="pr-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <section id="relativetimeformat" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.RelativeTimeFormat</h2>
+            <p class="text-lg">Formats a time difference in a human-readable way, like "in 3 weeks" or "2 months ago".</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Displaying timestamps on social media feeds ("posted 2 hours ago").</li>
+                <li>Showing upcoming deadlines ("due tomorrow").</li>
+                <li>Displaying countdowns ("event starts in 3 weeks").</li>
+                <li>Showing file modification times ("updated yesterday").</li>
+              </ul>
+            </div>
+            <p class="text-lg">The `numeric: 'auto'` option allows for friendly terms like "yesterday" or "tomorrow".</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="rtf-locale" class="block font-medium">Locale</label>
+                  <select id="rtf-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>en-GB</option><option>fr-FR</option><option>es-ES</option><option>es-CL</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="rtf-value" class="block font-medium">Value</label>
+                  <input id="rtf-value" type="number" class="w-full p-2 border border-slate-300 rounded-lg" value="-1">
+                </div>
+                <div>
+                  <label for="rtf-unit" class="block font-medium">Unit</label>
+                  <select id="rtf-unit" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>day</option><option>week</option><option>month</option><option>quarter</option><option>year</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="rtf-numeric" class="block font-medium">Numeric Style</label>
+                  <select id="rtf-numeric" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>auto</option><option>always</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="rtf-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Result</h3>
+                <p id="rtf-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <section id="listformat" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.ListFormat</h2>
+            <p class="text-lg">Formats a list of strings with locale-appropriate connectors.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Listing authors of an article: "John, Jane, and Sarah".</li>
+                <li>Showing a list of tags on a blog post: "Technology, JavaScript, and Web Dev".</li>
+                <li>Listing items in a shopping cart summary: "You have a shirt, pants, and shoes in your cart".</li>
+                <li>Displaying options in a confirmation dialog: "Do you want to save, discard, or cancel?".</li>
+              </ul>
+            </div>
+            <p class="text-lg">This handles things like the Oxford comma in English correctly.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="lf-locale" class="block font-medium">Locale</label>
+                  <select id="lf-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>es-ES</option><option>de-DE</option><option>ja-JP</option><option>es-CL</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="lf-items" class="block font-medium">Items (comma-separated)</label>
+                  <input id="lf-items" class="w-full p-2 border border-slate-300 rounded-lg" value="Motorcycle, Bus, Car">
+                </div>
+                <div>
+                  <label for="lf-type" class="block font-medium">Type</label>
+                  <select id="lf-type" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>conjunction</option><option>disjunction</option><option>unit</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="lf-style" class="block font-medium">Style</label>
+                  <select id="lf-style" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>long</option><option>short</option><option>narrow</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="lf-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Result</h3>
+                <p id="lf-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <section id="displaynames" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.DisplayNames</h2>
+            <p class="text-lg">Provides translated names for languages, regions, scripts, or currencies.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Showing a readable language name in a language selector dropdown (e.g., "Español" instead of "es").</li>
+                <li>Displaying the full country name from a region code (`US` -> "United States").</li>
+                <li>Showing the name of a currency in a financial application (`JPY` -> "Japanese Yen").</li>
+                <li>Converting a script code to its name (`Latn` -> "Latin").</li>
+              </ul>
+            </div>
+            <p class="text-lg">For example, it can tell you that "de" is "German" in English or "allemand" in French.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="dn-locale" class="block font-medium">Display In (Locale)</label>
+                  <select id="dn-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>es-ES</option><option>fr-FR</option><option>zh-CN</option><option>es-CL</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="dn-type" class="block font-medium">Type of Name</label>
+                  <select id="dn-type" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>language</option><option>region</option><option>currency</option><option>script</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="dn-code" class="block font-medium">Code to Translate</label>
+                  <input id="dn-code" class="w-full p-2 border border-slate-300 rounded-lg" value="fr-CA">
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="dn-code-block" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Result</h3>
+                <p id="dn-result" class="p-4 rounded-lg text-xl result-box"></p>
+              </div>
+            </div>
+          </section>
+          <section id="segmenter" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.Segmenter</h2>
+            <p class="text-lg">Provides locale-sensitive text segmentation.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Accurately counting the number of "characters" in a string that includes multi-code-point emoji.</li>
+                <li>Implementing a word counter for a text editor that works for languages without spaces (e.g., Japanese, Thai).</li>
+                <li>Highlighting the current sentence a user is reading in a text-to-speech application.</li>
+                <li>Splitting text into words for search indexing or keyword analysis.</li>
+              </ul>
+            </div>
+            <p class="text-lg">It can correctly split a string into graphemes (what users perceive as characters), words, or sentences, which is far more reliable than `string.split()`.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Options</h3>
+                <div>
+                  <label for="seg-locale" class="block font-medium">Locale</label>
+                  <select id="seg-locale" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>en-US</option><option>ja-JP</option><option>th-TH</option><option>es-CL</option><option>es-ES</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="seg-text" class="block font-medium">Text to Segment</label>
+                  <textarea id="seg-text" class="w-full p-2 border border-slate-300 rounded-lg" rows="4">Hello world. 👋 How are you?</textarea>
+                </div>
+                <div>
+                  <label for="seg-granularity" class="block font-medium">Granularity</label>
+                  <select id="seg-granularity" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <option>word</option><option>sentence</option><option>grapheme</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="seg-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Resulting Segments</h3>
+                <div id="seg-result" class="p-4 rounded-lg result-box flex flex-wrap gap-2"></div>
+              </div>
+            </div>
+          </section>
+          <section id="locale" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">Intl.Locale</h2>
+            <p class="text-lg">A constructor to parse and manipulate BCP 47 locale identifier strings.</p>
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold">Common Use Cases</h3>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>Extracting the base language from a complex locale to fall back to a more general language if needed.</li>
+                <li>Reading user preferences from a locale string (e.g., `u-hc-h23` for 24-hour time) to customize the UI.</li>
+                <li>Validating that a user-provided string is a well-formed locale identifier.</li>
+                <li>Programmatically building or modifying locale strings.</li>
+              </ul>
+            </div>
+            <p class="text-lg">It allows you to programmatically access parts of a locale string like the language, region, or script.</p>
+            <div class="playground-grid bg-white p-6 rounded-lg shadow-sm">
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Input</h3>
+                <div>
+                  <label for="loc-string" class="block font-medium">Locale String</label>
+                  <input id="loc-string" class="w-full p-2 border border-slate-300 rounded-lg" value="zh-Hans-CN-u-ca-chinese">
+                </div>
+              </div>
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Live Example</h3>
+                <pre><code id="loc-code" class="language-js"></code></pre>
+                <h3 class="font-semibold text-lg">Parsed Properties</h3>
+                <div id="loc-result" class="p-4 rounded-lg result-box space-y-1"></div>
+              </div>
+            </div>
+          </section>
+          <section id="temporal" class="content-section hidden space-y-4">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-sky-200 pb-2">The Future: Interaction with Temporal API</h2>
+            <p class="text-lg">The
+              <strong>Temporal API</strong>
+              is a new, modern date/time API for JavaScript, currently at Stage 3 in the TC39 process. It is designed to be a superior replacement for the old `Date` object.</p>
+            <div id="temporal-status" class="bg-sky-100 border-l-4 border-sky-500 text-sky-800 p-4 rounded-r-lg mt-4"></div>
+            <p class="mt-4">Temporal objects can be passed directly to `Intl.DateTimeFormat` instances, creating a clean, robust way to work with dates and times.</p>
+            <div class="mt-4 bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-lg">
+              <h4 class="font-bold">A Note on Polyfills and Native Support</h4>
+              <p class="mt-2">The conceptual examples below use a
+                <strong>polyfill</strong>
+                to make the `Temporal` API work in all browsers. However, there's a crucial distinction to understand:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>The
+                  <strong>polyfill</strong>
+                  creates the `Temporal` objects (like
+                  <code>ZonedDateTime</code>).</li>
+                <li>The browser's
+                  <strong>native
+                    <code>Intl</code>
+                    engine</strong>
+                  is what actually formats the date.</li>
+              </ul>
+              <p class="mt-2">In browsers without native `Temporal` support (e.g., Chrome), the `Intl` engine has not been updated to understand these new objects. The polyfill cannot change this internal browser behavior. Therefore, to ensure compatibility, our examples perform a final conversion from a `Temporal` object to a legacy `Date` object (e.g.,
+                <code>new Date(zdt.toInstant().epochMilliseconds)</code>) just before formatting. This allows you to use the modern `Temporal` API for all your logic and only convert at the very last step for display.</p>
+            </div>
+            <h3 class="text-2xl font-semibold mt-6">Example: ZonedDateTime Formatting</h3>
+            <p>Format a specific moment in time (a date, time, and timezone) for a user in a specific locale.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm mt-4">
+              <pre><code class="language-js">
+// This conceptual code requires the Temporal polyfill to run.
+
+// 1. Create an immutable Temporal object.
+const zonedDateTime = Temporal.ZonedDateTime.from({
+  year: 2025,
+  month: 8,
+  day: 29,
+  timeZone: 'America/Los_Angeles',
+});
+
+// 2. Format it using Intl.DateTimeFormat.
+const formatter = new Intl.DateTimeFormat('de-DE', {
+  dateStyle: 'full',
+  timeStyle: 'long',
+  timeZone: 'America/Los_Angeles',
+});
+
+// Note: In browsers without native Temporal support, we must convert
+// to a legacy Date object before formatting.
+const legacyDate = new Date(zonedDateTime.toInstant().epochMilliseconds);
+
+// The formatted output will be similar to:
+// "Freitag, 29. August 2025 um 00:00:00 PDT"
+console.log(formatter.format(legacyDate));
+                        </code></pre>
+            </div>
+            <h3 class="text-2xl font-semibold mt-6">Example: PlainDate Formatting</h3>
+            <p>Format a calendar date that has no time or timezone information, like a birthday.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm mt-4">
+              <pre><code class="language-js">
+// This conceptual code requires the Temporal polyfill to run.
+
+// 1. Create a date object without time or timezone.
+const plainDate = Temporal.PlainDate.from({
+  year: 1776,
+  month: 7,
+  day: 4,
+});
+
+// 2. Format it using Intl.DateTimeFormat.
+const formatter = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'long',
+  timeZone: 'UTC', // Required for consistent output
+});
+
+// Note: In browsers without native Temporal support, we must convert
+// to a legacy Date object before formatting.
+const legacyDate = new Date(Date.UTC(plainDate.year, plainDate.month - 1, plainDate.day));
+
+// The formatted output will be:
+// "July 4, 1776"
+console.log(formatter.format(legacyDate));
+                        </code></pre>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+    const mainNav = document.getElementById('main-nav');
+    const mobileNav = document.getElementById('mobile-nav');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    function setActiveSection(hash) {
+        if (!hash) hash = '#introduction';
+
+        // Update nav links
+        document.querySelectorAll('#main-nav a').forEach(link => {
+            if (link.getAttribute('href') === hash) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+        
+        mobileNav.value = hash;
+
+        // Update content visibility
+        contentSections.forEach(section => {
+            if (`#${section.id}` === hash) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
+        });
+    }
+    
+    function handleNavigation(event) {
+        event.preventDefault();
+        const hash = event.target.getAttribute('href');
+        if (hash) {
+           window.location.hash = hash;
+        }
+    }
+    
+    mainNav.addEventListener('click', handleNavigation);
+    mobileNav.addEventListener('change', (event) => {
+        window.location.hash = event.target.value;
+    });
+
+    window.addEventListener('hashchange', () => setActiveSection(window.location.hash));
+
+
+    // --- PLAYGROUNDS ---
+
+    // DateTimeFormat Playground
+    function initDateTimeFormat() {
+        const localeEl = document.getElementById('dtf-locale');
+        const dateStyleEl = document.getElementById('dtf-datestyle');
+        const timeStyleEl = document.getElementById('dtf-timestyle');
+        const timezoneEl = document.getElementById('dtf-timezone');
+        const codeEl = document.getElementById('dtf-code');
+        const resultEl = document.getElementById('dtf-result');
+        const date = new Date();
+
+        function update() {
+            const locale = localeEl.value;
+            const dateStyle = dateStyleEl.value === 'undefined' ? undefined : dateStyleEl.value;
+            const timeStyle = timeStyleEl.value === 'undefined' ? undefined : timeStyleEl.value;
+            const timeZone = timezoneEl.value || undefined;
+
+            const options = {};
+            if (dateStyle) options.dateStyle = dateStyle;
+            if (timeStyle) options.timeStyle = timeStyle;
+            if (timeZone) options.timeZone = timeZone;
+            
+            const optionsString = JSON.stringify(options, null, 2);
+
+            codeEl.textContent = `const date = new Date();\nconst options = ${optionsString};\n\nnew Intl.DateTimeFormat('${locale}', options).format(date);`;
+            Prism.highlightElement(codeEl);
+            
+            try {
+                resultEl.textContent = new Intl.DateTimeFormat(locale, options).format(date);
+                resultEl.classList.remove('bg-red-100', 'border-red-300', 'text-red-700');
+                resultEl.classList.add('bg-cyan-100', 'border-cyan-300', 'text-cyan-700');
+            } catch (e) {
+                resultEl.textContent = e.message;
+                resultEl.classList.add('bg-red-100', 'border-red-300', 'text-red-700');
+                resultEl.classList.remove('bg-cyan-100', 'border-cyan-300', 'text-cyan-700');
+            }
+        }
+
+        [localeEl, dateStyleEl, timeStyleEl, timezoneEl].forEach(el => el.addEventListener('change', update));
+        timezoneEl.addEventListener('input', update);
+        update();
+    }
+
+    // NumberFormat Playground
+    function initNumberFormat() {
+        const localeEl = document.getElementById('nf-locale');
+        const numberEl = document.getElementById('nf-number');
+        const styleEl = document.getElementById('nf-style');
+        const currencyEl = document.getElementById('nf-currency');
+        const unitEl = document.getElementById('nf-unit');
+        const notationEl = document.getElementById('nf-notation');
+        const currencyOptionsEl = document.getElementById('nf-currency-options');
+        const unitOptionsEl = document.getElementById('nf-unit-options');
+        const codeEl = document.getElementById('nf-code');
+        const resultEl = document.getElementById('nf-result');
+
+        function update() {
+            const locale = localeEl.value;
+            const number = parseFloat(numberEl.value);
+            const style = styleEl.value;
+            const currency = currencyEl.value.toUpperCase();
+            const unit = unitEl.value;
+            const notation = notationEl.value;
+
+            currencyOptionsEl.classList.toggle('hidden', style !== 'currency');
+            unitOptionsEl.classList.toggle('hidden', style !== 'unit');
+
+            const options = { style, notation };
+            if (style === 'currency') options.currency = currency;
+            if (style === 'unit') options.unit = unit;
+
+            const optionsString = JSON.stringify(options, null, 2);
+            codeEl.textContent = `const number = ${number};\nconst options = ${optionsString};\n\nnew Intl.NumberFormat('${locale}', options).format(number);`;
+            Prism.highlightElement(codeEl);
+            
+            try {
+                resultEl.textContent = new Intl.NumberFormat(locale, options).format(number);
+                resultEl.classList.remove('bg-red-100', 'border-red-300', 'text-red-700');
+                resultEl.classList.add('bg-cyan-100', 'border-cyan-300', 'text-cyan-700');
+            } catch (e) {
+                resultEl.textContent = e.message;
+                resultEl.classList.add('bg-red-100', 'border-red-300', 'text-red-700');
+                resultEl.classList.remove('bg-cyan-100', 'border-cyan-300', 'text-cyan-700');
+            }
+        }
+        [localeEl, numberEl, styleEl, currencyEl, unitEl, notationEl].forEach(el => {
+            el.addEventListener('change', update);
+            el.addEventListener('input', update);
+        });
+        update();
+    }
+    
+    // Collator Playground
+    function initCollator() {
+        const localeEl = document.getElementById('collator-locale');
+        const sensitivityEl = document.getElementById('collator-sensitivity');
+        const codeEl = document.getElementById('collator-code');
+        const resultEl = document.getElementById('collator-result');
+        const items = ['émilie', 'Eva', 'emil', 'Äpple', 'apple', 'Zulu'];
+
+        function update() {
+            const locale = localeEl.value;
+            const sensitivity = sensitivityEl.value;
+            
+            let sortedItems;
+            
+            if (locale === 'default') {
+                codeEl.textContent = `const items = ${JSON.stringify(items)};\n\nitems.sort();`;
+                sortedItems = [...items].sort();
+            } else {
+                const options = { sensitivity };
+                const optionsString = JSON.stringify(options);
+                codeEl.textContent = `const items = ${JSON.stringify(items)};\nconst collator = new Intl.Collator('${locale}', ${optionsString});\n\nitems.sort(collator.compare);`;
+                const collator = new Intl.Collator(locale, options);
+                sortedItems = [...items].sort(collator.compare);
+            }
+            Prism.highlightElement(codeEl);
+            
+            resultEl.innerHTML = sortedItems.map(item => `<li>${item}</li>`).join('');
+        }
+        
+        [localeEl, sensitivityEl].forEach(el => el.addEventListener('change', update));
+        update();
+    }
+    
+    // PluralRules Playground
+    function initPluralRules() {
+        const localeEl = document.getElementById('pr-locale');
+        const numberEl = document.getElementById('pr-number');
+        const codeEl = document.getElementById('pr-code');
+        const resultEl = document.getElementById('pr-result');
+        
+        function update() {
+            const locale = localeEl.value;
+            const number = parseInt(numberEl.value, 10);
+            
+            codeEl.textContent = `new Intl.PluralRules('${locale}').select(${number});`;
+            Prism.highlightElement(codeEl);
+            try {
+                const pr = new Intl.PluralRules(locale);
+                resultEl.textContent = pr.select(number);
+            } catch (e) {
+                resultEl.textContent = e.message;
+            }
+        }
+        [localeEl, numberEl].forEach(el => {
+            el.addEventListener('change', update);
+            el.addEventListener('input', update);
+        });
+        update();
+    }
+    
+    // RelativeTimeFormat Playground
+    function initRelativeTimeFormat() {
+        const localeEl = document.getElementById('rtf-locale');
+        const valueEl = document.getElementById('rtf-value');
+        const unitEl = document.getElementById('rtf-unit');
+        const numericEl = document.getElementById('rtf-numeric');
+        const codeEl = document.getElementById('rtf-code');
+        const resultEl = document.getElementById('rtf-result');
+
+        function update() {
+            const locale = localeEl.value;
+            const value = parseFloat(valueEl.value);
+            const unit = unitEl.value;
+            const numeric = numericEl.value;
+            
+            const options = { numeric };
+            const optionsString = JSON.stringify(options);
+
+            codeEl.textContent = `const options = ${optionsString};\n\nnew Intl.RelativeTimeFormat('${locale}', options).format(${value}, '${unit}');`;
+            Prism.highlightElement(codeEl);
+            
+            try {
+                const rtf = new Intl.RelativeTimeFormat(locale, options);
+                resultEl.textContent = rtf.format(value, unit);
+            } catch (e) {
+                resultEl.textContent = e.message;
+            }
+        }
+        [localeEl, valueEl, unitEl, numericEl].forEach(el => {
+             el.addEventListener('change', update);
+             el.addEventListener('input', update);
+        });
+        update();
+    }
+
+    // ListFormat Playground
+    function initListFormat() {
+        const localeEl = document.getElementById('lf-locale');
+        const itemsEl = document.getElementById('lf-items');
+        const typeEl = document.getElementById('lf-type');
+        const styleEl = document.getElementById('lf-style');
+        const codeEl = document.getElementById('lf-code');
+        const resultEl = document.getElementById('lf-result');
+
+        function update() {
+            const locale = localeEl.value;
+            const items = itemsEl.value.split(',').map(s => s.trim()).filter(Boolean);
+            const type = typeEl.value;
+            const style = styleEl.value;
+            
+            const options = { type, style };
+            const optionsString = JSON.stringify(options);
+
+            codeEl.textContent = `const items = ${JSON.stringify(items)};\nconst options = ${optionsString};\n\nnew Intl.ListFormat('${locale}', options).format(items);`;
+            Prism.highlightElement(codeEl);
+
+            try {
+                const lf = new Intl.ListFormat(locale, options);
+                resultEl.textContent = lf.format(items);
+            } catch (e) {
+                resultEl.textContent = e.message;
+            }
+        }
+        [localeEl, itemsEl, typeEl, styleEl].forEach(el => {
+             el.addEventListener('change', update);
+             el.addEventListener('input', update);
+        });
+        update();
+    }
+
+    // DisplayNames Playground
+    function initDisplayNames() {
+        const localeEl = document.getElementById('dn-locale');
+        const typeEl = document.getElementById('dn-type');
+        const codeEl = document.getElementById('dn-code');
+        const codeBlockEl = document.getElementById('dn-code-block');
+        const resultEl = document.getElementById('dn-result');
+
+        function update() {
+            const locale = localeEl.value;
+            const type = typeEl.value;
+            const code = codeEl.value;
+
+            const options = { type };
+            const optionsString = JSON.stringify(options);
+
+            codeBlockEl.textContent = `const options = ${optionsString};\n\nnew Intl.DisplayNames(['${locale}'], options).of('${code}');`;
+            Prism.highlightElement(codeBlockEl);
+            
+            try {
+                const dn = new Intl.DisplayNames([locale], options);
+                resultEl.textContent = dn.of(code);
+            } catch (e) {
+                resultEl.textContent = `Error: ${e.message}`;
+            }
+        }
+        [localeEl, typeEl, codeEl].forEach(el => {
+             el.addEventListener('change', update);
+             el.addEventListener('input', update);
+        });
+        update();
+    }
+
+    // Segmenter Playground
+    function initSegmenter() {
+        const localeEl = document.getElementById('seg-locale');
+        const textEl = document.getElementById('seg-text');
+        const granularityEl = document.getElementById('seg-granularity');
+        const codeEl = document.getElementById('seg-code');
+        const resultEl = document.getElementById('seg-result');
+
+        function update() {
+            const locale = localeEl.value;
+            const text = textEl.value;
+            const granularity = granularityEl.value;
+
+            const options = { granularity };
+            const optionsString = JSON.stringify(options);
+            
+            codeEl.textContent = `const text = "${text.substring(0, 30)}...";\nconst options = ${optionsString};\n\nconst segmenter = new Intl.Segmenter('${locale}', options);\nconst segments = Array.from(segmenter.segment(text));`;
+            Prism.highlightElement(codeEl);
+            
+            try {
+                const segmenter = new Intl.Segmenter(locale, options);
+                const segments = segmenter.segment(text);
+                resultEl.innerHTML = Array.from(segments).map(s => `<span class="bg-sky-200 text-sky-800 p-1 rounded">${s.segment}</span>`).join('');
+            } catch (e) {
+                resultEl.textContent = e.message;
+            }
+        }
+        [localeEl, textEl, granularityEl].forEach(el => {
+             el.addEventListener('change', update);
+             el.addEventListener('input', update);
+        });
+        update();
+    }
+
+    // Locale Playground
+    function initLocale() {
+        const stringEl = document.getElementById('loc-string');
+        const codeEl = document.getElementById('loc-code');
+        const resultEl = document.getElementById('loc-result');
+
+        function update() {
+            const localeString = stringEl.value;
+            codeEl.textContent = `const locale = new Intl.Locale('${localeString}');`;
+            Prism.highlightElement(codeEl);
+            
+            try {
+                const locale = new Intl.Locale(localeString);
+                const properties = ['baseName', 'language', 'script', 'region', 'calendar', 'collation', 'hourCycle', 'numberingSystem'];
+                let html = '';
+                properties.forEach(prop => {
+                    if (locale[prop]) {
+                         html += `<div><strong class="font-medium">${prop}:</strong> ${locale[prop]}</div>`;
+                    }
+                });
+                resultEl.innerHTML = html;
+            } catch (e) {
+                resultEl.innerHTML = `<div class="text-red-600">${e.message}</div>`;
+            }
+        }
+        stringEl.addEventListener('input', update);
+        update();
+    }
+    
+    // Temporal Section Logic
+    function initTemporalStatusCheck() {
+        if (typeof window.Temporal === 'object' && window.Temporal !== null) {
+            const isNative = window.Temporal.PlainDate.toString().includes('[native code]');
+            document.getElementById('temporal-status').innerHTML = `<strong class="font-semibold">Temporal Status:</strong> You are running the ${isNative ? '<strong>native browser implementation</strong>.' : '<strong>polyfill</strong>.'}`;
+        } else {
+             document.getElementById('temporal-status').innerHTML = '<strong class="font-semibold text-red-600">Note:</strong> The Temporal API polyfill is included, but it may not be supported in this browser environment.';
+        }
+    }
+
+    // Initialize all playgrounds immediately
+    initDateTimeFormat();
+    initNumberFormat();
+    initCollator();
+    initPluralRules();
+    initRelativeTimeFormat();
+    initListFormat();
+    initDisplayNames();
+    initSegmenter();
+    initLocale();
+    
+    // Initial page load
+    setActiveSection(window.location.hash);
+    
+    // Defer Temporal check until all resources are loaded
+    window.addEventListener('load', initTemporalStatusCheck);
+});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Guide to Chrome's Built-in AI APIs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+            --base03: #002b36; --base02: #073642; --base01: #586e75; --base00: #657b83;
+            --base0: #839496; --base1: #93a1a1; --base2: #eee8d5; --base3: #fdf6e3;
+            --yellow: #b58900; --orange: #cb4b16; --red: #dc322f; --magenta: #d33682;
+            --violet: #6c71c4; --blue: #268bd2; --cyan: #2aa198; --green: #859900;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--base3);
+            color: var(--base00);
+        }
+        .nav-link.active { color: var(--orange); border-bottom-color: var(--orange); }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .api-section, .card {
+            background-color: var(--base2);
+            border: 1px solid var(--base1);
+        }
+        h1, h2, h3, h4 { color: var(--base02); }
+        .btn-primary {
+            background-color: var(--blue);
+            color: var(--base3);
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover { background-color: var(--cyan); }
+        .btn-primary:disabled { background-color: var(--base1); cursor: not-allowed; }
+        .status-badge {
+            display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-weight: 600; font-size: 0.8rem; color: white;
+        }
+        .status-available { background-color: var(--green); }
+        .status-downloadable { background-color: var(--yellow); }
+        .status-downloading { background-color: var(--blue); }
+        .status-unavailable { background-color: var(--red); }
+        .status-unknown { background-color: var(--base1); }
+        pre[class*="language-"] {
+            background: var(--base3) !important;
+            border: 1px solid var(--base1);
+            border-radius: 0.5rem;
+        }
+        code {
+            background-color: var(--base2);
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+        }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div class="min-h-screen flex flex-col">
+      <!-- Header & Navigation -->
+      <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div class="text-xl font-bold text-orange-600">
+            Chrome On-Device AI
+          </div>
+          <div class="hidden md:flex items-center space-x-6">
+            <a href="#home" class="nav-link border-b-2 border-transparent pb-1">Home</a>
+            <a href="#concepts" class="nav-link border-b-2 border-transparent pb-1">Core Concepts</a>
+            <a href="#getting-started" class="nav-link border-b-2 border-transparent pb-1">Getting Started</a>
+            <a href="#examples" class="nav-link border-b-2 border-transparent pb-1">Live Examples</a>
+            <a href="#responsible-ai" class="nav-link border-b-2 border-transparent pb-1">Responsible AI</a>
+          </div>
+          <button id="mobile-menu-button" class="md-hidden focus:outline-none text-2xl">☰</button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+          <a href="#home" class="block py-2 nav-link">Home</a>
+          <a href="#concepts" class="block py-2 nav-link">Core Concepts</a>
+          <a href="#getting-started" class="block py-2 nav-link">Getting Started</a>
+          <a href="#examples" class="block py-2 nav-link">Live Examples</a>
+          <a href="#responsible-ai" class="block py-2 nav-link">Responsible AI</a>
+        </div>
+      </header>
+      <!-- Main Content -->
+      <main class="flex-grow container mx-auto px-6 py-12">
+        <section id="home" class="content-section">
+          <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">The Future of Web Intelligence is On-Device</h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">This guide provides a comprehensive overview and hands-on examples of Chrome's built-in AI APIs, a technology that brings powerful, private, and responsive AI directly into the browser.</p>
+          </div>
+          <div class="mt-12 grid md:grid-cols-3 gap-8 text-center">
+            <div class="card p-8 rounded-lg">
+              <div class="text-5xl mb-4">🔒</div>
+              <h3 class="text-xl font-bold mb-2">Enhanced Privacy</h3>
+              <p>Process user data locally, ensuring sensitive information never leaves the device. A new standard for secure, AI-powered features.</p>
+            </div>
+            <div class="card p-8 rounded-lg">
+              <div class="text-5xl mb-4">⚡️</div>
+              <h3 class="text-xl font-bold mb-2">Instantaneous Speed</h3>
+              <p>Eliminate network latency for real-time AI interactions. Experience virtually instant responses and robust offline functionality.</p>
+            </div>
+            <div class="card p-8 rounded-lg">
+              <div class="text-5xl mb-4">🌍</div>
+              <h3 class="text-xl font-bold mb-2">Greater Accessibility</h3>
+              <p>Reduce server costs and broaden access to AI features, creating opportunities for free tiers and wider adoption.</p>
+            </div>
+          </div>
+        </section>
+        <section id="concepts" class="content-section">
+          <h2 class="text-3xl font-bold text-center mb-10">The Architectural Shift: On-Device vs. Server-Side</h2>
+          <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Chrome's built-in AI represents a move from cloud-based processing to on-device inference. This paradigm offers compelling benefits in privacy and speed but requires careful engineering to handle device limitations and ensure a good user experience.</p>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="card p-6 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">On-Device Advantage</h3>
+              <ul class="space-y-3">
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Privacy First:</strong>
+                    Data stays on the user's device, ideal for sensitive applications.</div></li>
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Zero Latency:</strong>
+                    Instantaneous responses enable real-time features and offline capabilities.</div></li>
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Cost-Effective:</strong>
+                    Reduces server infrastructure costs, enabling free tiers.</div></li>
+                <li class="flex items-start"><strong class="text-red-600 mr-3 text-xl">✗</strong><div><strong>Graceful Fallbacks:</strong>
+                    Must be designed for devices that don't meet hardware requirements.</div></li>
+                <li class="flex items-start"><strong class="text-red-600 mr-3 text-xl">✗</strong><div><strong>Resource Management:</strong>
+                    Requires careful handling of large model downloads and device storage.</div></li>
+              </ul>
+            </div>
+            <div class="card p-6 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">Server-Side Strengths</h3>
+              <ul class="space-y-3">
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Massive Scale:</strong>
+                    Access to large, powerful models for complex, open-ended tasks.</div></li>
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Centralized Updates:</strong>
+                    Models can be improved on the server without client-side changes.</div></li>
+                <li class="flex items-start"><strong class="text-green-600 mr-3 text-xl">✓</strong><div><strong>Hardware Agnostic:</strong>
+                    Works on any device with a browser.</div></li>
+                <li class="flex items-start"><strong class="text-red-600 mr-3 text-xl">✗</strong><div><strong>Privacy Concerns:</strong>
+                    Requires sending user data to a server.</div></li>
+                <li class="flex items-start"><strong class="text-red-600 mr-3 text-xl">✗</strong><div><strong>High Costs:</strong>
+                    Significant infrastructure costs for GPUs, bandwidth, and maintenance.</div></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="getting-started" class="content-section">
+          <h2 class="text-3xl font-bold text-center mb-10">Setup and Lifecycle</h2>
+          <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Before coding, you must ensure the environment meets specific requirements. The implementation then follows a clear, user-centric lifecycle from checking availability to creating a session.</p>
+          <div class="card p-8 rounded-lg mb-12">
+            <h3 class="text-2xl font-bold text-center mb-6">1. System Prerequisites</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="text-center"><h4 class="font-bold text-lg">Operating System</h4><p class="text-sm">Windows 10/11, macOS 13+, or Linux.</p></div>
+              <div class="text-center"><h4 class="font-bold text-lg">Storage</h4><p class="text-sm">At least 22 GB of free disk space.</p></div>
+              <div class="text-center"><h4 class="font-bold text-lg">GPU / VRAM</h4><p class="text-sm">A dedicated GPU with >4 GB of VRAM.</p></div>
+              <div class="text-center"><h4 class="font-bold text-lg">Network</h4><p class="text-sm">Unmetered connection for model download.</p></div>
+            </div>
+          </div>
+          <div class="card p-8 rounded-lg mb-12">
+            <h3 class="text-2xl font-bold text-center mb-6">2. Enabling the Model via Experimental Flags</h3>
+            <p class="text-center text-sm mb-6 max-w-3xl mx-auto">For local development, you enable the underlying AI model with a single flag. This flag makes the browser aware of the model and its capabilities, including the download process.</p>
+            <div class="max-w-2xl mx-auto bg-[#fdf6e3] p-6 rounded">
+              <h4 class="font-semibold text-lg mb-2">The "One Flag" Model</h4>
+              <p class="text-sm mb-4">You only need to enable
+                <strong>one flag</strong>
+                to get started:</p>
+              <ol class="list-decimal list-inside space-y-3 text-sm">
+                <li>Navigate to
+                  <code>chrome://flags</code>.</li>
+                <li>Search for and
+                  <strong>Enable</strong>
+                  the flag named
+                  <code>Prompt API for Gemini Nano</code>
+                  (<code>#prompt-api-for-gemini-nano</code>).</li>
+                <li>Relaunch Chrome.</li>
+              </ol>
+              <h4 class="font-semibold text-lg mt-6 mb-2">What This Flag Does:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>It enables the Gemini Nano model itself.</strong>
+                  This single flag covers all experimental APIs that rely on this model, such as the
+                  <strong>Prompt API</strong>
+                  and the
+                  <strong>Summarizer API</strong>.</li>
+                <li><strong>It enables the download workflow.</strong>
+                  You do not need a separate flag for downloads. Once the main flag is on, the browser manages the model download as part of the API's standard lifecycle, triggered by user activation.</li>
+                <li>Stable APIs like the
+                  <strong>Translator</strong>
+                  and
+                  <strong>Language Detector</strong>
+                  do not depend on this model and do not require this flag.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card p-8 rounded-lg mb-12">
+            <h3 class="text-2xl font-bold text-center mb-6">3. The Implementation Lifecycle</h3>
+            <div class="flex flex-col md:flex-row items-start justify-center space-y-4 md:space-y-0 md:space-x-8 text-center">
+              <div class="flex-1"><div class="text-3xl font-bold text-blue-500 mb-2">A</div><h4 class="font-semibold">Check Availability</h4><p class="text-sm">Use
+                  <code>availability()</code>
+                  to see if the model is
+                  <code>available</code>,
+                  <code>downloadable</code>, or
+                  <code>unavailable</code>.</p></div>
+              <div class="text-2xl text-gray-300 mt-6 hidden md:block">→</div>
+              <div class="flex-1"><div class="text-3xl font-bold text-blue-500 mb-2">B</div><h4 class="font-semibold">Get User Activation</h4><p class="text-sm">Require a user action (like a click) to initiate downloads or create a session.</p></div>
+              <div class="text-2xl text-gray-300 mt-6 hidden md:block">→</div>
+              <div class="flex-1"><div class="text-3xl font-bold text-blue-500 mb-2">C</div><h4 class="font-semibold">Create Session</h4><p class="text-sm">Once activated and available, call
+                  <code>create()</code>
+                  to start a processing session.</p></div>
+            </div>
+          </div>
+          <div class="card p-8 rounded-lg">
+            <h3 class="text-2xl font-bold text-center mb-6">4. The User Consent Model (No Permission Prompt)</h3>
+            <p class="text-center text-sm mb-6 max-w-3xl mx-auto">Unlike APIs that access sensitive hardware like the camera, Chrome's built-in AI does not trigger a traditional "Allow/Block" permission prompt. Instead, consent is granted through
+              <strong>user activation</strong>. Resource-intensive actions, like downloading the model or creating a session, can
+              <strong>only</strong>
+              be initiated in response to a direct user action (e.g., a click). This privacy-by-design approach prevents websites from using your computer's resources without your explicit, in-the-moment intent, directly enforcing the principle of User Autonomy.</p>
+          </div>
+        </section>
+        <section id="examples" class="content-section">
+          <h2 class="text-3xl font-bold text-center mb-10">Live API Examples</h2>
+          <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Interact with the APIs directly. The examples below are fully functional. You can modify the inputs and see the on-device AI in action. Remember to enable the necessary flags as described in the "Getting Started" section.</p>
+          <div class="card p-6 rounded-lg mb-12">
+            <h3 class="text-xl font-bold text-center mb-4">Understanding the Models</h3>
+            <div class="text-sm text-center max-w-2xl mx-auto">
+              <p>The APIs in this section use different underlying models. The
+                <strong>Prompt API</strong>
+                and
+                <strong>Summarizer API</strong>
+                are powered by the flexible
+                <strong class="text-orange-600">Gemini Nano</strong>
+                model, which requires the experimental flag. The stable
+                <strong>Translator API</strong>
+                and
+                <strong>Language Detector API</strong>
+                use different, highly specialized and optimized models for their specific tasks and do not require the flag.</p>
+            </div>
+          </div>
+          <!-- Prompt API Example -->
+          <div class="api-section p-6 rounded-lg shadow-md mb-12">
+            <h3 class="text-2xl font-bold mb-4">1. Prompt API (Gemini Nano)</h3>
+            <div class="mb-4"><label for="prompt-input" class="block font-semibold mb-2">Enter your prompt:</label><textarea id="prompt-input" class="w-full p-2 border border-[#93a1a1] rounded bg-[#fdf6e3]" rows="3">Write a short poem about the future of the web</textarea></div>
+            <div class="flex items-center space-x-4 mb-4"><button id="prompt-button" class="btn-primary font-bold py-2 px-4 rounded" disabled>Run Prompt</button><div id="prompt-status" class="status-badge status-unknown">Checking...</div></div>
+            <div class="mt-4 p-4 bg-[#fdf6e3] rounded border border-[#93a1a1]"><h4 class="font-semibold mb-2">API Output:</h4><div id="prompt-output" class="whitespace-pre-wrap font-mono text-sm min-h-[50px]"></div></div>
+            <details class="mt-4"><summary class="cursor-pointer font-semibold">View Code</summary><pre><code class="language-javascript" id="prompt-code"></code></pre></details>
+          </div>
+          <!-- Summarizer API Example -->
+          <div class="api-section p-6 rounded-lg shadow-md mb-12">
+            <h3 class="text-2xl font-bold mb-4">2. Summarizer API (Gemini Nano)</h3>
+            <div class="mb-4"><label for="summarizer-input" class="block font-semibold mb-2">Text to summarize:</label><textarea id="summarizer-input" class="w-full p-2 border border-[#93a1a1] rounded bg-[#fdf6e3]" rows="8">The web is a vast and ever-evolving platform. Initially conceived as a system for sharing academic documents, it has grown into a global medium for communication, commerce, and entertainment. The introduction of technologies like HTML5, CSS3, and modern JavaScript frameworks has enabled developers to create rich, interactive applications that rival native desktop software. More recently, the integration of powerful capabilities like WebAssembly, WebGL for 3D graphics, and Progressive Web Apps (PWAs) has further blurred the lines between web and native. The next frontier appears to be on-device machine learning, allowing for intelligent, private, and low-latency applications directly within the browser, reducing reliance on cloud servers and empowering a new generation of web experiences.</textarea></div>
+            <div class="flex items-center space-x-4 mb-4"><button id="summarizer-button" class="btn-primary font-bold py-2 px-4 rounded" disabled>Summarize</button><div id="summarizer-status" class="status-badge status-unknown">Checking...</div></div>
+            <div class="mt-4 p-4 bg-[#fdf6e3] rounded border border-[#93a1a1]"><h4 class="font-semibold mb-2">Summary:</h4><div id="summarizer-output" class="whitespace-pre-wrap min-h-[50px]"></div></div>
+            <details class="mt-4"><summary class="cursor-pointer font-semibold">View Code</summary><pre><code class="language-javascript" id="summarizer-code"></code></pre></details>
+          </div>
+          <!-- Translator API Example -->
+          <div class="api-section p-6 rounded-lg shadow-md mb-12">
+            <h3 class="text-2xl font-bold mb-4">3. Translator API (Specialized Model)</h3>
+            <div class="mb-4"><label for="translator-input" class="block font-semibold mb-2">Text to translate:</label><textarea id="translator-input" class="w-full p-2 border border-[#93a1a1] rounded bg-[#fdf6e3]" rows="3">Hello, world! This is a test of the on-device translation API.</textarea></div>
+            <div class="flex items-center space-x-4 mb-4"><label for="target-lang">Translate to:</label><select id="target-lang" class="p-2 border border-[#93a1a1] rounded bg-[#fdf6e3]"><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ja">Japanese</option></select><button id="translator-button" class="btn-primary font-bold py-2 px-4 rounded">Translate</button></div>
+            <div class="mt-4 p-4 bg-[#fdf6e3] rounded border border-[#93a1a1]"><h4 class="font-semibold mb-2">Translation:</h4><div id="translator-output" class="whitespace-pre-wrap min-h-[50px]"></div></div>
+            <details class="mt-4"><summary class="cursor-pointer font-semibold">View Code</summary><pre><code class="language-javascript" id="translator-code"></code></pre></details>
+          </div>
+          <!-- Language Detector API Example -->
+          <div class="api-section p-6 rounded-lg shadow-md mb-12">
+            <h3 class="text-2xl font-bold mb-4">4. Language Detector API (Specialized Model)</h3>
+            <div class="mb-4"><label for="detector-input" class="block font-semibold mb-2">Text to analyze:</label><textarea id="detector-input" class="w-full p-2 border border-[#93a1a1] rounded bg-[#fdf6e3]" rows="3">Bonjour le monde. Ceci est un test.</textarea></div>
+            <div class="flex items-center space-x-4 mb-4"><button id="detector-button" class="btn-primary font-bold py-2 px-4 rounded">Detect Language</button></div>
+            <div class="mt-4 p-4 bg-[#fdf6e3] rounded border border-[#93a1a1]"><h4 class="font-semibold mb-2">Detected Language:</h4><div id="detector-output" class="whitespace-pre-wrap font-mono min-h-[50px]"></div></div>
+            <details class="mt-4"><summary class="cursor-pointer font-semibold">View Code</summary><pre><code class="language-javascript" id="detector-code"></code></pre></details>
+          </div>
+        </section>
+        <section id="responsible-ai" class="content-section">
+          <h2 class="text-3xl font-bold text-center mb-10">Engineering with Empathy: Responsible AI</h2>
+          <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Integrating AI requires a human-centered approach. The API design itself encourages best practices by encoding ethical principles directly into its technical framework, guiding developers toward creating responsible and trustworthy applications.</p>
+          <div class="space-y-12">
+            <!-- Principle 1: User Autonomy -->
+            <div class="card p-8 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">Principle 1: User Autonomy is Non-Negotiable</h3>
+              <p class="mb-4">The core principle of user autonomy is that people, not technology, should be in control. The API enforces this by requiring
+                <strong>user activation</strong>
+                for any resource-intensive action. This means a user must perform a direct action, like a click, to initiate a model download or start an AI session.</p>
+              <h4 class="font-semibold text-lg mt-6 mb-2">Developer Best Practices:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Design for Intent:</strong>
+                  Your UI must be explicit. A button should clearly state the AI action it will perform (e.g., "Summarize with AI," not just "Submit"). This ensures the user's click is an act of informed consent.</li>
+                <li><strong>Provide Clear Controls:</strong>
+                  Give users obvious ways to start, stop, and cancel AI tasks. Avoid automatic or surprising AI behaviors that happen without a direct user command.</li>
+                <li><strong>Check for Activation:</strong>
+                  While a click handler inherently confirms activation, it's good practice to be aware of the
+                  <code>navigator.userActivation.isActive</code>
+                  property for more complex user flows.</li>
+              </ul>
+            </div>
+            <!-- Principle 2: Transparency & Graceful Failures -->
+            <div class="card p-8 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">Principle 2: Transparency Through Graceful Fallbacks</h3>
+              <p class="mb-4">Trust is built on transparency. The API's mandatory
+                <code>availability()</code>
+                check is a tool for this. It forces you to acknowledge that the AI may not always be available and to design for that reality. A silent failure erodes trust; a clear explanation builds it.</p>
+              <h4 class="font-semibold text-lg mt-6 mb-2">Developer Best Practices:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Handle All States:</strong>
+                  Your application must have a clear UI for each availability state:
+                  <code>available</code>
+                  (feature is active),
+                  <code>downloadable</code>
+                  (feature can be activated),
+                  <code>downloading</code>
+                  (show progress), and
+                  <code>unavailable</code>.</li>
+                <li><strong>Explain "Unavailable":</strong>
+                  When the state is
+                  <code>unavailable</code>, don't just hide the feature. If possible, provide a tooltip or message explaining why (e.g., "This AI feature requires a device with more than 4GB of graphics memory.").</li>
+                <li><strong>Offer Alternatives:</strong>
+                  In a fallback scenario, provide an alternative. This could be a non-AI version of the feature or an option to use a server-side AI if your architecture supports it.</li>
+              </ul>
+            </div>
+            <!-- Principle 3: Feedback & Alignment -->
+            <div class="card p-8 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">Principle 3: Building Trust with Feedback and Alignment</h3>
+              <p class="mb-4">On-device models are powerful but not perfect. Building a "bidirectional feedback loop" allows users to correct the system and helps you align the model's general capabilities with your specific use case.</p>
+              <h4 class="font-semibold text-lg mt-6 mb-2">Developer Best Practices:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Implement Feedback Mechanisms:</strong>
+                  Place simple feedback controls (e.g., thumbs up/down icons) next to AI-generated content. This gives users a sense of agency and provides you with valuable data on the model's performance in your app.</li>
+                <li><strong>Master Prompt Engineering:</strong>
+                  For the Prompt API, the most effective way to "align" the model is through careful prompt design. Pre-process user input to create a detailed prompt that includes context, desired tone, and structural guidance to get better, more consistent results.</li>
+                <li><strong>Encourage Editing:</strong>
+                  Frame the AI's output as a "draft" or "suggestion." This encourages users to review, edit, and take ownership of the final content, positioning the AI as a helpful assistant, not an infallible authority.</li>
+              </ul>
+            </div>
+            <!-- Principle 4: Safety & Ethical Boundaries -->
+            <div class="card p-8 rounded-lg">
+              <h3 class="text-2xl font-bold mb-4">Principle 4: Upholding Safety and Ethical Boundaries</h3>
+              <p class="mb-4">With great power comes great responsibility. Your use of these APIs is governed by Google's
+                <strong>Generative AI Prohibited Use Policy</strong>, which provides the ethical foundation. Your responsibility extends beyond this baseline to consider the specific safety needs of your application.</p>
+              <h4 class="font-semibold text-lg mt-6 mb-2">Developer Best Practices:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Know the Policy:</strong>
+                  Before shipping, thoroughly review the prohibited uses. Do not build features that facilitate harassment, generate deceptive content, or operate in high-stakes domains like finance or healthcare without human oversight.</li>
+                <li><strong>Add Application-Layer Safeguards:</strong>
+                  The on-device model has built-in safety filters, but you should add your own. For an app that generates social media comments, this could mean adding a client-side filter for toxic language or hate speech.</li>
+                <li><strong>Consider the Context:</strong>
+                  Think about how your AI feature could be misused in the context of your application. Design guardrails to mitigate those risks, such as rate-limiting generation or requiring human review before content is made public.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+      // Main Navigation Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            function updateActiveState() {
+                let currentHash = window.location.hash || '#home';
+                navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === currentHash));
+                sections.forEach(section => section.classList.toggle('active', '#' + section.id === currentHash));
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = link.getAttribute('href');
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            window.addEventListener('hashchange', updateActiveState);
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            updateActiveState();
+        });
+
+        // --- API EXAMPLE SCRIPTS ---
+        
+        // Example 1: Prompt API
+        (function runPromptExample() {
+            const promptButton = document.getElementById('prompt-button');
+            const promptStatus = document.getElementById('prompt-status');
+            const promptInput = document.getElementById('prompt-input');
+            const promptOutput = document.getElementById('prompt-output');
+            const codeBlock = document.getElementById('prompt-code');
+
+            const implementation = async () => {
+                try {
+                    if (!window.ai || !window.ai.getCompletion) {
+                        promptStatus.textContent = 'API Not Found';
+                        promptStatus.className = 'status-badge status-unavailable';
+                        return;
+                    }
+                    const availability = await window.ai.getCompletion;
+                    promptStatus.textContent = availability;
+                    if (availability === 'available') {
+                        promptStatus.className = 'status-badge status-available';
+                        promptButton.disabled = false;
+                    } else if (availability === 'downloadable') {
+                        promptStatus.className = 'status-badge status-downloadable';
+                        promptButton.disabled = false;
+                        promptButton.textContent = 'Download Model & Run';
+                    } else {
+                        promptStatus.className = 'status-badge status-unavailable';
+                    }
+                } catch (e) {
+                    promptStatus.textContent = 'Error';
+                    promptStatus.className = 'status-badge status-unavailable';
+                    console.error(e);
+                }
+            };
+            
+            promptButton.addEventListener('click', async () => {
+                promptButton.disabled = true;
+                promptButton.textContent = 'Processing...';
+                promptOutput.textContent = '';
+                try {
+                    const session = await window.ai.createCompletionSession();
+                    const stream = session.promptStreaming(promptInput.value);
+                    for await (const chunk of stream) {
+                        promptOutput.textContent += chunk;
+                    }
+                } catch (e) {
+                    promptOutput.textContent = `Error: ${e.message}`;
+                    console.error(e);
+                } finally {
+                    promptButton.disabled = false;
+                    promptButton.textContent = 'Run Prompt';
+                }
+            });
+            
+            codeBlock.textContent = `const availability = await window.ai.getCompletion;
+if (availability === 'available' || availability === 'downloadable') {
+    // Enable UI
+}
+promptButton.addEventListener('click', async () => {
+    const session = await window.ai.createCompletionSession();
+    const stream = session.promptStreaming(promptInput.value);
+    for await (const chunk of stream) {
+        // Update UI with chunk
+    }
+});`;
+            implementation();
+        })();
+
+        // Example 2: Summarizer API
+        (function runSummarizerExample() {
+            const btn = document.getElementById('summarizer-button');
+            const status = document.getElementById('summarizer-status');
+            const input = document.getElementById('summarizer-input');
+            const output = document.getElementById('summarizer-output');
+            const codeBlock = document.getElementById('summarizer-code');
+
+            const implementation = async () => {
+                if (typeof Summarizer === 'undefined') {
+                    status.textContent = 'API Not Found';
+                    status.className = 'status-badge status-unavailable';
+                    return;
+                }
+                try {
+                    const availability = await Summarizer.availability();
+                    status.textContent = availability;
+                    if (availability === 'available' || availability === 'downloadable') {
+                        status.className = `status-badge status-${availability}`;
+                        btn.disabled = false;
+                    } else {
+                        status.className = 'status-badge status-unavailable';
+                    }
+                } catch (e) {
+                    status.textContent = 'Error';
+                    status.className = 'status-badge status-unavailable';
+                    console.error(e);
+                }
+            };
+
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                output.textContent = 'Processing...';
+                try {
+                    const summarizer = await Summarizer.create();
+                    const summary = await summarizer.summarize(input.value);
+                    output.textContent = summary;
+                } catch (e) {
+                    output.textContent = `Error: ${e.message}`;
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+            
+            codeBlock.textContent = `const availability = await Summarizer.availability();
+if (availability === 'available' || availability === 'downloadable') {
+    // Enable UI
+}
+summarizerButton.addEventListener('click', async () => {
+    const summarizer = await Summarizer.create();
+    const summary = await summarizer.summarize(text);
+    // Update UI with summary
+});`;
+            implementation();
+        })();
+
+        // Example 3: Translator API
+        (function runTranslatorExample() {
+            const btn = document.getElementById('translator-button');
+            const input = document.getElementById('translator-input');
+            const output = document.getElementById('translator-output');
+            const select = document.getElementById('target-lang');
+            const codeBlock = document.getElementById('translator-code');
+            
+            const implementation = async () => {
+                if (typeof Translator === 'undefined') {
+                    output.textContent = 'Translator API not available.';
+                    btn.disabled = true;
+                    return;
+                }
+                let translator;
+                try {
+                    translator = await Translator.create();
+                } catch (e) {
+                    output.textContent = `Failed to init: ${e.message}`;
+                    btn.disabled = true;
+                    return;
+                }
+                btn.addEventListener('click', async () => {
+                    btn.disabled = true;
+                    output.textContent = 'Translating...';
+                    try {
+                        const result = await translator.translate(input.value, select.value);
+                        output.textContent = result.translation;
+                    } catch (e) {
+                        output.textContent = `Error: ${e.message}`;
+                    } finally {
+                        btn.disabled = false;
+                    }
+                });
+            };
+            
+            codeBlock.textContent = `if (typeof Translator === 'undefined') { /* handle error */ }
+const translator = await Translator.create();
+translatorButton.addEventListener('click', async () => {
+    const result = await translator.translate(text, targetLang);
+    // Update UI with result.translation
+});`;
+            implementation();
+        })();
+
+        // Example 4: Language Detector API
+        (function runDetectorExample() {
+            const btn = document.getElementById('detector-button');
+            const input = document.getElementById('detector-input');
+            const output = document.getElementById('detector-output');
+            const codeBlock = document.getElementById('detector-code');
+
+            const implementation = async () => {
+                if (typeof LanguageDetector === 'undefined') {
+                    output.textContent = 'LanguageDetector API not available.';
+                    btn.disabled = true;
+                    return;
+                }
+                let detector;
+                try {
+                    detector = await LanguageDetector.create();
+                } catch (e) {
+                    output.textContent = `Failed to init: ${e.message}`;
+                    btn.disabled = true;
+                    return;
+                }
+                btn.addEventListener('click', async () => {
+                    btn.disabled = true;
+                    output.textContent = 'Detecting...';
+                    try {
+                        const result = await detector.detect(input.value);
+                        const topResult = result[0];
+                        output.textContent = `Language: ${topResult.language}, Confidence: ${topResult.confidence.toFixed(4)}`;
+                    } catch (e) {
+                        output.textContent = `Error: ${e.message}`;
+                    } finally {
+                        btn.disabled = false;
+                    }
+                });
+            };
+            
+            codeBlock.textContent = `if (typeof LanguageDetector === 'undefined') { /* handle error */ }
+const detector = await LanguageDetector.create();
+detectorButton.addEventListener('click', async () => {
+    const result = await detector.detect(text);
+    const topResult = result[0]; // Array of possibilities
+    // Update UI with topResult.language
+});`;
+            implementation();
+        })();
+    </script>
+  </body>
+</html>

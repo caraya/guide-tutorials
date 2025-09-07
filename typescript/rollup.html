@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Rollup.js Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application with a fixed, horizontal navigation bar at the top and a main content area. This structure provides a classic, user-friendly layout for a tutorial, allowing users to see all navigation options at a glance while scrolling. The top bar will use a "scroll spy" to highlight the currently viewed section, improving user orientation. Key interactions include smooth scrolling navigation and one-click copy-to-clipboard buttons for all code snippets, which streamlines the developer's workflow. This design was chosen to create an intuitive and efficient learning tool. -->
+    <!-- Visualization & Content Choices: The source material is a technical tutorial, not data-driven. Therefore, traditional charts are not applicable. The primary "visualizations" are the well-structured and styled content sections and code blocks. Report Info: Sequential tutorial steps. -> Goal: Guide user through a learning process. -> Presentation Method: Thematic sections with styled text, commands, and code blocks. -> Interaction: Sticky top navigation with active-section highlighting (scroll spy), and copy-to-clipboard buttons. -> Justification: This structure enhances usability and engagement by making navigation intuitive and code usage frictionless. -> Library/Method: Vanilla JS for all interactions, Tailwind CSS for styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .active-nav {
+            color: #c2410c; /* orange-600 */
+            font-weight: 600;
+            border-bottom: 2px solid #c2410c;
+        }
+        .code-block {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: #374151; /* gray-700 */
+            color: #d1d5db; /* gray-300 */
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out, background-color 0.2s;
+            border: 1px solid #4b5563; /* gray-600 */
+        }
+        .code-block:hover .copy-btn {
+            opacity: 1;
+        }
+        .copy-btn:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+        <nav class="max-w-screen-xl mx-auto px-4">
+            <ul id="nav-menu" class="flex flex-wrap justify-center items-center gap-x-6 sm:gap-x-8 text-sm font-medium">
+                <li><a href="#section-1" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Basic Setup</a></li>
+                <li><a href="#section-2" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Plugins</a></li>
+                <li><a href="#section-3" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Dev vs. Prod</a></li>
+                <li><a href="#section-4" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Assets</a></li>
+                <li><a href="#section-5" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">TypeScript</a></li>
+                <li><a href="#section-6" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Code Splitting</a></li>
+                <li><a href="#section-7" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Formats</a></li>
+                <li><a href="#section-8" class="block py-4 text-stone-600 hover:text-stone-900 border-b-2 border-transparent">Conclusion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-screen-md mx-auto p-8 md:p-12">
+        
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-bold text-stone-900 mb-4">Rollup.js Guide</h1>
+            <p class="text-lg text-stone-500">An interactive tutorial for the next-generation JavaScript module bundler.</p>
+        </div>
+        
+        <section id="section-1" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">1. Project Setup & Basic Configuration</h2>
+            <p class="mb-6 text-stone-600">This section walks you through the initial steps of creating a new project, installing Rollup, and creating your first bundle. We'll set up the basic file structure and configuration needed to get started.</p>
+            
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Initialize the Project</h3>
+            <p class="mb-2 text-stone-600">Create a directory and initialize a new Node.js project.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>mkdir rollup-project
+cd rollup-project
+npm init -y</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Install Rollup</h3>
+            <p class="mb-2 text-stone-600">Install Rollup as a development dependency.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>npm install --save-dev rollup</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 3: Create Source Files</h3>
+            <p class="mb-2 text-stone-600">Create a `src` directory with these two files:</p>
+            <div class="mb-4">
+                <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">src/logger.js</p>
+                <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                    <button class="copy-btn">Copy</button>
+                    <pre><code>// A simple utility function
+export const logMessage = (message) => {
+  console.log(`[INFO] ${message}`);
+};</code></pre>
+                </div>
+            </div>
+            <div>
+                <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">src/main.js</p>
+                <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                    <button class="copy-btn">Copy</button>
+                    <pre><code>import { logMessage } from './logger.js';
+
+const heading = document.createElement('h1');
+heading.textContent = 'Hello, Rollup!';
+document.body.appendChild(heading);
+
+logMessage('Application has started.');</code></pre>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 4: Create a Basic Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">Create a `rollup.config.js` file in the root of your project.</p>
+             <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife' // Immediately Invoked Function Expression
+  }
+};</code></pre>
+            </div>
+        </section>
+
+        <section id="section-2" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">2. Using Plugins for Common Tasks</h2>
+            <p class="mb-6 text-stone-600">Rollup's core functionality is extended through a rich ecosystem of plugins. Here, we'll add some of the most common plugins to handle modules from `node_modules` and transpile modern JavaScript for broader compatibility.</p>
+            
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Install Plugins</h3>
+            <p class="mb-2 text-stone-600">Install plugins for resolving Node modules and transpiling with Babel.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>npm install --save-dev @rollup/plugin-node-resolve @rollup/plugin-commonjs @rollup/plugin-babel @babel/core @babel/preset-env</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Update Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">Import and add the plugins to your `rollup.config.js`. This is the complete file at this stage.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife',
+    sourcemap: true,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    babel({ babelHelpers: 'bundled' })
+  ]
+};</code></pre>
+            </div>
+        </section>
+
+        <section id="section-3" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">3. Development vs. Production Configurations</h2>
+            <p class="mb-6 text-stone-600">Different environments require different build outputs. For development, we want fast rebuilds, a local server, and source maps. For production, we want a minified, optimized bundle. This section shows how to manage both from a single configuration file.</p>
+            
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Install Dev/Prod Plugins</h3>
+            <p class="mb-2 text-stone-600">Install plugins for serving content, live reloading, and minification.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>npm install --save-dev rollup-plugin-serve rollup-plugin-livereload @rollup/plugin-terser</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Update `package.json` Scripts</h3>
+            <p class="mb-2 text-stone-600">Add `dev` and `build` scripts to your `package.json`.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">package.json</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>{
+  ...
+  "scripts": {
+    "build": "NODE_ENV=production rollup -c",
+    "dev": "rollup -c -w"
+  },
+  ...
+}</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 3: Update Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">Use an environment variable to conditionally apply plugins. This is the complete file at this stage.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import terser from '@rollup/plugin-terser';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife',
+    sourcemap: !isProduction,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    babel({ babelHelpers: 'bundled', exclude: 'node_modules/**' }),
+
+    !isProduction && serve({
+      contentBase: ['dist'],
+      port: 3000,
+    }),
+    !isProduction && livereload('dist'),
+
+    isProduction && terser()
+  ]
+};</code></pre>
+            </div>
+        </section>
+        
+        <section id="section-4" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">4. Handling CSS and Images</h2>
+            <p class="mb-6 text-stone-600">Modern web development involves more than just JavaScript. Learn how to use Rollup plugins to import, process, and bundle assets like CSS files and images directly within your project.</p>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Install Asset Plugins</h3>
+            <p class="mb-2 text-stone-600">Install plugins for handling CSS and image files.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>npm install --save-dev rollup-plugin-postcss @rollup/plugin-image</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Update Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">Add the asset plugins to your configuration. This is the complete file at this stage.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import terser from '@rollup/plugin-terser';
+import postcss from 'rollup-plugin-postcss';
+import image from '@rollup/plugin-image';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife',
+    sourcemap: !isProduction,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    babel({ babelHelpers: 'bundled', exclude: 'node_modules/**' }),
+    image(),
+    postcss({
+      extract: 'bundle.css',
+      minimize: isProduction,
+    }),
+    !isProduction && serve({ contentBase: ['dist'], port: 3000 }),
+    !isProduction && livereload('dist'),
+    isProduction && terser(),
+  ]
+};</code></pre>
+            </div>
+        </section>
+
+        <section id="section-5" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">5. Using Rollup with TypeScript</h2>
+            <p class="mb-6 text-stone-600">Integrate the power of static typing into your Rollup workflow. This section covers setting up the TypeScript compiler and the official Rollup plugin to build type-safe applications.</p>
+            
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Install Dependencies</h3>
+            <p class="mb-2 text-stone-600">Install TypeScript and the Rollup TypeScript plugin.</p>
+            <div class="code-block bg-stone-800 text-white rounded-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>npm install --save-dev typescript @rollup/plugin-typescript</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Configure TypeScript</h3>
+            <p class="mb-2 text-stone-600">Create a `tsconfig.json` file to configure the TypeScript compiler.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">tsconfig.json</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 3: Update Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">Add the TypeScript plugin and update the input file. This is the complete file at this stage.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import terser from '@rollup/plugin-terser';
+import postcss from 'rollup-plugin-postcss';
+import image from '@rollup/plugin-image';
+import typescript from '@rollup/plugin-typescript';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+export default {
+  input: 'src/main.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife',
+    sourcemap: !isProduction,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript({ sourceMap: !isProduction }),
+    babel({ babelHelpers: 'bundled', exclude: 'node_modules/**' }),
+    image(),
+    postcss({
+      extract: 'bundle.css',
+      minimize: isProduction,
+    }),
+    !isProduction && serve({ contentBase: ['dist'], port: 3000 }),
+    !isProduction && livereload('dist'),
+    isProduction && terser(),
+  ]
+};</code></pre>
+            </div>
+        </section>
+
+        <section id="section-6" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">6. Code Splitting with Dynamic Imports</h2>
+            <p class="mb-6 text-stone-600">Improve your application's initial load time by splitting code into smaller chunks that are loaded on demand. Rollup has first-class support for the dynamic `import()` syntax, making code splitting easy and efficient.</p>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 1: Use a Dynamic Import in Your Code</h3>
+            <p class="mb-2 text-stone-600">Use `import()` to load a module dynamically, for example on a button click.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">src/main.ts</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>// ...
+button.onclick = () => {
+  import('./dynamic-module.js')
+    .then(module => {
+      module.showDynamicMessage();
+    });
+};
+// ...</code></pre>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-2">Step 2: Update Rollup Configuration</h3>
+            <p class="mb-2 text-stone-600">To enable code splitting, your configuration needs several changes. The `output.format` must be changed to `es`, and `output.file` must be replaced with `output.dir`. The following is the <strong>complete and final</strong> `rollup.config.js` incorporating all plugins and features from the entire tutorial.</p>
+            <p class="font-mono text-sm bg-stone-200 px-2 py-1 rounded-t-md inline-block">rollup.config.js</p>
+            <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                <button class="copy-btn">Copy</button>
+                <pre><code>import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import terser from '@rollup/plugin-terser';
+import postcss from 'rollup-plugin-postcss';
+import image from '@rollup/plugin-image';
+import typescript from '@rollup/plugin-typescript';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+export default {
+  input: 'src/main.ts',
+  output: {
+    dir: 'dist',
+    format: 'es',
+    sourcemap: !isProduction,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript({ sourceMap: !isProduction }),
+    babel({ babelHelpers: 'bundled', exclude: 'node_modules/**' }),
+    image(),
+    postcss({
+      extract: 'bundle.css',
+      minimize: isProduction,
+    }),
+
+    // For development
+    !isProduction && serve({
+      contentBase: ['dist'],
+      port: 3000,
+    }),
+    !isProduction && livereload('dist'),
+
+    // For production
+    isProduction && terser(),
+  ],
+};</code></pre>
+            </div>
+        </section>
+
+        <section id="section-7" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">7. Understanding Output Formats: `iife` vs. `es`</h2>
+            <p class="mb-6 text-stone-600">The output format determines how your bundled code is structured. Choosing the right one is crucial for compatibility and functionality. This section explains the two most common formats for web development in more detail.</p>
+
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+                <h4 class="font-bold text-amber-900">`iife` (Immediately Invoked Function Expression)</h4>
+                <p class="text-amber-800 mt-1">This format is ideal for simple, single-file browser scripts. It wraps your entire bundle in a function that is executed immediately, creating a private scope. This prevents your code from adding variables to the global `window` object, which avoids conflicts with other scripts on the page.</p>
+                <p class="text-amber-800 mt-2"><strong>Use when:</strong> You have a single entry point and don't need code splitting. It's great for compatibility with older browsers and simple script setups.</p>
+                <div class="mt-4">
+                    <p class="font-mono text-sm bg-amber-100 px-2 py-1 rounded-t-md inline-block">Example Output (dist/bundle.js)</p>
+                    <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                        <button class="copy-btn">Copy</button>
+                        <pre><code>(function () {
+    'use strict';
+
+    // All your bundled code is contained here...
+
+})();</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-sky-50 border-l-4 border-sky-400 p-4 mt-6 rounded-r-lg">
+                <h4 class="font-bold text-sky-900">`es` (ES Modules)</h4>
+                <p class="text-sky-800 mt-1">This is the modern format for web applications. It outputs standard JavaScript modules that modern browsers can understand. Its primary advantage is that it's required for code splitting. When Rollup finds a dynamic `import()`, it creates a separate "chunk" file that the main bundle can load on demand.</p>
+                 <p class="text-sky-800 mt-2"><strong>Use when:</strong> You are building a modern application and want to use code splitting for better performance. Remember to load your script in HTML with &lt;script type="module"&gt;.</p>
+                <div class="mt-4">
+                    <p class="font-mono text-sm bg-sky-100 px-2 py-1 rounded-t-md inline-block">Example Output (Multiple Files)</p>
+                    <div class="code-block bg-stone-800 text-white rounded-b-lg rounded-r-lg p-4 font-mono text-sm">
+                        <button class="copy-btn">Copy</button>
+                        <pre><code>// dist/main.js
+import { showDynamicMessage } from './chunk-abc.js';
+// ... your main entry code ...
+
+// dist/chunk-abc.js
+const showDynamicMessage = () => { /*...*/ };
+export { showDynamicMessage };</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section-8" class="scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-4 text-stone-900 border-b pb-2">8. Conclusion & Next Steps</h2>
+            <p class="mb-6 text-stone-600">Congratulations on completing this guide! You now have a solid foundation for using Rollup.js to build efficient, modern JavaScript applications. You've learned how to set up a project, use essential plugins, manage different build environments, handle assets, and implement advanced features like TypeScript and code splitting.</p>
+            <p class="mb-6 text-stone-600">From here, you can explore more advanced topics to further enhance your build process:</p>
+            <ul class="list-disc list-inside space-y-2 text-stone-700">
+                <li>Explore the <a href="https://rollupjs.org/guide/en/" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">Official Rollup Documentation</a> for in-depth information.</li>
+                <li>Discover more plugins in the <a href="https://github.com/rollup/awesome" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">Awesome Rollup</a> list.</li>
+                <li>Learn about advanced options like tree-shaking, creating multiple outputs, and building for Node.js.</li>
+                <li>Integrate Rollup with other tools like Storybook or testing frameworks.</li>
+            </ul>
+        </section>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('main section');
+    const navLinks = document.querySelectorAll('#nav-menu a');
+
+    const observer = new IntersectionObserver((entries) => {
+        let visibleSectionId = null;
+        // Find the last intersecting element (handles scrolling up and down)
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                visibleSectionId = entry.target.id;
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active-nav');
+            if (visibleSectionId && link.getAttribute('href').substring(1) === visibleSectionId) {
+                link.classList.add('active-nav');
+            }
+        });
+    }, { rootMargin: '-24% 0px -76% 0px', threshold: 0 });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+    
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    copyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#10b981'; // green-500
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.style.backgroundColor = '#374151'; // gray-700
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        });
+    });
+});
+</script>
+
+</body>
+</html>
