@@ -7,6 +7,26 @@
   <title>CaniuseSupport Web Component Demo</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.0/dist/typography.min.css">
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .main-tab-button:focus-visible,
+    details summary:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+      border-radius: 0.375rem;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 font-sans leading-normal text-gray-800">
@@ -20,12 +40,17 @@
     </p>
 
     <div class="mb-8 flex flex-col items-center">
-      <div class="flex w-full max-w-md mb-4">
-        <input type="text" id="featureInput" placeholder="Enter feature ID (e.g., flexbox)"
-          class="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button id="renderButton"
-          class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Render</button>
+      <div class="w-full max-w-md mb-4">
+        <label for="featureInput" class="mb-2 block text-sm font-semibold text-gray-800">Web feature ID</label>
+        <div class="flex">
+          <input type="text" id="featureInput" placeholder="Enter feature ID (e.g., flexbox)"
+            aria-describedby="featureStatus"
+            class="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button id="renderButton"
+            class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Render</button>
+        </div>
       </div>
+      <p id="featureStatus" class="sr-only" role="status" aria-live="polite"></p>
       <div id="componentContainer" class="w-full flex justify-center">
       </div>
     </div>
@@ -33,12 +58,13 @@
     <hr class="my-10 border-gray-300">
 
     <div class="w-full">
-      <div role="tablist" class="flex border-b border-gray-200">
-        <button role="tab" id="tab-explanation" aria-controls="panel-explanation" aria-selected="true"
+      <div role="tablist" aria-label="Documentation sections" class="flex border-b border-gray-200">
+        <button role="tab" id="tab-explanation" aria-controls="panel-explanation" aria-selected="true" tabindex="0"
           class="main-tab-button active px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 hover:text-blue-800 focus:outline-none">
           Component Explanation
         </button>
         <button role="tab" id="tab-private-methods" aria-controls="panel-private-methods" aria-selected="false"
+          tabindex="-1"
           class="main-tab-button px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 hover:border-gray-300 focus:outline-none">
           Underscore vs. Private Methods
         </button>
@@ -50,7 +76,8 @@
         <p>
           This web component, <code class="bg-gray-200 px-1 rounded">CaniuseSupport</code>, is designed to display a
           browser compatibility matrix for a specific web feature using data from the <a href="https://caniuse.com"
-            target="_blank" class="text-blue-600 hover:underline">caniuse.com</a> database. It's built to be entirely
+            target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">caniuse.com</a> database.
+          It's built to be entirely
           self-contained, meaning all its styling and logic are encapsulated within the component itself. This
           separation ensures that the component's internal styles and markup won't "leak out" and affect the main
           document, and vice-versa, adhering to Web Component best practices.
@@ -138,7 +165,8 @@
                     component's internal setup (like injecting styles and creating the container) has already run.</li>
                   <li><code class="bg-gray-200 px-1 rounded">this._container = null</code>: A placeholder for the main
                     <code class="bg-gray-200 px-1 rounded">div</code> element inside the Shadow DOM where the
-                    component's content will be rendered.</li>
+                    component's content will be rendered.
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -228,7 +256,8 @@
                   <li>It creates a <code class="bg-gray-200 px-1 rounded">&lt;style&gt;</code> element and sets its
                     <code class="bg-gray-200 px-1 rounded">textContent</code> to a large string of CSS rules. These
                     rules are standard CSS, mimicking the visual appearance that Tailwind CSS would provide, but they
-                    are now scoped <i>only</i> to this component's Shadow DOM.</li>
+                    are now scoped <i>only</i> to this component's Shadow DOM.
+                  </li>
                   <li>It appends this <code class="bg-gray-200 px-1 rounded">&lt;style&gt;</code> element to the <code
                       class="bg-gray-200 px-1 rounded">shadowRoot</code>.</li>
                   <li>It creates the main <code class="bg-gray-200 px-1 rounded">_container</code> <code
@@ -427,7 +456,7 @@
         </details>
       </div>
 
-      <div id="panel-private-methods" role="tabpanel" aria-labelledby="tab-private-methods"
+      <div id="panel-private-methods" role="tabpanel" aria-labelledby="tab-private-methods" hidden
         class="main-tab-content p-4 prose prose-lg max-w-none hidden mx-auto">
         <h2>Why <code class="bg-gray-200 px-1 rounded">_</code> (Underscore) Instead of Private Class Methods (<code
             class="bg-gray-200 px-1 rounded">#</code>)?</h2>
@@ -498,7 +527,7 @@
       }
 
       static get observedAttributes() {
-        return [ 'feature-id' ];
+        return ['feature-id'];
       }
 
       connectedCallback() {
@@ -602,6 +631,11 @@
                     .caniuse-notes-summary:hover {
                         color: #2563eb;
                     }
+                    .caniuse-notes-summary:focus-visible {
+                      outline: 2px solid #2563eb;
+                      outline-offset: 2px;
+                      border-radius: 0.375rem;
+                    }
                     .caniuse-notes-summary svg {
                         width: 1rem;
                         height: 1rem;
@@ -686,26 +720,39 @@
         return this._dbPromise;
       }
 
+      _announce(message, tone = 'polite') {
+        this.dispatchEvent(new CustomEvent('caniuse-status-change', {
+          bubbles: true,
+          composed: true,
+          detail: { message, tone }
+        }));
+      }
+
       async _render() {
         if (!this._container) return;
+        this._announce(`Loading support data for ${this._featureId || 'the requested feature'}.`);
         this._container.innerHTML = this._renderLoading();
 
         if (!this._featureId) {
+          this._announce('No feature ID provided.', 'assertive');
           this._container.innerHTML = this._renderMessage('No feature ID provided.');
           return;
         }
 
         try {
           const db = await CaniuseSupport._fetchDb();
-          const featureData = db.data[ this._featureId ];
+          const featureData = db.data[this._featureId];
 
           if (!featureData) {
+            this._announce(`Feature ${this._featureId} was not found.`, 'assertive');
             this._container.innerHTML = this._renderMessage(`Feature '${this._featureId}' not found.`);
             return;
           }
           this._container.innerHTML = this._buildLayout(featureData);
+          this._announce(`Showing browser compatibility results for ${featureData.title}.`);
         } catch (error) {
           console.error('Failed to fetch or render caniuse data:', error);
+          this._announce('Could not load support data. Please check the console.', 'assertive');
           this._container.innerHTML = this._renderMessage('Could not load support data. Please check the console.');
         }
       }
@@ -719,7 +766,7 @@
         let supportData = null;
 
         for (const version of versions) {
-          const supportString = stats[ version ];
+          const supportString = stats[version];
           if (supportString.includes('y') && !firstSupported) {
             firstSupported = { version, supportString };
             break;
@@ -744,8 +791,8 @@
       }
 
       _renderLoading() {
-        return `<div class="caniuse-card" style="padding: 2rem; text-align: center;">
-                            <svg class="animate-spin spinner-color" style="height: 2rem; width: 2rem; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        return `<div class="caniuse-card" role="status" aria-live="polite" style="padding: 2rem; text-align: center;">
+                            <svg aria-hidden="true" class="animate-spin spinner-color" style="height: 2rem; width: 2rem; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="spinner-circle-opacity" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="spinner-path-opacity" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -754,7 +801,7 @@
       }
 
       _renderMessage(message) {
-        return `<div class="message-box">${message}</div>`;
+        return `<div class="message-box" role="alert">${message}</div>`;
       }
 
       _buildLayout(featureData) {
@@ -762,8 +809,8 @@
 
         const browserItems = Object.keys(CaniuseSupport.BROWSER_INFO)
           .map(id => {
-            const info = CaniuseSupport.BROWSER_INFO[ id ];
-            const supportInfo = this._getSupportInfo(featureData.stats[ id ]);
+            const info = CaniuseSupport.BROWSER_INFO[id];
+            const supportInfo = this._getSupportInfo(featureData.stats[id]);
 
             if (supportInfo.noteNumbers && supportInfo.noteNumbers.length > 0) {
               supportInfo.noteNumbers.forEach(num => relevantNoteNumbers.add(num));
@@ -808,8 +855,8 @@
         const filteredNumberedNotes = {};
         if (allNumberedNotes) {
           for (const num of relevantNoteNumbers) {
-            if (allNumberedNotes[ num ]) {
-              filteredNumberedNotes[ num ] = allNumberedNotes[ num ];
+            if (allNumberedNotes[num]) {
+              filteredNumberedNotes[num] = allNumberedNotes[num];
             }
           }
         }
@@ -820,7 +867,7 @@
           let numberedNotesHtml = '';
           if (Object.keys(filteredNumberedNotes).length > 0) {
             const notesList = Object.entries(filteredNumberedNotes)
-              .map(([ num, noteText ]) => `<li>${noteText.replace(/^\d+:\s*/, '')}</li>`)
+              .map(([num, noteText]) => `<li>${noteText.replace(/^\d+:\s*/, '')}</li>`)
               .join('');
             numberedNotesHtml = `<ul style="list-style-type: disc; padding-left: 1.25rem; margin-top: 0.75rem; margin-bottom: 0.75rem; line-height: 1.5;">${notesList}</ul>`;
           }
@@ -831,7 +878,7 @@
                                 <summary class="caniuse-notes-summary">
                                     <span style="display: flex; align-items: center;">
                                         Notes
-                                        <svg style="width: 1rem; height: 1rem; margin-left: 0.5rem; transition: transform 0.2s ease-in-out;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <svg aria-hidden="true" style="width: 1rem; height: 1rem; margin-left: 0.5rem; transition: transform 0.2s ease-in-out;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </span>
                                 </summary>
                                 <div class="caniuse-notes-content">
@@ -844,7 +891,7 @@
         }
 
         return `
-                    <div class="caniuse-card">
+                    <div class="caniuse-card" role="region" aria-label="Browser compatibility results for ${featureData.title}">
                         <div class="caniuse-header">
                             <h2 class="caniuse-title">${featureData.title}</h2>
                             <p class="caniuse-status">Status: ${featureData.status}</p>
@@ -867,23 +914,42 @@
       const featureInput = document.getElementById('featureInput');
       const renderButton = document.getElementById('renderButton');
       const componentContainer = document.getElementById('componentContainer');
+      const featureStatus = document.getElementById('featureStatus');
+
+      const setFeatureStatus = (message, tone = 'polite') => {
+        featureStatus.setAttribute('aria-live', tone === 'assertive' ? 'assertive' : 'polite');
+        featureStatus.textContent = message;
+      };
+
+      document.querySelectorAll('details summary svg').forEach(svg => {
+        svg.setAttribute('aria-hidden', 'true');
+        svg.setAttribute('focusable', 'false');
+      });
+
+      componentContainer.addEventListener('caniuse-status-change', (event) => {
+        setFeatureStatus(event.detail.message, event.detail.tone);
+      });
 
       const renderCaniuseComponent = () => {
         const featureId = featureInput.value.trim().toLowerCase();
         componentContainer.innerHTML = ''; // Clear previous component
 
         if (featureId) {
+          setFeatureStatus(`Loading support data for ${featureId}.`);
           const caniuseElement = document.createElement('caniuse-support');
           caniuseElement.setAttribute('feature-id', featureId);
           componentContainer.appendChild(caniuseElement);
         } else {
-          componentContainer.innerHTML = '<p class="text-red-500 mt-4">Please enter a feature ID.</p>';
+          setFeatureStatus('Please enter a feature ID.', 'assertive');
+          componentContainer.innerHTML = '<p class="text-red-500 mt-4" role="alert">Please enter a feature ID.</p>';
+          featureInput.focus();
         }
       };
 
       renderButton.addEventListener('click', renderCaniuseComponent);
-      featureInput.addEventListener('keypress', (event) => {
+      featureInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
+          event.preventDefault();
           renderCaniuseComponent();
         }
       });
@@ -892,15 +958,17 @@
       const mainTabButtons = document.querySelectorAll('.main-tab-button');
       const mainTabPanels = document.querySelectorAll('.main-tab-content');
 
-      const activateMainTab = (selectedTabId) => {
+      const activateMainTab = (selectedTabId, { moveFocus = false } = {}) => {
         mainTabButtons.forEach(button => {
           button.setAttribute('aria-selected', 'false');
+          button.setAttribute('tabindex', '-1');
           button.classList.remove('active', 'text-blue-600', 'border-blue-600');
           button.classList.add('text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:border-gray-300');
         });
 
         mainTabPanels.forEach(panel => {
           panel.classList.add('hidden');
+          panel.hidden = true;
         });
 
         const selectedButton = document.getElementById(selectedTabId);
@@ -908,15 +976,42 @@
         const targetPanel = document.getElementById(targetPanelId);
 
         selectedButton.setAttribute('aria-selected', 'true');
+        selectedButton.setAttribute('tabindex', '0');
         selectedButton.classList.add('active', 'text-blue-600', 'border-blue-600');
         selectedButton.classList.remove('text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:border-gray-300');
+        if (moveFocus) {
+          selectedButton.focus();
+        }
 
         targetPanel.classList.remove('hidden');
+        targetPanel.hidden = false;
       };
 
-      mainTabButtons.forEach(button => {
+      mainTabButtons.forEach((button, index) => {
         button.addEventListener('click', () => {
           activateMainTab(button.id);
+        });
+
+        button.addEventListener('keydown', (event) => {
+          const navigationKeys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+          if (!navigationKeys.includes(event.key)) {
+            return;
+          }
+
+          event.preventDefault();
+
+          let nextIndex = index;
+          if (event.key === 'ArrowRight') {
+            nextIndex = (index + 1) % mainTabButtons.length;
+          } else if (event.key === 'ArrowLeft') {
+            nextIndex = (index - 1 + mainTabButtons.length) % mainTabButtons.length;
+          } else if (event.key === 'Home') {
+            nextIndex = 0;
+          } else if (event.key === 'End') {
+            nextIndex = mainTabButtons.length - 1;
+          }
+
+          activateMainTab(mainTabButtons[nextIndex].id, { moveFocus: true });
         });
       });
 

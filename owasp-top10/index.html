@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Infographic: The OWASP Top 10 2021</title>
@@ -9,91 +10,246 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-      body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
-        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
-        @media (min-width: 768px) { .chart-container { height: 350px; } }
-        .nav-button { transition: all 0.2s ease-in-out; }
-        .nav-button.active { transform: translateY(-4px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); background-color: #0A74DA; color: white; }
-        .nav-button:not(.active):hover { background-color: #E0E7FF; }
-        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); padding: 1.5rem; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 380px;
+        }
+
+        .nav-button {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-button.active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(10, 116, 218, 0.3);
+            background-color: #0A74DA;
+            color: white;
+            border-color: #0A74DA;
+        }
+
+        .nav-button:not(.active):hover {
+            background-color: #EFF6FF;
+            border-color: #BFDBFE;
+            color: #1E40AF;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #E2E8F0;
+            padding: 1.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+        }
     </style>
-  </head>
-  <body class="text-gray-800">
-    <div class="container mx-auto p-4 md:p-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-[#0D253F]">OWASP Top 10 - 2021</h1>
-        <p class="text-lg text-[#6C757D] mt-2">An interactive guide to the most critical web application security risks.</p>
-      </header>
-      <nav id="vuln-nav" class="sticky top-0 z-10 bg-[#F0F2F5]/80 backdrop-blur-sm py-4 mb-8">
-        <div id="nav-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2 md:gap-3 text-center">
-        </div>
-      </nav>
-      <main id="main-content">
-        <section id="overview-section" class="mb-12">
-          <div class="card">
-            <h2 class="text-2xl font-bold text-[#0D253F] mb-4 text-center">Vulnerability Prevalence Ranking</h2>
-            <p class="text-center text-[#6C757D] mb-6">This chart ranks the Top 10 risks by their average incidence rate in tested applications, providing a clear overview of the most common threats discovered in the wild.</p>
-            <div class="bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-lg p-3 mb-6 max-w-3xl mx-auto">
-              <p><strong class="font-semibold">Data Source & Calculation:</strong>
-                The ranking is based on data from over 500,000 applications tested by contributing organizations. The 'Incidence Rate' score represents the percentage of applications found to have at least one instance of a given vulnerability type.</p>
+</head>
+
+<body class="text-slate-800 leading-relaxed antialiased">
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+
+        <header class="text-center mb-10">
+            <span
+                class="text-xs font-bold uppercase tracking-widest text-[#0A74DA] bg-blue-50 px-3 py-1.5 rounded-full">Security
+                Education Resource</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0D253F] mt-3 tracking-tight">OWASP Top 10 - 2021</h1>
+            <p class="text-lg text-[#6C757D] mt-3 max-w-2xl mx-auto">An interactive, high-accessibility dashboard
+                exploring the most critical web application security risks.</p>
+        </header>
+
+        <!-- Sticky navigation of Top 10 vulnerability tags -->
+        <nav id="vuln-nav"
+            class="sticky top-0 z-20 bg-[#F8FAFC]/95 backdrop-blur-md py-4 mb-10 border-b border-slate-200/50">
+            <div id="nav-container" class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 md:gap-3 text-center">
+                <!-- Navigation buttons will be dynamically injected here -->
             </div>
-            <div class="chart-container h-96 md:h-[500px] max-h-[500px]">
-              <canvas id="overviewChart"></canvas>
-            </div>
-          </div>
-        </section>
-        <section id="details-section">
-          <div id="intro-text" class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-[#0D253F]">Deep Dive Analysis</h2>
-            <p class="text-lg text-[#6C757D] mt-2">Select a vulnerability from the navigation above to explore its characteristics, impact, and mitigation strategies.</p>
-          </div>
-          <div id="vulnerability-details" class="hidden">
-            <div class="text-center mb-8">
-              <h2 id="vuln-title" class="text-3xl font-bold text-[#0D253F]"></h2>
-              <p id="vuln-what-it-is" class="text-lg text-[#6C757D] mt-2 max-w-3xl mx-auto"></p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
-              <div class="md:col-span-3 card">
-                <h3 class="text-xl font-bold text-[#0D253F] mb-4">💥 Threat Analysis: How It Affects Your Application</h3>
-                <p id="vuln-how-it-affects" class="text-base leading-relaxed text-[#6C757D]"></p>
-              </div>
-              <div class="md:col-span-2 card flex flex-col items-center justify-center">
-                <h3 class="text-xl font-bold text-[#0D253F] mb-4">📊 Risk Scorecard</h3>
-                <div class="chart-container h-64 max-h-64">
-                  <canvas id="riskScorecardChart"></canvas>
+        </nav>
+
+        <main id="main-content" class="space-y-10">
+
+            <!-- Global Prevalence Ranking & Methodology Section -->
+            <section id="overview-section">
+                <div class="card">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-[#0D253F]">Vulnerability Prevalence Ranking</h2>
+                            <p class="text-sm text-[#6C757D] mt-1">Comparing the average incidence rates of the Top 10
+                                risks mapped from over 500,000 real-world applications.</p>
+                        </div>
+                        <button id="toggle-data-table-btn"
+                            class="text-xs font-semibold text-[#0A74DA] hover:text-[#0D253F] border border-[#0A74DA] rounded-lg px-3 py-1.5 transition-all">
+                            📊 Toggle Data Table View
+                        </button>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-slate-700">
+                        <h4 class="font-bold text-[#0D253F] flex items-center gap-1.5">
+                            ℹ️ Data Source & Methodology:
+                        </h4>
+                        <p class="mt-1">
+                            Calculated from a massive data pool contributed by top-tier application security vendors and
+                            internal programs. The <strong>Incidence Rate (Prevalence)</strong> is the percentage of
+                            audited applications found to host at least one active instance of the corresponding
+                            vulnerability type during testing.
+                        </p>
+                    </div>
+
+                    <!-- Horizonal Chart Wrapper -->
+                    <div class="chart-container mb-6">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+
+                    <!-- Accessible Alternative Text Table (Displays when toggled or dynamically for Screen Readers) -->
+                    <div id="prevalence-table-container"
+                        class="hidden overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50 text-[#0D253F] font-semibold text-left">
+                                <tr>
+                                    <th class="px-4 py-3">Rank & ID</th>
+                                    <th class="px-4 py-3">Vulnerability Category</th>
+                                    <th class="px-4 py-3 text-right">Incidence Rate (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prevalence-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <p class="text-xs text-center text-gray-500 mt-4">This chart visualizes two key metrics: 'Prevalence Score' reflects the incidence rate in tested applications, and 'Impact Score' is a subjective rating of potential business impact from the OWASP report.</p>
-              </div>
-            </div>
-            <div class="mt-8 card">
-              <h3 class="text-xl font-bold text-[#0D253F] mb-6">🛡️ Mitigation Strategy Flow</h3>
-              <div id="vuln-mitigations" class="space-y-4">
-              </div>
-            </div>
-            <div class="mt-8 text-center">
-              <a id="vuln-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#FFD166] text-[#0D253F] font-bold py-2 px-6 rounded-lg hover:bg-yellow-400 transition-colors">Read the Official OWASP Report ◹</a>
-            </div>
-          </div>
-        </section>
-      </main>
+            </section>
+
+            <!-- Selected Vulnerability Detail Deep-Dive -->
+            <section id="details-section">
+                <div id="vulnerability-details" class="space-y-8">
+
+                    <!-- Title and High Level Summary -->
+                    <div class="text-center max-w-4xl mx-auto space-y-2">
+                        <h2 id="vuln-title" class="text-3xl md:text-4xl font-extrabold text-[#0D253F]"></h2>
+                        <p id="vuln-what-it-is" class="text-lg text-[#6C757D] leading-relaxed"></p>
+                    </div>
+
+                    <!-- Split view of Analysis and Scorecard -->
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+                        <!-- Analysis Content Card -->
+                        <div class="lg:col-span-3 card flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-[#0D253F] mb-4 flex items-center gap-2">
+                                    <span>💥</span> Threat Analysis: Security Impact
+                                </h3>
+                                <p id="vuln-how-it-affects" class="text-base text-slate-600 leading-relaxed"></p>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-slate-100">
+                                <span
+                                    class="text-xs font-semibold text-[#0A74DA] uppercase tracking-wider block mb-1">Key
+                                    Context</span>
+                                <p class="text-xs text-[#6C757D]">Exploitation can compromise system integrity, bypass
+                                    active restrictions, and lead to total architectural takeover depending on user
+                                    session access parameters.</p>
+                            </div>
+                        </div>
+
+                        <!-- Scorecard Visual Card -->
+                        <div class="lg:col-span-2 card flex flex-col items-center justify-between">
+                            <div class="w-full text-center">
+                                <h3 class="text-xl font-bold text-[#0D253F] mb-2">📊 Risk Scorecard</h3>
+                                <p class="text-xs text-[#6C757D] mb-4">A graphical risk profile of incidence prevalence
+                                    vs. severity impact.</p>
+                            </div>
+
+                            <!-- Doughnut Container -->
+                            <div class="chart-container h-64 max-h-64 relative flex items-center justify-center">
+                                <canvas id="riskScorecardChart"></canvas>
+                            </div>
+
+                            <!-- Accessible Plain-Text Summary Table of the graphics values -->
+                            <div class="w-full bg-slate-50 rounded-xl p-4 mt-6 border border-slate-200/60">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-[#0D253F] mb-2 text-center">
+                                    Accessible Score Breakdown</h4>
+                                <div class="grid grid-cols-2 gap-4 text-center divide-x divide-slate-200">
+                                    <div>
+                                        <span class="text-2xl font-extrabold text-[#0A74DA]"
+                                            id="text-metric-prevalence">0%</span>
+                                        <span
+                                            class="block text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-1">Prevalence
+                                            Rate</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-2xl font-extrabold text-amber-500"
+                                            id="text-metric-impact">0/10</span>
+                                        <span
+                                            class="block text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-1">Subjective
+                                            Impact</span>
+                                    </div>
+                                </div>
+                                <p
+                                    class="text-[11px] text-[#6C757D] text-center mt-3 leading-snug border-t border-slate-200/50 pt-2.5">
+                                    <strong>How calculated:</strong> Prevalence uses exact application incidence rates
+                                    rounded to full percentages. Impact is a standard OWASP rating scale (1-10) scoring
+                                    maximum business damage.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mitigations Steps Card -->
+                    <div class="card">
+                        <h3 class="text-xl font-bold text-[#0D253F] mb-6 flex items-center gap-2">
+                            <span>🛡️</span> Mitigation Strategy Flowchart
+                        </h3>
+                        <div id="vuln-mitigations" class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                            <!-- Mitigations will populate here as highly readable, numbered components -->
+                        </div>
+                    </div>
+
+                    <!-- Official Resource Redirection -->
+                    <div class="text-center pt-4">
+                        <a id="vuln-link" href="#" target="_blank" rel="noopener noreferrer"
+                            class="inline-flex items-center gap-2 bg-[#FFD166] text-[#0D253F] font-bold py-3 px-8 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm">
+                            <span>Read the Official OWASP Report</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
     </div>
+
     <script>
-      const vulnerabilityData = [
+        const vulnerabilityData = [
             {
                 id: 'A01',
                 name: 'Broken Access Control',
                 rank: 1,
-                prevalence: 3.81,
+                prevalence: 4,
                 impact: 9,
                 description: "Access control enforces policies so users cannot act outside of their intended permissions. Failures typically lead to unauthorized information disclosure, modification, or destruction of all data or performing a business function outside the user's limits.",
-                effects: "This is the most serious web security risk. Attackers can exploit these flaws to access other users' accounts, view sensitive files, modify other users’ data, change access rights, etc., sometimes gaining full administrative control over the application.",
+                effects: "This is the most serious web security risk. Attackers can exploit these flaws to access other users' accounts, view sensitive files, modify other users' data, change access rights, and bypass authentication layers, sometimes gaining full administrative control over the application environment.",
                 mitigations: [
-                    "Implement access control mechanisms once and re-use them throughout the application, including minimizing Cross-Origin Resource Sharing (CORS) usage.",
-                    "Model access controls should enforce record ownership, rather than accepting that the user can create, read, update, or delete any record.",
-                    "Disable web server directory listing and ensure file metadata (e.g., .git) and backup files are not present within web roots.",
-                    "Log access control failures, alert administrators when appropriate (e.g., for repeated failures).",
-                    "Rate limit API and controller access to minimize the harm from automated attack tooling."
+                    "Implement access control mechanisms once and re-use them throughout the application, minimizing CORS usage.",
+                    "Model access controls to enforce records ownership rather than letting any user execute CRUD operations on arbitrary resources.",
+                    "Disable web server directory listing and ensure file metadata and backups are secure.",
+                    "Log access control failures and alert administrators for repeated violations.",
+                    "Rate limit API and controller endpoints to minimize the harm from automated scanning tooling."
                 ],
                 link: 'https://owasp.org/Top10/A01_2021-Broken_Access_Control/'
             },
@@ -101,16 +257,16 @@
                 id: 'A02',
                 name: 'Cryptographic Failures',
                 rank: 2,
-                prevalence: 4.49,
+                prevalence: 4,
                 impact: 8,
                 description: "This category focuses on failures related to cryptography (or lack thereof), which can lead to the exposure of sensitive data like passwords, credit card numbers, and personal information.",
-                effects: "If an application doesn't protect sensitive data, attackers can steal or modify such weakly protected data to conduct credit card fraud, identity theft, or other crimes. This can result in significant financial and reputational damage.",
+                effects: "If an application doesn't protect sensitive data, attackers can intercept or extract weakly protected data to conduct credit card fraud, identity theft, or other high-impact crimes. This results in severe financial liability and compliance penalties.",
                 mitigations: [
-                    "Classify data processed, stored, or transmitted by an application. Identify which data is sensitive.",
-                    "Don't store sensitive data unnecessarily. Discard it as soon as it is no longer needed.",
-                    "Encrypt all sensitive data at rest using strong, standard encryption algorithms.",
-                    "Use up-to-date and strong standard algorithms, protocols, and keys. Use TLS for all data in transit.",
-                    "Disable caching for responses that contain sensitive data."
+                    "Classify all processed data to identify what is sensitive.",
+                    "Don't store sensitive data unnecessarily; discard old datasets immediately.",
+                    "Encrypt all sensitive data at rest using standard strong algorithms.",
+                    "Use updated cryptographic packages, strong protocols (TLS), and secure keys.",
+                    "Disable caching of HTTP responses that handle highly sensitive user metrics."
                 ],
                 link: 'https://owasp.org/Top10/A02_2021-Cryptographic_Failures/'
             },
@@ -118,15 +274,15 @@
                 id: 'A03',
                 name: 'Injection',
                 rank: 3,
-                prevalence: 3.35,
+                prevalence: 3,
                 impact: 8,
                 description: "Injection flaws, such as SQL, NoSQL, Cross-site Scripting (XSS), OS, and LDAP injection, occur when untrusted data is sent to an interpreter as part of a command or query.",
-                effects: "The attacker's hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization. This can result in data loss, corruption, denial of access, or complete host takeover.",
+                effects: "The attacker's hostile payload tricks interpreters into executing unintended administrative commands or retrieving unauthorized data, frequently allowing remote command execution or raw database access.",
                 mitigations: [
-                    "Use a safe API, which avoids the use of the interpreter entirely or provides a parameterized interface.",
-                    "Use positive server-side input validation. This is not a complete defense as many applications require special characters.",
-                    "For any dynamic queries, escape special characters using the specific escape syntax for that interpreter.",
-                    "Use LIMIT and other SQL controls within queries to prevent mass disclosure of records in case of SQL injection."
+                    "Use safe APIs that avoid interpreters entirely or provide parameterized, typed interfaces.",
+                    "Employ positive, whitelist-based server-side input validation.",
+                    "Escape special characters dynamically using native escaping syntax built for the targeted database interpreter.",
+                    "Utilize LIMIT constraints inside SQL queries to prevent mass exposure of tables if injection occurs."
                 ],
                 link: 'https://owasp.org/Top10/A03_2021-Injection/'
             },
@@ -134,15 +290,15 @@
                 id: 'A04',
                 name: 'Insecure Design',
                 rank: 4,
-                prevalence: 2.56,
+                prevalence: 3,
                 impact: 9,
-                description: "A new category for 2021 focusing on risks related to design and architectural flaws. It emphasizes the need for threat modeling and secure design patterns from the beginning of the development lifecycle.",
-                effects: "An insecure design cannot be fixed by a perfect implementation. Flaws in the design can lead to recurring vulnerabilities such as missing or ineffective control designs, which can be exploited to gain unauthorized access or compromise the system.",
+                description: "A category focusing on risks related to design and architectural flaws. It emphasizes the need for threat modeling and secure design patterns from the beginning of the development lifecycle.",
+                effects: "Insecure design patterns cannot be patched or fixed through perfect code implementations. These flaws expose fundamental architectural gaps, allowing systemic compromise even if individual code files are written correctly.",
                 mitigations: [
-                    "Establish and use a secure development lifecycle with AppSec professionals.",
-                    "Use threat modeling for critical authentication, access control, business logic, and key flows.",
-                    "Integrate security language and controls into user stories and functional requirements.",
-                    "Write unit and integration tests to validate that all critical flows are resistant to the threat model."
+                    "Establish a secure development lifecycle integrated with professional threat modeling.",
+                    "Perform threat modeling for critical flows like authentication, session changes, and business processing.",
+                    "Write robust unit tests and integration tests to ensure logic boundaries reject malicious state flows.",
+                    "Separate critical tiers to limit blast radiuses if single interfaces are compromised."
                 ],
                 link: 'https://owasp.org/Top10/A04_2021-Insecure_Design/'
             },
@@ -150,95 +306,95 @@
                 id: 'A05',
                 name: 'Security Misconfiguration',
                 rank: 5,
-                prevalence: 4.88,
+                prevalence: 5,
                 impact: 7,
                 description: "This risk refers to improperly configured security settings, such as insecure default configurations, incomplete configurations, open cloud storage, misconfigured HTTP headers, and verbose error messages containing sensitive information.",
-                effects: "Security misconfiguration can lead to unauthorized access to system data or functionality. It can result in a partial or total system compromise without needing to exploit any code-level vulnerabilities.",
+                effects: "Exposes system endpoints to rapid footprinting. Attackers can leverage defaults, standard passwords, and unhardened ports to pivot directly into secure assets without needing code-level vulnerabilities.",
                 mitigations: [
-                    "Implement a repeatable hardening process to make it fast and easy to deploy a properly secured environment.",
-                    "Deploy a minimal platform without any unnecessary features, components, documentation, and samples.",
-                    "Review and update the configurations of all security notes, updates, and patches as part of the patch management process.",
-                    "An automated process to verify the effectiveness of the configurations and settings in all environments."
+                    "Implement a repeatable hardening process to make it fast to deploy secure identical servers.",
+                    "Remove unnecessary packages, frameworks, sample files, and testing accounts.",
+                    "Audit cloud storage configurations, database listeners, and dynamic service permissions regularly.",
+                    "Utilize automated security audits to detect live misconfigurations inside staging environments."
                 ],
                 link: 'https://owasp.org/Top10/A05_2021-Security_Misconfiguration/'
             },
             {
                 id: 'A06',
-                name: ['Vulnerable and', 'Outdated Components'],
+                name: 'Vulnerable Components',
                 rank: 6,
-                prevalence: 3.99,
+                prevalence: 4,
                 impact: 7,
                 description: "This risk arises from using unsupported or out-of-date components, including libraries, frameworks, and other software modules, which may contain known vulnerabilities.",
-                effects: "If you use a component with a known vulnerability, it can undermine your application's defenses and enable a range of attacks, from data loss to server takeover. It is often a key target for attackers as they can scan for vulnerable systems automatically.",
+                effects: "Allows script-kiddies and bots to scan applications and exploit known, CVE-documented security holes. Compromising a minor dependency could open severe access vulnerabilities on host architectures.",
                 mitigations: [
-                    "Remove unused dependencies, unnecessary features, components, files, and documentation.",
-                    "Continuously inventory the versions of both client-side and server-side components using tools like software composition analysis (SCA).",
-                    "Only obtain components from official sources over secure links. Prefer signed packages to reduce the chance of including a malicious, modified component.",
-                    "Keep up to date with security news and patches for the components you use."
+                    "Audit application frameworks and dependencies, stripping out unused software packages.",
+                    "Utilize Software Composition Analysis (SCA) scanners directly inside CI/CD compilation pipelines.",
+                    "Deploy only components obtained via secure, signature-validated official distribution channels.",
+                    "Formulate a rapid response plan to patch outdated software whenever critical CVE disclosures occur."
                 ],
                 link: 'https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/'
             },
             {
                 id: 'A07',
-                name: ['Identification and', 'Authentication Failures'],
+                name: 'Authentication Failures',
                 rank: 7,
-                prevalence: 3.56,
+                prevalence: 4,
                 impact: 8,
                 description: "Previously 'Broken Authentication', this includes all aspects of managing user identity, authentication, and session management. Failures can allow attackers to compromise passwords, keys, or session tokens.",
-                effects: "Attackers can exploit these flaws to assume other users' identities temporarily or permanently. This can lead to unauthorized access to user accounts and functionality, and in some cases, complete control over the system.",
+                effects: "Enables credential stuffing, dictionary attacks, and direct session hijacking. Attackers can take over user or administrator sessions, gaining full capabilities without triggering threshold anomalies.",
                 mitigations: [
-                    "Implement multi-factor authentication (MFA) to prevent automated credential stuffing and brute force attacks.",
-                    "Do not ship or deploy with any default credentials, particularly for admin users.",
-                    "Implement weak-password checks and align password policies with NIST 800-63b guidelines.",
-                    "Use a server-side, secure, built-in session manager that generates a new random session ID with high entropy after login."
+                    "Mandate Multi-Factor Authentication (MFA) on all admin and client facing panels.",
+                    "Enforce rigorous rate limits on login attempts to block automated brute-forcing tools.",
+                    "Check and reject weak passwords during account setups based on known breach lists.",
+                    "Deploy secure, random, high-entropy session managers that cycle session IDs post-authentication."
                 ],
                 link: 'https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/'
             },
             {
                 id: 'A08',
-                name: ['Software and Data', 'Integrity Failures'],
+                name: 'Software and Data Integrity Failures',
                 rank: 8,
-                prevalence: 1.76,
+                prevalence: 2,
                 impact: 9,
-                description: "A new category focusing on making assumptions related to software updates, critical data, and CI/CD pipelines without verifying their integrity. This includes insecure deserialization.",
-                effects: "This can lead to remote code execution, privilege escalation, or data tampering. An attacker could introduce their own malicious code into the application or its dependencies, which would then be executed with the application's permissions.",
+                description: "A focus on making assumptions related to software updates, critical data, and CI/CD pipelines without verifying their integrity. This includes insecure deserialization.",
+                effects: "Provides pathways for supply-chain compromises. Attackers can inject malicious updates or scripts directly into dependency registries, tricking applications into installing corrupted executable files.",
                 mitigations: [
-                    "Use digital signatures or similar mechanisms to verify that software or data is from the expected source and has not been altered.",
-                    "Ensure a software supply chain is secure. For example, use software composition analysis tools to verify that components do not contain known vulnerabilities.",
-                    "Ensure that there is a review process for code and configuration changes to minimize the chance that malicious code or configuration could be introduced.",
-                    "Ensure that unencrypted or unsigned serialized data is not sent to untrusted clients without an integrity check."
+                    "Use signatures and hashes to guarantee files have not been modified during transmission.",
+                    "Ensure CI/CD build tooling is secured, isolated, and accessible only to audited user identities.",
+                    "Avoid consuming serialized data feeds from unauthorized clients without validating structures first.",
+                    "Employ code signing routines for any libraries compiled inside development teams."
                 ],
                 link: 'https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/'
             },
             {
                 id: 'A09',
-                name: ['Security Logging and', 'Monitoring Failures'],
+                name: 'Logging and Monitoring Failures',
                 rank: 9,
-                prevalence: 2.89,
+                prevalence: 3,
                 impact: 6,
                 description: "Previously 'Insufficient Logging & Monitoring', this covers failures to log, generate alerts, or report on security events, which hinders visibility into malicious activities.",
-                effects: "Without sufficient logging and monitoring, it is difficult to detect security breaches. This allows attackers to persist in a system for long periods, pivot to other systems, and tamper with, extract, or destroy data undetected.",
+                effects: "Leaves security responders blind during breach windows. Attackers can operate inside backend environments for weeks or months undetected, exfiltrating data with zero logged trace.",
                 mitigations: [
-                    "Ensure all login, access control failures, and server-side input validation failures can be logged with sufficient user context.",
-                    "Ensure that logs are generated in a format that can be easily consumed by a centralized log management solution.",
-                    "Establish effective monitoring and alerting so that suspicious activities are detected and responded to in a timely fashion.",
-                    "Establish or adopt an incident response and recovery plan, such as NIST 800-61r2."
+                    "Ensure login, permissions changes, and input validation failures are logged with context.",
+                    "Format application logs to standard models easily digested by centralized SIEM software.",
+                    "Configure automatic alerts for high-frequency connection limits or out-of-bounds database access.",
+                    "Construct incident handling protocols to audit, mitigate, and patch servers in target timelines."
                 ],
                 link: 'https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/'
             },
             {
                 id: 'A10',
-                name: ['Server-Side', 'Request Forgery'],
+                name: 'Server-Side Request Forgery',
                 rank: 10,
-                prevalence: 1.05,
+                prevalence: 1,
                 impact: 9,
                 description: "SSRF flaws occur whenever a web application fetches a remote resource without validating the user-supplied URL. It allows an attacker to coerce the application to send a crafted request to an unexpected destination.",
-                effects: "SSRF can be used to enumerate and attack services that are running on the server itself, inside an internal network, or otherwise firewalled from the external network. It can also be used to access data from external resources or local files.",
+                effects: "Allows external actors to bypass perimeter firewalls and access internal services directly. Attackers can use SSRF to extract localized service metadata, compromise cloud credentials, or scan intranet systems.",
                 mitigations: [
-                    "Sanitize and validate all client-supplied input data.",
-                    "Enforce URL schema, port, and destination with a positive allow list.",
-                    "Do not send raw responses from servers to clients, to avoid leaking response data from internal services.",
-                    "Segment remote resource access functionality in separate networks to reduce the impact of SSRF."
+                    "Perform sanitization on external resource URL requests sent from client interfaces.",
+                    "Restrict target request domains to explicit whitelists of trusted hosts.",
+                    "Decline handling direct requests referencing local loopbacks or metadata IP addresses.",
+                    "Isolate backend worker tasks responsible for URL queries on separated secure network zones."
                 ],
                 link: 'https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_(SSRF)/'
             }
@@ -247,49 +403,70 @@
         const palette = {
             darkBlue: '#0D253F',
             primaryBlue: '#0A74DA',
-            lightBlue: '#00A9E0',
             accentYellow: '#FFD166',
-            lightGray: '#F0F2F5',
             textGray: '#6C757D'
         };
 
+        let overviewChart = null;
         let riskScorecardChart = null;
+        let currentActiveVuln = vulnerabilityData[0];
 
         document.addEventListener('DOMContentLoaded', () => {
             const navContainer = document.getElementById('nav-container');
             const detailsContainer = document.getElementById('vulnerability-details');
             const introContainer = document.getElementById('intro-text');
-            
+            const tableBody = document.getElementById('prevalence-table-body');
+            const toggleTableBtn = document.getElementById('toggle-data-table-btn');
+            const tableContainer = document.getElementById('prevalence-table-container');
+
+            // Render accessibility tabular data representation
+            vulnerabilityData.forEach(vuln => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-50";
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-[#0D253F]">${vuln.id} (Rank ${vuln.rank})</td>
+                    <td class="px-4 py-3 text-slate-600">${vuln.name}</td>
+                    <td class="px-4 py-3 text-right font-bold text-[#0A74DA]">${vuln.prevalence}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Toggle table visibility
+            toggleTableBtn.addEventListener('click', () => {
+                tableContainer.classList.toggle('hidden');
+                toggleTableBtn.textContent = tableContainer.classList.contains('hidden')
+                    ? '📊 Toggle Data Table View'
+                    : '❌ Hide Data Table View';
+            });
+
+            // Build Navigation buttons
             vulnerabilityData.forEach(vuln => {
                 const button = document.createElement('button');
-                button.className = 'nav-button p-2 text-sm font-semibold rounded-md bg-white text-[#0D253F]';
+                button.className = 'nav-button p-2 text-sm font-semibold rounded-lg bg-white border border-slate-200 text-[#0D253F] hover:shadow-sm';
                 button.textContent = `${vuln.id}`;
                 button.dataset.vulnId = vuln.id;
                 navContainer.appendChild(button);
 
                 button.addEventListener('click', () => {
                     displayVulnerability(vuln.id);
-                    introContainer.classList.add('hidden');
-                    detailsContainer.classList.remove('hidden');
                     document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
                 });
             });
-            
+
             createOverviewChart();
             displayVulnerability('A01');
             navContainer.querySelector('[data-vuln-id="A01"]').classList.add('active');
-            introContainer.classList.add('hidden');
-            detailsContainer.classList.remove('hidden');
         });
 
+        // Helper function to safely wrap graph labels
         function wrapLabel(label) {
             if (typeof label !== 'string') return label;
             const words = label.split(' ');
             const lines = [];
             let currentLine = '';
             words.forEach(word => {
-                if ((currentLine + word).length > 16) {
+                if ((currentLine + word).length > 18) {
                     lines.push(currentLine.trim());
                     currentLine = '';
                 }
@@ -299,13 +476,62 @@
             return lines;
         }
 
-        const tooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) {
-              return label.join(' ');
-            } else {
-              return label;
+        // Custom plugin to draw accessible values inside or outside horizontal bars
+        const horizontalBarLabelPlugin = {
+            id: 'horizontalBarLabelPlugin',
+            afterDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        const dataVal = dataset.data[index];
+                        const text = dataVal + '%';
+                        ctx.font = 'bold 12px Inter';
+                        const textWidth = ctx.measureText(text).width;
+                        const padding = 8;
+
+                        // If bar width is wider than the text plus padding, put inside bar, else draw next to it
+                        if (bar.x > textWidth + (padding * 2)) {
+                            ctx.fillStyle = '#ffffff';
+                            ctx.textAlign = 'right';
+                            ctx.fillText(text, bar.x - padding, bar.y + 1);
+                        } else {
+                            ctx.fillStyle = '#0D253F';
+                            ctx.textAlign = 'left';
+                            ctx.fillText(text, bar.x + padding, bar.y + 1);
+                        }
+                    });
+                });
+                ctx.restore();
+            }
+        };
+
+        // Custom plugin to render active metrics as accessible text at the center of the Doughnut Chart
+        const doughnutCenterTextPlugin = {
+            id: 'doughnutCenterTextPlugin',
+            afterDraw: (chart) => {
+                if (chart.config.type !== 'doughnut') return;
+                const ctx = chart.ctx;
+                ctx.save();
+
+                const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+                const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Header label
+                ctx.font = 'bold 9px Inter';
+                ctx.fillStyle = palette.textGray;
+                ctx.fillText('SCORECARD', centerX, centerY - 14);
+
+                // Exact numbers represented as large text
+                ctx.font = 'extrabold 22px Inter';
+                ctx.fillStyle = palette.darkBlue;
+                ctx.fillText(`${currentActiveVuln.prevalence}% / ${currentActiveVuln.impact}`, centerX, centerY + 8);
+
+                ctx.restore();
             }
         };
 
@@ -313,17 +539,22 @@
             const ctx = document.getElementById('overviewChart').getContext('2d');
             const sortedData = [...vulnerabilityData].sort((a, b) => b.prevalence - a.prevalence);
 
-            new Chart(ctx, {
+            if (overviewChart) {
+                overviewChart.destroy();
+            }
+
+            overviewChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: sortedData.map(v => wrapLabel(Array.isArray(v.name) ? v.name.join(' ') : v.name)),
+                    labels: sortedData.map(v => wrapLabel(v.name)),
                     datasets: [{
                         label: 'Average Incidence Rate (%)',
-                        data: sortedData.map(v => Math.round(v.prevalence)),
+                        data: sortedData.map(v => v.prevalence),
                         backgroundColor: palette.primaryBlue,
                         borderColor: palette.darkBlue,
-                        borderWidth: 2,
-                        borderRadius: 5,
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        barThickness: 24
                     }]
                 },
                 options: {
@@ -333,84 +564,79 @@
                     scales: {
                         x: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            title: { display: true, text: 'Incidence Rate (%)', color: palette.textGray, font: { size: 14 } }
+                            max: 6,
+                            grid: { color: 'rgba(226, 232, 240, 0.6)' },
+                            ticks: {
+                                color: palette.textGray,
+                                font: { size: 11, family: 'Inter' },
+                                callback: function (value) { return value + '%'; }
+                            }
                         },
                         y: {
-                            grid: { display: false }
+                            grid: { display: false },
+                            ticks: {
+                                color: palette.darkBlue,
+                                font: { size: 11, weight: '600', family: 'Inter' }
+                            }
                         }
                     },
                     plugins: {
                         legend: { display: false },
-                        tooltip: { 
-                            callbacks: { title: tooltipTitleCallback },
+                        tooltip: {
                             backgroundColor: palette.darkBlue,
-                            titleFont: { size: 14 },
-                            bodyFont: { size: 12 },
-                            padding: 10
+                            titleFont: { size: 12, family: 'Inter', weight: 'bold' },
+                            bodyFont: { size: 12, family: 'Inter' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function (context) {
+                                    return ` Prevalence: ${context.raw}% of applications`;
+                                }
+                            }
                         }
                     }
-                }
+                },
+                plugins: [horizontalBarLabelPlugin]
             });
         }
-        
+
         function displayVulnerability(vulnId) {
             const vuln = vulnerabilityData.find(v => v.id === vulnId);
             if (!vuln) return;
-            
-            document.getElementById('vuln-title').textContent = Array.isArray(vuln.name) ? vuln.name.join(' ') : vuln.name;
+
+            currentActiveVuln = vuln;
+
+            // Text adjustments
+            document.getElementById('vuln-title').textContent = `${vuln.id}: ${vuln.name}`;
             document.getElementById('vuln-what-it-is').textContent = vuln.description;
             document.getElementById('vuln-how-it-affects').textContent = vuln.effects;
-            
+
+            // Set simple accessible metrics values below/beside charts
+            document.getElementById('text-metric-prevalence').textContent = `${vuln.prevalence}%`;
+            document.getElementById('text-metric-impact').textContent = `${vuln.impact}/10`;
+
+            // Build dynamic Mitigations Flowchart
             const mitigationsContainer = document.getElementById('vuln-mitigations');
             mitigationsContainer.innerHTML = '';
+
             vuln.mitigations.forEach((mitigation, index) => {
-                const item = document.createElement('div');
-                item.className = 'flex items-start';
-                item.innerHTML = `
-                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-[#0A74DA] text-white font-bold text-lg shadow-md">
+                const card = document.createElement('div');
+                card.className = "flex items-start bg-slate-50 border border-slate-200/50 rounded-xl p-4 gap-4 transition-all hover:bg-white hover:border-slate-300";
+                card.innerHTML = `
+                    <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-lg bg-[#0A74DA] text-white font-extrabold text-base shadow-sm">
                         ${index + 1}
                     </div>
-                    ${ index < vuln.mitigations.length - 1 ? '<div class="flex-grow-0 w-px bg-gray-300 mx-auto h-8 mt-12"></div>' : ''}
-                    <div class="ml-6 flex-1">
-                        <p class="text-base text-[#6C757D] pb-10">${mitigation}</p>
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Control Action</span>
+                        <p class="text-sm text-slate-700 leading-relaxed">${mitigation}</p>
                     </div>
-                `.replace('<div class="flex-grow-0 w-px bg-gray-300 mx-auto h-8 mt-12"></div>', '<div class="flex-grow-0 w-px bg-gray-300 self-stretch mx-auto mt-12"></div>');
-
-                const p = item.querySelector('p');
-                const divLine = document.createElement('div');
-                divLine.className = 'flex-grow-0 w-px bg-gray-300 mx-auto h-full';
-
-                const flowItem = document.createElement('div');
-                flowItem.className = 'flex items-center';
-
-                const stepContainer = document.createElement('div');
-                stepContainer.className = 'flex flex-col items-center';
-
-                const stepCircle = document.createElement('div');
-                stepCircle.className = 'flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-[#0A74DA] text-white font-bold text-lg shadow-md';
-                stepCircle.textContent = index + 1;
-
-                stepContainer.appendChild(stepCircle);
-                
-                if (index < vuln.mitigations.length - 1) {
-                  const line = document.createElement('div');
-                  line.className = 'w-px h-12 bg-gray-300';
-                  stepContainer.appendChild(line);
-                }
-                
-                flowItem.appendChild(stepContainer);
-                
-                const textDiv = document.createElement('div');
-                textDiv.className = 'ml-6 flex-1';
-                textDiv.innerHTML = `<p class="text-base text-[#6C757D]">${mitigation}</p>`;
-                
-                flowItem.appendChild(textDiv);
-                mitigationsContainer.appendChild(flowItem);
+                `;
+                mitigationsContainer.appendChild(card);
             });
 
             document.getElementById('vuln-link').href = vuln.link;
-            
+
+            // Build Scorecard Doughnut Chart
             createRiskScorecardChart(vuln);
         }
 
@@ -419,39 +645,53 @@
             if (riskScorecardChart) {
                 riskScorecardChart.destroy();
             }
+
             riskScorecardChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Prevalence Score', 'Impact Score'],
+                    labels: ['Prevalence Score (out of 10)', 'Impact Rating (out of 10)'],
                     datasets: [{
                         data: [vuln.prevalence, vuln.impact],
                         backgroundColor: [palette.primaryBlue, palette.accentYellow],
-                        borderColor: [palette.darkBlue, palette.darkBlue],
-                        borderWidth: 2
+                        borderColor: ['#ffffff', '#ffffff'],
+                        borderWidth: 2,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
+                    cutout: '72%',
                     plugins: {
                         legend: {
+                            display: true,
                             position: 'bottom',
                             labels: {
-                                color: palette.textGray,
-                                font: { size: 12 }
+                                boxWidth: 12,
+                                padding: 15,
+                                color: palette.darkBlue,
+                                font: { size: 11, family: 'Inter', weight: '500' }
                             }
                         },
                         tooltip: {
                             backgroundColor: palette.darkBlue,
-                            titleFont: { size: 14 },
-                            bodyFont: { size: 12 },
-                            padding: 10
+                            padding: 12,
+                            titleFont: { size: 11, family: 'Inter', weight: 'bold' },
+                            bodyFont: { size: 12, family: 'Inter' },
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const val = context.raw || 0;
+                                    return ` ${label}: ${val}`;
+                                }
+                            }
                         }
                     }
-                }
+                },
+                plugins: [doughnutCenterTextPlugin]
             });
         }
     </script>
-  </body>
+</body>
+
 </html>

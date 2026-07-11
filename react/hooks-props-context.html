@@ -1,490 +1,1213 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Guide to React Hooks, Props & Context</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.0/dist/typography.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-            font-family: 'Inter', sans-serif;
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Guide to React Hooks, Props & Context</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Mermaid.js for diagrams (ESM Import required for v10/v11+) -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose'
+    });
+  </script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
         }
-        .mermaid svg {
-            margin: auto;
-        }
-        pre {
-            background-color: #1f2937;
-            color: #f3f4f6;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-        code {
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .code-block-title {
-            background-color: #374151;
-            color: #d1d5db;
-            padding: 0.5rem 1.5rem;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        .code-block-content {
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-            margin-top: -1.5rem; /* Adjust for title */
-            padding-top: 1.5rem; /* Restore padding */
-        }
-    </style>
-  </head>
-  <body class="bg-slate-50 text-slate-800">
-    <!-- Header and Navigation -->
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <h1 class="text-xl font-bold text-slate-900">React Hooks, Props & Context</h1>
-          <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
-            <a href="#parent-to-child" class="text-sm text-slate-600 hover:text-blue-600 transition-colors">Parent-to-Child</a>
-            <a href="#child-to-parent" class="text-sm text-slate-600 hover:text-blue-600 transition-colors">Child-to-Parent</a>
-            <a href="#context-api" class="text-sm text-slate-600 hover:text-blue-600 transition-colors">Context API</a>
-            <a href="#other-hooks" class="text-sm text-slate-600 hover:text-blue-600 transition-colors font-semibold">Other Hooks</a>
-          </div>
+      }
+    }
+  </script>
+  <style>
+    .mermaid svg {
+      margin: auto;
+      max-width: 100%;
+      height: auto;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #f1f5f9;
+      padding: 1.25rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .code-block-title {
+      background-color: #1e293b;
+      color: #94a3b8;
+      padding: 0.5rem 1rem;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #334155;
+    }
+
+    .terminal-log {
+      font-family: 'Fira Code', monospace;
+      background-color: #020617;
+      color: #38bdf8;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      max-height: 250px;
+      overflow-y: auto;
+      border: 1px solid #1e293b;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <header class="bg-slate-900/90 backdrop-blur sticky top-0 z-50 border-b border-slate-800">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <span class="p-2 bg-blue-600 rounded-lg text-white font-black text-lg">R</span>
+          <span class="font-extrabold text-lg tracking-tight text-white">React Data Flow & Hooks</span>
         </div>
-      </nav>
-    </header>
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-      <p class="text-center text-lg text-slate-600 max-w-3xl mx-auto mb-12">
-        This guide breaks down the fundamental ways components pass data and manage state in React. Explore each pattern with diagrams, code examples, and live, interactive demos.
+        <div class="hidden lg:flex items-center space-x-6">
+          <a href="#parent-to-child" class="text-sm text-slate-400 hover:text-blue-400 transition-colors">1. Parent
+            &rarr; Child</a>
+          <a href="#child-to-parent" class="text-sm text-slate-400 hover:text-blue-400 transition-colors">2. Child
+            &rarr; Parent</a>
+          <a href="#context-api" class="text-sm text-slate-400 hover:text-blue-400 transition-colors">3. Context API</a>
+          <a href="#other-hooks" class="text-sm text-slate-400 hover:text-indigo-400 transition-colors font-semibold">4.
+            Hooks Sandbox</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <span
+        class="px-3 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">Interactive
+        Dev Sandbox v2.5</span>
+      <h1 class="text-4xl sm:text-5xl font-black text-white mt-4 tracking-tight leading-none">
+        Mastering Data Flow & Hooks
+      </h1>
+      <p class="text-lg text-slate-400 mt-4">
+        Explore architectural diagrams, modify live states to watch variables cascade through sandboxes, and simulate
+        full-lifecycle side effects on mock servers.
       </p>
-      <!-- Section 1: Parent-to-Child -->
-      <section id="parent-to-child" class="mb-16 p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-3xl font-bold text-slate-900 mb-6">1. Parent-to-Child Communication</h2>
-        <div class="grid md:grid-cols-2 gap-8 items-start">
-          <div>
-            <h3 class="text-xl font-semibold mb-2">Concept</h3>
-            <p class="text-slate-600 mb-4">This is the most common data flow in React. A parent component holds data and passes it down to its child components via props. The data flow is unidirectional.</p>
-            <h3 class="text-xl font-semibold mb-2">Data Flow</h3>
-            <div class="p-4 bg-slate-100 rounded-lg">
-              <pre class="mermaid bg-slate-100">
-                            graph TD
-                                subgraph Parent Component
-                                    A[App.js]
-                                end
-                                subgraph Child Component
-                                    B[UserProfile.js]
-                                end
-                                A -- "Passes props (name, age, etc.)" --> B;
-                        </pre>
+    </div>
+
+    <!-- Highlighted Core Principles Banner -->
+    <div
+      class="max-w-4xl mx-auto mb-16 bg-gradient-to-r from-blue-900/40 to-slate-800/80 p-6 rounded-2xl border border-blue-500/30 shadow-xl">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400 mb-3 flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-ping"></span>
+        Core Architecture: Unidirectional Data Rules
+      </h3>
+      <p class="text-slate-200 text-sm leading-relaxed mb-4">
+        Props are <strong>read-only</strong> properties passed from a parent component down to its children. This
+        implements React's <strong>"unidirectional data flow"</strong>—the child has no authority to modify its props
+        directly; it must render whatever the parent provides.
+      </p>
+      <div class="grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+        <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+          <p class="font-extrabold text-amber-400 mb-1">🛡️ Immutable Integrity</p>
+          <p class="text-slate-400">React strictly enforces prop immutability. If a child tries to mutate its incoming
+            <code>props</code> object, React throws a read-only runtime error.
+          </p>
+        </div>
+        <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+          <p class="font-extrabold text-emerald-400 mb-1">⚡ Cascade Re-renders</p>
+          <p class="text-slate-400">Whenever the parent changes the state variables bound to child props, React
+            schedules a re-render of that child to match the new values.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Parent-to-Child -->
+    <section id="parent-to-child" class="mb-16 p-6 sm:p-8 bg-slate-800/50 rounded-2xl border border-slate-800">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">Mechanism 01</span>
+          <h2 class="text-3xl font-bold text-white mt-1">Parent-to-Child Communication</h2>
+        </div>
+        <span
+          class="px-3 py-1 text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full self-start">Unidirectional
+          Flow</span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch mb-8">
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <div class="space-y-4">
+            <p class="text-slate-300 leading-relaxed">
+              React applications are structured as trees of components. Passing props from parent to child represents
+              the primary nervous system of this tree.
+            </p>
+
+            <div class="space-y-3">
+              <h4 class="text-sm font-bold text-white uppercase tracking-wider">Deep Dive: How React Processes Props
+              </h4>
+              <ul class="space-y-2 text-xs text-slate-400 list-disc list-inside">
+                <li><strong>The Render Phase:</strong> When a parent renders, it calls the child component functions,
+                  passing the evaluated attributes as a single frozen object (<code>props</code>).</li>
+                <li><strong>Shallow Comparison:</strong> When the Fiber Engine reconciles differences, it checks if any
+                  incoming prop has reference or primitive value changes. If they differ, the child is flagged for
+                  update.</li>
+                <li><strong>Single Source of Truth:</strong> By isolating state mutation solely inside the Parent, we
+                  ensure the UI remains predictable and synchronous.</li>
+              </ul>
             </div>
           </div>
-          <div>
-            <h3 class="text-xl font-semibold mb-2">Live Demo</h3>
-            <p class="text-slate-600 mb-4">The parent component passes user data to the `UserProfile` component below for display.</p>
-            <div class="p-6 border rounded-lg shadow-md bg-white">
-              <h3 class="text-xl font-bold mb-2">Alice</h3>
-              <p>Age: 30</p>
-              <p>Hobbies: Reading, Hiking, Coding</p>
+
+          <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800 mt-6 lg:mt-0">
+            <p class="text-xs font-semibold text-slate-500 uppercase mb-3">Subelements Flow Architecture</p>
+            <div class="mermaid">
+              graph TD
+              subgraph Parent["Parent Component (App.js)"]
+              A["State: userData { name, age, hobbies }"]
+              end
+              subgraph Child["Child Component (UserProfile.js)"]
+              B["Incoming Props: { name, age, hobbies }"]
+              C["UI Render Output"]
+              end
+              A -- "Passes payload dynamically" --> B
+              B --> C
+              classDef parent fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#fff;
+              classDef child fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff;
+              class Parent parent;
+              class Child child;
             </div>
           </div>
         </div>
-        <div class="mt-8">
-          <h3 class="text-xl font-semibold mb-4">Full Code Example</h3>
-          <div class="code-block-title">Parent: App.js</div>
-          <pre class="!rounded-t-none"><code>import React from 'react';
+
+        <div class="lg:col-span-7 flex flex-col">
+          <div class="p-6 bg-slate-950/40 rounded-2xl border border-slate-800/80 flex-1 flex flex-col justify-between">
+            <div>
+              <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+                Live Playground: Render Cascade & Immutability Test
+              </h4>
+
+              <!-- Play Instructions -->
+              <div
+                class="bg-blue-950/20 border border-blue-500/20 p-3 rounded-lg text-xs text-slate-400 mb-4 space-y-1">
+                <p class="font-bold text-blue-300">🎯 How to Test:</p>
+                <ol class="list-decimal list-inside space-y-0.5 text-[11px]">
+                  <li>Type in the inputs: Notice the child layout flashes green (<strong
+                      class="text-emerald-400">Cascade Render</strong>) and scales up seamlessly.</li>
+                  <li>Click <strong class="text-amber-400">Simulate Mutation Violation</strong>: Witness what occurs
+                    when a child tries to overwrite its read-only props object.</li>
+                </ol>
+              </div>
+
+              <!-- Parent inputs simulator -->
+              <div id="parent-boundary"
+                class="bg-slate-900/60 p-4 rounded-xl mb-4 border border-slate-800 transition-all duration-300">
+                <p class="text-xs font-extrabold text-blue-400 mb-3 uppercase tracking-wider">&lt;App /&gt; (Parent
+                  Controller State)</p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">User Name</label>
+                    <input id="p1-name" type="text" value="Alice"
+                      class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-blue-500 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">Age</label>
+                    <input id="p1-age" type="number" value="30"
+                      class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-blue-500 text-white">
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <label class="block text-xs text-slate-400 mb-1">Hobbies (comma-separated)</label>
+                  <input id="p1-hobbies" type="text" value="Reading, Hiking, Coding"
+                    class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-blue-500 text-white">
+                </div>
+              </div>
+
+              <!-- Prop vector flow symbol -->
+              <div class="flex justify-center my-2 text-blue-400 font-mono text-xs tracking-widest">
+                &darr; Props Cascade &darr;
+              </div>
+
+              <!-- Child View Component -->
+              <div id="child-boundary"
+                class="bg-slate-900/80 p-5 rounded-xl border border-emerald-500/30 shadow-lg relative transition-all duration-300">
+                <span
+                  class="absolute top-3 right-3 text-[10px] font-mono px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">UserProfile
+                  (Child)</span>
+                <p class="text-xs font-extrabold text-slate-500 mb-3 uppercase tracking-wider">&lt;UserProfile ...props
+                  /&gt;</p>
+
+                <div class="space-y-2">
+                  <h3 class="text-2xl font-black text-white" id="p1-out-name">Alice</h3>
+                  <p class="text-slate-300">Age: <span class="font-bold text-white" id="p1-out-age">30</span></p>
+                  <p class="text-slate-300">Hobbies: <span class="font-bold text-emerald-400"
+                      id="p1-out-hobbies">Reading, Hiking, Coding</span></p>
+                </div>
+
+                <!-- Action button inside child to violate React standard -->
+                <button id="p1-violate-btn"
+                  class="mt-4 w-full py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-semibold rounded border border-amber-500/30 transition-all">
+                  ⚠️ Simulate Mutation Violation: props.name = 'Bob'
+                </button>
+              </div>
+            </div>
+
+            <!-- Simulated React Immutability Console Error Output -->
+            <div id="p1-error-console"
+              class="hidden mt-4 p-3 bg-red-950/40 border border-red-500/30 rounded-lg text-xs font-mono text-red-400">
+              <strong>🚫 Uncaught TypeError:</strong> Cannot assign to read only property 'name' of object
+              '#&lt;Object&gt;'
+              <p class="text-[10px] text-slate-400 mt-1">at UserProfile.js:5 (mutating direct component parameters is
+                forbidden in React's strict fiber tree)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-xl font-semibold mb-4 text-white">Code Construction</h3>
+        <div class="code-block-title">App.js (Parent)</div>
+        <pre><code>import React, { useState } from 'react';
 import UserProfile from './UserProfile';
 
 function App() {
-  const userData = {
-    name: "Alice",
-    age: 30,
-    hobbies: ['Reading', 'Hiking', 'Coding']
-  };
+  const [name, setName] = useState('Alice');
+  const [age, setAge] = useState(30);
+  const [hobbies, setHobbies] = useState(['Reading', 'Hiking', 'Coding']);
 
   return (
-    &lt;div&gt;
+    &lt;div className="dashboard-container"&gt;
       &lt;h1&gt;User Dashboard&lt;/h1&gt;
-      &lt;UserProfile 
-        name={userData.name} 
-        age={userData.age} 
-        hobbies={userData.hobbies} 
+      {/* Passing variables downstream as direct props */}
+      &lt;UserProfile
+        name={name}
+        age={age}
+        hobbies={hobbies}
       /&gt;
     &lt;/div&gt;
   );
-}
+}</code></pre>
 
-export default App;</code></pre>
-          <div class="code-block-title mt-4">Child: UserProfile.js</div>
-          <pre class="!rounded-t-none"><code>import React from 'react';
+        <div class="code-block-title mt-4">UserProfile.js (Child)</div>
+        <pre><code>import React from 'react';
 
-const UserProfile = ({ name, age, hobbies }) => {
+// Props are structured as read-only argument bindings
+function UserProfile({ name, age, hobbies }) {
+  // PROPS MUST REMAIN IMMUTABLE INSIDE COMPONENT CONTEXT
   return (
-    &lt;div className="p-4 border rounded-lg"&gt;
-      &lt;h3 className="font-bold"&gt;{name}&lt;/h3&gt;
+    &lt;div className="profile-card"&gt;
+      &lt;h3&gt;{name}&lt;/h3&gt;
       &lt;p&gt;Age: {age}&lt;/p&gt;
       &lt;p&gt;Hobbies: {hobbies.join(', ')}&lt;/p&gt;
     &lt;/div&gt;
   );
-};
+}</code></pre>
+      </div>
+    </section>
 
-export default UserProfile;</code></pre>
+    <!-- Section 2: Child-to-Parent -->
+    <section id="child-to-parent" class="mb-16 p-6 sm:p-8 bg-slate-800/50 rounded-2xl border border-slate-800">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">Mechanism 02</span>
+          <h2 class="text-3xl font-bold text-white mt-1">Child-to-Parent (Callbacks)</h2>
         </div>
-      </section>
-      <!-- Section 2: Child-to-Parent -->
-      <section id="child-to-parent" class="mb-16 p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-3xl font-bold text-slate-900 mb-6">2. Child-to-Parent Communication</h2>
-        <div class="grid md:grid-cols-2 gap-8 items-start">
+        <span
+          class="px-3 py-1 text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full self-start">Bubble-Up
+          Actions</span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch mb-8">
+        <div class="lg:col-span-5 flex flex-col justify-between">
           <div>
-            <h3 class="text-xl font-semibold mb-2">Concept</h3>
-            <p class="text-slate-600 mb-4">A child can't pass props directly up to a parent. Instead, the parent passes a callback function down to the child. The child calls this function, passing data as an argument, to communicate back to the parent.</p>
-            <h3 class="text-xl font-semibold mb-2">Data Flow</h3>
-            <div class="p-4 bg-slate-100 rounded-lg">
-              <pre class="mermaid bg-slate-100">
-                            graph TD
-                                A[App Component] -- "Passes 'onAddToCart' function as a prop" --> B[AddToCartButton Component];
-                                B -- "Calls onAddToCart(product) on click" --> A;
-                        </pre>
+            <p class="text-slate-300 mb-4 leading-relaxed">
+              Since data flows only downwards, a child component cannot pass props up to its parent. To communicate
+              upwards, the parent must pass down an <strong>event handler function (callback)</strong>. The child
+              triggers this function, passing data as parameters.
+            </p>
+            <div class="border-l-2 border-amber-500 pl-4 py-1 text-xs text-slate-400 space-y-2 mb-4">
+              <p><strong>Parent Orchestration:</strong> The parent decides *how* to react to the action (e.g., adding an
+                item, filtering a list). The child is merely an emitter of user actions.</p>
+              <p><strong>State Mutation Boundaries:</strong> The child triggers state modification functions, but never
+                mutates the state directly, maintaining clean isolation boundaries.</p>
             </div>
           </div>
-          <div>
-            <h3 class="text-xl font-semibold mb-2">Live Demo</h3>
-            <p class="text-slate-600 mb-4">Click the button to send product data from the child component up to the parent, which then updates the shopping cart.</p>
-            <button id="addToCartBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
-              Add to Cart
-            </button>
-            <div class="p-4 border rounded bg-white shadow-inner">
-              <h3 class="font-bold">Shopping Cart:</h3>
-              <ul id="cart-list">
-                <li id="empty-cart-msg" class="text-slate-500">Cart is empty</li>
-              </ul>
+          <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800">
+            <p class="text-xs font-semibold text-slate-500 uppercase mb-3">Event Bubbling Flow</p>
+            <div class="mermaid">
+              graph TD
+              subgraph Parent["Parent: App.js"]
+              State["State: cart [list]"]
+              CB["Callback Function: handleAddToCart(item)"]
+              end
+              subgraph Child["Child: AddToCartButton.js"]
+              Btn["Button Clicked"]
+              end
+              CB -- "Passes callback function as prop" --> Btn
+              Btn -- "Invokes callback(payload)" --> CB
+              CB -- "Mutates" --> State
+              classDef parent fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#fff;
+              classDef child fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff;
+              class Parent parent;
+              class Child child;
             </div>
           </div>
         </div>
-        <div class="mt-8">
-          <h3 class="text-xl font-semibold mb-4">Full Code Example</h3>
-          <div class="code-block-title">Parent: App.js</div>
-          <pre class="!rounded-t-none"><code>import React, { useState } from 'react';
-import AddToCartButton from './AddToCartButton';
 
-function App() {
-  const [cart, setCart] = useState([]);
+        <div class="lg:col-span-7 flex flex-col">
+          <div class="p-6 bg-slate-950/40 rounded-2xl border border-slate-800/80 flex-1">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+              Live Hands-On Playground (Customizable Child Action)
+            </h4>
 
-  const handleAddToCart = (product) => {
-    setCart(currentCart => [...currentCart, product]);
-    console.log('Product added:', product);
-  };
+            <!-- Child element editor -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-amber-500/30 relative mb-4">
+              <span
+                class="absolute top-3 right-3 text-[10px] font-mono px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20">ProductCard
+                (Child component)</span>
+              <p class="text-xs font-extrabold text-slate-500 mb-3 uppercase tracking-wider">&lt;ProductCard /&gt; child
+                form parameters</p>
 
-  return (
-    &lt;div&gt;
-      &lt;h1&gt;My Store&lt;/h1&gt;
-      &lt;AddToCartButton onAddToCart={handleAddToCart} /&gt;
-      &lt;h2&gt;Cart Items: {cart.length}&lt;/h2&gt;
-    &lt;/div&gt;
-  );
-}
+              <div class="grid sm:grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Item Title</label>
+                  <input id="p2-prod-name" type="text" value="Mechanical Keyboard"
+                    class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-amber-500 text-white">
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Price ($)</label>
+                  <input id="p2-prod-price" type="number" value="150"
+                    class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-amber-500 text-white">
+                </div>
+              </div>
+              <button id="p2-action-btn"
+                class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg transition-all flex items-center justify-center gap-2">
+                Emit: onAddToCart(payload)
+              </button>
+            </div>
 
-export default App;</code></pre>
-          <div class="code-block-title mt-4">Child: AddToCartButton.js</div>
-          <pre class="!rounded-t-none"><code>import React from 'react';
+            <!-- Prop vector flow symbol -->
+            <div class="flex justify-center my-2 text-amber-500 font-mono text-sm tracking-widest">
+              &uarr; Trigger Parent Callback &uarr;
+            </div>
 
-const AddToCartButton = ({ onAddToCart }) => {
-  const product = { id: 1, name: 'Laptop', price: 1200 };
+            <!-- Parent component output -->
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <p class="text-xs font-extrabold text-blue-400 mb-3 uppercase tracking-wider">&lt;App /&gt; (Parent
+                Shopping Cart Status)</p>
+              <div class="bg-slate-950 p-4 rounded-lg">
+                <div class="flex justify-between items-center mb-2 border-b border-slate-800 pb-2">
+                  <span class="text-xs text-slate-400">Total Items in Cart State:</span>
+                  <span id="p2-cart-count"
+                    class="text-lg font-black text-white px-2.5 py-0.5 bg-blue-500/20 rounded border border-blue-500/30">0</span>
+                </div>
+                <div class="text-xs text-slate-400 mb-1">Interactive Log (Real-time events inside parent):</div>
+                <div id="p2-event-log" class="text-xs font-mono text-slate-300 space-y-1 max-h-24 overflow-y-auto">
+                  <span class="text-slate-500 italic">[System] Awaiting child-to-parent callback emissions...</span>
+                </div>
+              </div>
+            </div>
 
-  return (
-    &lt;button onClick={() => onAddToCart(product)}&gt;
-      Add Laptop to Cart
-    &lt;/button&gt;
-  );
-};
-
-export default AddToCartButton;</code></pre>
+          </div>
         </div>
-      </section>
-      <!-- Section 3: Context API -->
-      <section id="context-api" class="mb-16 p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-3xl font-bold text-slate-900 mb-6">3. The Context API: Sharing Data Without "Prop Drilling"</h2>
-        <div class="grid md:grid-cols-2 gap-8 items-start">
+      </div>
+    </section>
+
+    <!-- Section 3: Context API -->
+    <section id="context-api" class="mb-16 p-6 sm:p-8 bg-slate-800/50 rounded-2xl border border-slate-800">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest">Mechanism 03</span>
+          <h2 class="text-3xl font-bold text-white mt-1">The Context API</h2>
+        </div>
+        <span
+          class="px-3 py-1 text-xs font-medium bg-teal-500/10 text-teal-400 border border-teal-500/20 rounded-full self-start">Avoid
+          Prop Drilling</span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch mb-8">
+        <div class="lg:col-span-5 flex flex-col justify-between">
           <div>
-            <h3 class="text-xl font-semibold mb-2">Concept</h3>
-            <p class="text-slate-600 mb-4">Context provides a way to pass data through the component tree without having to pass props down manually at every level. It's designed to share data that can be considered "global" for a tree of React components, like the current authenticated user or theme.</p>
-            <h3 class="text-xl font-semibold mb-2">Data Flow</h3>
-            <div class="p-4 bg-slate-100 rounded-lg">
-              <pre class="mermaid bg-slate-100">
-                            graph TD
-                                A[App Component] --> B(UserContext.Provider);
-                                B -- "Provides 'user' value" --> C[Layout Component];
-                                C --> D[Header Component];
-                                D --> E[UserInfo Component];
-                                B -. "Consumes 'user' value via useContext" .-> E;
-                        </pre>
+            <p class="text-slate-300 mb-4 leading-relaxed">
+              When deeply nested components require state, traditional prop passing causes <strong>Prop
+                Drilling</strong> (where
+              middle layout blocks act as unnecessary courier nodes). <strong>React Context</strong> establishes a
+              dedicated
+              broadcast channel allowing children to subscribe directly.
+            </p>
+            <div class="border-l-2 border-teal-500 pl-4 py-1 text-xs text-slate-400 space-y-2 mb-4">
+              <p><strong>Provider/Consumer Link:</strong> Any nested child using <code>useContext</code> connects
+                directly to the
+                nearest <code>Provider</code> ancestor, ignoring any intermediary wrappers.</p>
+              <p><strong>Render Optimization:</strong> When context variables mutate, all subscribing child nodes
+                re-render automatically. We manage this meticulously using split contexts or selectors to keep updates
+                snappy.</p>
             </div>
           </div>
-          <div>
-            <h3 class="text-xl font-semibold mb-2">Live Demo</h3>
-            <p class="text-slate-600 mb-4">Click the button to change the user context. The `UserInfo` component, nested deep inside the layout, will update without any props being passed through the intermediate components.</p>
-            <button id="toggleUserBtn" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mb-4">
-              Log In
-            </button>
-            <div class="p-4 border rounded-lg bg-slate-200">
-              <p class="font-semibold">Layout Component</p>
-              <div class="mt-2 p-4 border rounded-lg bg-slate-100">
-                <p class="font-semibold">Header Component</p>
-                <div id="user-info-panel" class="mt-2 p-4 border rounded-lg bg-white shadow-inner">
-                  <p class="font-semibold">UserInfo Component</p>
-                  <p>Current User:
-                    <span id="user-name" class="font-bold text-blue-600">Guest</span></p>
+          <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800">
+            <p class="text-xs font-semibold text-slate-500 uppercase mb-3">Context API Brokerage Topology</p>
+            <div class="mermaid">
+              graph TD
+              A[App.js] --> B(UserContext.Provider)
+              B -- "Broadcasting Context" --> C["Layout Component (Courier Only)"]
+              C --> D["Header Component (Courier Only)"]
+              D --> E["UserInfo Component"]
+              B -. "Direct connection via useContext" .-> E
+              classDef provider fill:#1e293b,stroke:#0d9488,stroke-width:2px,color:#fff;
+              classDef courier fill:#334155,stroke:#475569,stroke-dasharray: 5 5,color:#94a3b8;
+              classDef active fill:#020617,stroke:#14b8a6,stroke-width:2.5px,color:#fff;
+              class B provider;
+              class C,D courier;
+              class E active;
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col">
+          <div class="p-6 bg-slate-950/40 rounded-2xl border border-slate-800/80 flex-1">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
+              Live Context Playground (Direct Context Subscription)
+            </h4>
+
+            <!-- Top Level Provider controller -->
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 mb-4">
+              <p class="text-xs font-extrabold text-teal-400 mb-3 uppercase tracking-wider">&lt;UserContext.Provider
+                /&gt; (App level controller)</p>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input id="p3-user-input" type="text" value="Developer Bob" placeholder="Enter username..."
+                  class="flex-1 bg-slate-950 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-teal-500 text-white">
+                <button id="p3-login-btn"
+                  class="px-5 py-2 bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold rounded text-sm transition-all">
+                  Update Context Value
+                </button>
+              </div>
+            </div>
+
+            <!-- Nested Hierarchy visualizer -->
+            <div class="p-4 border border-slate-800 bg-slate-950/50 rounded-xl space-y-3 relative">
+              <div class="text-[10px] uppercase font-mono tracking-wider text-slate-500 mb-1">&lt;Layout /&gt; (Visual
+                block container)</div>
+
+              <!-- Intermediary node 1 -->
+              <div class="p-3 bg-slate-900/40 border border-slate-800 rounded-lg relative overflow-hidden">
+                <span class="absolute top-2 right-2 text-[9px] font-mono text-slate-500">Unaffected by render
+                  updates</span>
+                <div class="text-xs text-slate-400 font-semibold">&lt;Navigation/&gt; (No user props passed here)</div>
+
+                <!-- Intermediary node 2 -->
+                <div class="mt-2 p-3 bg-slate-900/60 border border-slate-800 rounded-lg">
+                  <div class="text-xs text-slate-400 font-semibold">&lt;ProfileWrapper/&gt; (No user props passed here)
+                  </div>
+
+                  <!-- Leaf Consumer Node -->
+                  <div
+                    class="mt-2 p-3 bg-slate-900 border border-teal-500/40 rounded-lg shadow-inner flex justify-between items-center relative transition-all duration-300"
+                    id="p3-consumer-container">
+                    <div class="text-xs font-bold text-teal-400">&lt;UserInfo /&gt; (Subscribed Leaf)</div>
+                    <div class="text-sm">
+                      Current User: <span id="p3-output-user" class="font-extrabold text-white">Developer Bob</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Other Hooks -->
+    <section id="other-hooks" class="mb-16 p-6 sm:p-8 bg-slate-800/50 rounded-2xl border border-slate-800">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Mechanism 04</span>
+          <h2 class="text-3xl font-bold text-white mt-1">Lifecycle, Side Effects, and Optimization</h2>
+        </div>
+        <span
+          class="px-3 py-1 text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full self-start">Advanced
+          Engineering Sandbox</span>
+      </div>
+
+      <!-- Detailed Explanation Text Block -->
+      <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80 mb-8 space-y-6">
+        <h3 class="text-xl font-bold text-indigo-400">Deep Dive: The Component Lifecycle & Side Effects</h3>
+
+        <div class="grid md:grid-cols-2 gap-6 text-sm text-slate-300">
+          <div class="space-y-4">
+            <h4 class="font-semibold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              What is the React Lifecycle?
+            </h4>
+            <p class="leading-relaxed">
+              A React component moves through three distinct phases: <code>Mounting</code> (insertion into the physical
+              DOM),
+              <code>Updating</code> (re-running component code due to prop, state, or context mutations), and
+              <code>Unmounting</code>
+              (removal from the DOM).
+            </p>
+            <p class="leading-relaxed">
+              Pure React rendering must <strong>never</strong> read or write to mutable values or initiate asynchronous
+              calls outside
+              of strict lifecycle hooks. Doing so creates unpredictable rendering states and breaks concurrently
+              rendered UI frameworks.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <h4 class="font-semibold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              What are Side Effects (<code>useEffect</code>)?
+            </h4>
+            <p class="leading-relaxed">
+              Side Effects are operations that modify state outside the local scope of the rendering function (e.g., API
+              networking, manually writing to the DOM, or setting timers).
+            </p>
+            <p class="leading-relaxed">
+              The <code>useEffect</code> hook schedules this work to run <strong>after</strong> the browser has finished
+              painting the visual
+              layout, ensuring that heavy external tasks do not delay the initial screen render.
+            </p>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-6">
+          <h4 class="font-bold text-white mb-2">The Critical Mechanics: Cleanups and Dependencies</h4>
+          <p class="text-sm text-slate-300 leading-relaxed mb-4">
+            React cleans up after previous effect runs by executing the return callback (if registered)
+            <strong>before</strong>
+            invoking the effect again or unmounting. This acts as a circuit-breaker against event-handler leakage and
+            unresolved network promises.
+          </p>
+        </div>
+      </div>
+
+      <!-- Highly Interactive Hands-On useEffect Sandbox -->
+      <div class="p-6 bg-slate-950/60 border border-slate-800 rounded-2xl mb-12">
+        <h4 class="text-md font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+          Playground: Lifecycle & Side Effects Simulator (`useEffect`)
+        </h4>
+
+        <!-- PLAYGROUND USER GUIDE -->
+        <div class="bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-xl mb-6 text-xs text-slate-300 space-y-2">
+          <p class="font-bold text-indigo-300 uppercase tracking-wider">🎯 How to Use This Playground:</p>
+          <ol class="list-decimal list-inside space-y-1 text-slate-400">
+            <li>Click <strong class="text-white">Mount Component</strong>: Watch the terminal trace the initial render
+              and the kickoff of the `useEffect` trigger.</li>
+            <li>Change the <strong class="text-white">Query Dependency</strong> dropdown: Notice how React automatically
+              runs the old effect's **Cleanup** first, before running the new Effect logic.</li>
+            <li>Click <strong class="text-white">Increment Render Count</strong>: Watch the element re-render. Since
+              this state is *not* in the dependency array, the `useEffect` execution is skipped!</li>
+            <li>Click <strong class="text-white">Unmount Component</strong>: Observe the final tear-down (cleanup)
+              function executing as the virtual component is destroyed.</li>
+          </ol>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 items-stretch">
+          <!-- Left: Control Deck -->
+          <div
+            class="lg:col-span-5 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+            <div class="space-y-4">
+              <!-- Toggle mounting state -->
+              <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Component Lifecycle Status</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="p4-btn-mount"
+                    class="py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded text-xs transition-all">
+                    Mount Component
+                  </button>
+                  <button id="p4-btn-unmount"
+                    class="py-2 bg-rose-600/20 hover:bg-rose-600/35 border border-rose-600/30 text-rose-300 font-bold rounded text-xs transition-all">
+                    Unmount Component
+                  </button>
+                </div>
+              </div>
+
+              <!-- Target dependency trigger -->
+              <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Interactive Trigger: Query
+                  Dependency</label>
+                <select id="p4-select-query"
+                  class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs focus:outline-none focus:border-indigo-500 text-white">
+                  <option value="user-profiles">Endpoint: /user-profiles</option>
+                  <option value="system-logs">Endpoint: /system-logs</option>
+                  <option value="active-servers">Endpoint: /active-servers</option>
+                </select>
+              </div>
+
+              <!-- Auxiliary State updates trigger -->
+              <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Auxiliary state (doesn't trigger
+                  effect dependency)</label>
+                <button id="p4-btn-aux"
+                  class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded text-xs transition-all flex justify-between items-center px-4">
+                  <span>Increment Render Count:</span>
+                  <span id="p4-aux-val" class="font-bold text-white px-2 py-0.5 bg-slate-950 rounded">0</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <p class="font-semibold text-slate-300">Rules applied inside this sandbox:</p>
+              <p>• Mounting forces the effect block to trigger.</p>
+              <p>• Modifying the 'Endpoint' triggers cleanup first, then runs a new effect.</p>
+              <p>• Modifying the render count triggers render, but skips the effect execution!</p>
+            </div>
+          </div>
+
+          <!-- Right: Terminal simulation Log output -->
+          <div class="lg:col-span-7 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Component Event Monitor (React
+                Lifecycle Logs)</span>
+              <button id="p4-clear-terminal" class="text-[10px] font-mono text-slate-500 hover:text-slate-300">Clear
+                Logs</button>
+            </div>
+            <div class="terminal-log flex-1 min-h-[250px] flex flex-col justify-between">
+              <div id="p4-terminal-output" class="space-y-1 text-xs">
+                <p class="text-slate-500 italic">// System ready. Click Mount to start lifecycle execution.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 bg-slate-950/60 border border-slate-800 rounded-2xl mb-12">
+        <h4 class="text-md font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Playground: Optimization & Auxiliary Sandbox
+        </h4>
+        <p class="text-xs text-slate-400 mb-6">
+          See exactly how state engines, computations, callback preserving references, and direct DOM hooks render on
+          demand.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Card 1: useReducer State Machine -->
+          <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-xs font-mono px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded">useReducer
+                State Machine</span>
+
+              <!-- Deep Dive Explanation -->
+              <div class="mt-3 text-xs text-slate-300 space-y-2">
+                <h5 class="text-sm font-bold text-white">Complex State Consolidation</h5>
+                <p class="leading-relaxed">
+                  <strong>Why it is needed:</strong> When state update logic becomes complex—involving multiple
+                  dependent variables or actions—using raw <code>useState</code> scatterplots makes updates error-prone.
+                </p>
+                <p class="leading-relaxed">
+                  <strong>Under the Hood:</strong> <code>useReducer</code> decouples <strong>what happened</strong> (the
+                  Action
+                  dispatched) from <strong>how the state updates</strong> (the Reducer function). It accepts
+                  <code>(state, action)</code> and returns a new state snapshot synchronously.
+                </p>
+              </div>
+
+              <!-- Playground User Guide -->
+              <div
+                class="my-4 bg-rose-950/25 border border-rose-500/10 p-3 rounded-lg text-[11px] text-slate-400 space-y-1">
+                <p class="font-bold text-rose-300 uppercase tracking-wider">🎯 How to use this playground:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                  <li>Click <strong class="text-white">Dispatch: "START_JOB"</strong>: Witness the state update from
+                    `IDLE` to `PROCESSING`, simulating an async task lifecycle.</li>
+                  <li>Observe the state automatically revert back to `IDLE` once the simulated action completes.</li>
+                  <li>Click <strong class="text-white">"RESET"</strong> to clear execution log counters back to zero.
+                  </li>
+                </ol>
+              </div>
+
+              <div class="space-y-2 p-3 bg-slate-950 rounded border border-slate-800">
+                <div class="flex justify-between text-xs font-mono text-slate-400">
+                  <span>Current Reducer State:</span>
+                  <span id="p5-reducer-state" class="text-rose-400 font-bold">{ status: "IDLE", logs: 0 }</span>
+                </div>
+                <div class="flex gap-2">
+                  <button id="p5-dispatch-work"
+                    class="flex-1 py-1.5 bg-rose-600/20 hover:bg-rose-600/35 border border-rose-600/40 text-rose-200 text-xs font-semibold rounded transition-colors">
+                    Dispatch: "START_JOB"
+                  </button>
+                  <button id="p5-dispatch-reset"
+                    class="py-1.5 px-3 bg-slate-850 hover:bg-slate-850 border border-slate-700 text-slate-300 text-xs font-semibold rounded transition-colors">
+                    "RESET"
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: useMemo Computation Cache -->
+          <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-xs font-mono px-2 py-0.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded">useMemo
+                Calculation Saver</span>
+
+              <!-- Deep Dive Explanation -->
+              <div class="mt-3 text-xs text-slate-300 space-y-2">
+                <h5 class="text-sm font-bold text-white">Preventing Expensive Recalculations</h5>
+                <p class="leading-relaxed">
+                  <strong>Why it is needed:</strong> Every state change in React triggers a complete functional re-run.
+                  If you have an expensive pure calculation, it executes on <strong>every single render cycle</strong>,
+                  slowing down
+                  your application.
+                </p>
+                <p class="leading-relaxed">
+                  <strong>Under the Hood:</strong> <code>useMemo</code> caches (memoizes) the return value of a
+                  calculation. It will <strong>never</strong> recalculate unless one of the explicitly declared
+                  dependencies in its
+                  array changes.
+                </p>
+              </div>
+
+              <!-- Playground User Guide -->
+              <div
+                class="my-4 bg-cyan-950/25 border border-cyan-500/10 p-3 rounded-lg text-[11px] text-slate-400 space-y-1">
+                <p class="font-bold text-cyan-300 uppercase tracking-wider">🎯 How to use this playground:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                  <li>Modify the <strong class="text-white">Limit (N)</strong> value: Notice the computation re-runs,
+                    taking a simulated random delay (e.g., <strong>7 ms</strong>).</li>
+                  <li>Click <strong class="text-white">Trigger Unrelated Render</strong>: This re-renders the parent
+                    layout. Notice the calculation status instantly reads <strong class="text-emerald-400">Cached (0
+                      ms)</strong> because the limit value did not change!</li>
+                </ol>
+              </div>
+
+              <div class="space-y-2 p-3 bg-slate-950 rounded border border-slate-800">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Calculate Prime Limit (N):</span>
+                  <input id="p5-memo-limit" type="number" value="100"
+                    class="w-16 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-center text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div class="flex justify-between text-xs font-mono">
+                  <span class="text-slate-400">Status Check:</span>
+                  <span id="p5-memo-status" class="text-cyan-400 font-bold">Cached (0 ms calculated)</span>
+                </div>
+                <button id="p5-trigger-unrelated"
+                  class="w-full py-1.5 bg-cyan-600/20 hover:bg-cyan-600/35 border border-cyan-500/30 text-cyan-200 text-xs font-semibold rounded transition-colors">
+                  Trigger Unrelated Render
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: useCallback Memoized Callback references -->
+          <div
+            class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between mt-6 md:mt-0">
+            <div>
+              <span
+                class="text-xs font-mono px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded">useCallback
+                Reference Preserver</span>
+
+              <!-- Deep Dive Explanation -->
+              <div class="mt-3 text-xs text-slate-300 space-y-2">
+                <h5 class="text-sm font-bold text-white">Maintaining Referential Equality</h5>
+                <p class="leading-relaxed">
+                  <strong>Why it is needed:</strong> Functions inside JavaScript are compared by reference. When a
+                  parent renders, any standard inline function is re-created in memory as a completely
+                  <strong>new</strong> instance,
+                  triggering forced re-renders of children.
+                </p>
+                <p class="leading-relaxed">
+                  <strong>Under the Hood:</strong> <code>useCallback</code> caches the <strong>function instance
+                    itself</strong>. If
+                  you pass this function down to optimized child components, they will recognize the referential
+                  equality and skip unnecessary paint cycles.
+                </p>
+              </div>
+
+              <!-- Playground User Guide -->
+              <div
+                class="my-4 bg-amber-950/25 border border-amber-500/10 p-3 rounded-lg text-[11px] text-slate-400 space-y-1">
+                <p class="font-bold text-amber-300 uppercase tracking-wider">🎯 How to use this playground:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                  <li>Click <strong class="text-white">Standard Function</strong>: Simulates standard parent renders.
+                    Note the reference ID changes randomly on every click (e.g., <code>New_Instance_0xFA32</code>).</li>
+                  <li>Click <strong class="text-white">Use useCallback</strong>: Note the reference ID is captured and
+                    locked in (<code>Persistent_Ref_0x7654</code>), proving that child components will not receive a
+                    dirty
+                    reference prop.</li>
+                </ol>
+              </div>
+
+              <div class="space-y-2 p-3 bg-slate-950 rounded border border-slate-800">
+                <div class="flex justify-between text-xs font-mono">
+                  <span class="text-slate-400">Function Reference ID:</span>
+                  <span id="p5-cb-ref" class="text-amber-400 font-semibold font-mono">Instance_A</span>
+                </div>
+                <div class="flex gap-2">
+                  <button id="p5-btn-with-cb"
+                    class="flex-1 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/35 text-amber-200 text-xs font-semibold rounded transition-colors">
+                    Use useCallback
+                  </button>
+                  <button id="p5-btn-without-cb"
+                    class="flex-1 py-1.5 bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold rounded transition-colors">
+                    Standard Function
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: useRef Value Persistence & DOM Connection -->
+          <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between mt-6">
+            <div>
+              <span
+                class="text-xs font-mono px-2 py-0.5 bg-lime-500/10 text-lime-400 border border-lime-500/20 rounded">useRef
+                Value & DOM Hook</span>
+
+              <!-- Deep Dive Explanation -->
+              <div class="mt-3 text-xs text-slate-300 space-y-2">
+                <h5 class="text-sm font-bold text-white">Direct Elements & Non-Rendering State</h5>
+                <p class="leading-relaxed">
+                  <strong>Why it is needed:</strong> You need a way to hold mutable data (like timer IDs or scroll
+                  offsets) across renders without triggering a visual re-draw. You also need direct imperative access to
+                  raw DOM elements.
+                </p>
+                <p class="leading-relaxed">
+                  <strong>Under the Hood:</strong> <code>useRef</code> returns a mutable object with a
+                  <code>.current</code> property. Mutating this property does <strong>not</strong> notify React to
+                  schedule any virtual
+                  layout calculations.
+                </p>
+              </div>
+
+              <!-- Playground User Guide -->
+              <div
+                class="my-4 bg-lime-950/25 border border-lime-500/10 p-3 rounded-lg text-[11px] text-slate-400 space-y-1">
+                <p class="font-bold text-lime-300 uppercase tracking-wider">🎯 How to use this playground:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                  <li>Click <strong class="text-white">Tick Ref</strong> repeatedly: Watch the counter increment
+                    silently. Observe that <strong>no parent re-renders</strong> occur.</li>
+                  <li>Click <strong class="text-white">Focus input</strong>: This leverages the actual DOM pointer
+                    connection, dynamically applying a focused ring outline to the adjacent input element.</li>
+                </ol>
+              </div>
+
+              <div class="space-y-2 p-3 bg-slate-950 rounded border border-slate-800">
+                <div class="flex items-center gap-2">
+                  <input id="p5-ref-input" type="text" placeholder="Direct element selector..."
+                    class="flex-1 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white focus:outline-none">
+                  <button id="p5-btn-focus"
+                    class="py-1 px-3 bg-lime-600/20 hover:bg-lime-600/35 border border-lime-500/40 text-lime-200 text-xs font-semibold rounded transition-colors">
+                    Focus input
+                  </button>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Persistent Ticks (No re-renders):</span>
+                  <div class="flex items-center gap-2">
+                    <span id="p5-ref-counter" class="text-lime-400 font-bold font-mono">0</span>
+                    <button id="p5-btn-tick"
+                      class="p-1 bg-slate-850 hover:bg-slate-800 rounded text-slate-300 text-[10px] transition-colors">Tick
+                      Ref</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="mt-8">
-          <h3 class="text-xl font-semibold mb-4">Full Code Example</h3>
-          <div class="code-block-title">Context: userContext.js</div>
-          <pre class="!rounded-t-none"><code>import { createContext } from 'react';
+      </div>
+    </section>
+  </main>
 
-// Create a Context object.
-export const UserContext = createContext(null);</code></pre>
-          <div class="code-block-title mt-4">Provider: App.js</div>
-          <pre class="!rounded-t-none"><code>import React, { useState } from 'react';
-import { UserContext } from './userContext';
-import Layout from './Layout'; // Assume Layout contains Header and UserInfo
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-function App() {
-  const [user, setUser] = useState(null);
+      // --- STREAMING_CHUNK: Attaching listeners for Section 1 Parent-to-Child props and mutation simulation... ---
+      const p1NameInput = document.getElementById('p1-name');
+      const p1AgeInput = document.getElementById('p1-age');
+      const p1HobbiesInput = document.getElementById('p1-hobbies');
 
-  return (
-    // Provide the user state to all children
-    &lt;UserContext.Provider value={{ user, setUser }}&gt;
-      &lt;h1&gt;My App&lt;/h1&gt;
-      &lt;button onClick={() => setUser({ name: 'Bob' })}&gt;Log In&lt;/button&gt;
-      &lt;Layout /&gt;
-    &lt;/UserContext.Provider&gt;
-  );
-}
+      const p1OutName = document.getElementById('p1-out-name');
+      const p1OutAge = document.getElementById('p1-out-age');
+      const p1OutHobbies = document.getElementById('p1-out-hobbies');
 
-export default App;</code></pre>
-          <div class="code-block-title mt-4">Consumer: UserInfo.js (Deeply Nested)</div>
-          <pre class="!rounded-t-none"><code>import React, { useContext } from 'react';
-import { UserContext } from './userContext';
+      const parentBoundary = document.getElementById('parent-boundary');
+      const childBoundary = document.getElementById('child-boundary');
+      const violateBtn = document.getElementById('p1-violate-btn');
+      const errorConsole = document.getElementById('p1-error-console');
 
-const UserInfo = () => {
-  // The useContext hook reads the context value directly
-  const { user } = useContext(UserContext);
+      function syncP1Demo() {
+        p1OutName.textContent = p1NameInput.value;
+        p1OutAge.textContent = p1AgeInput.value || '0';
+        p1OutHobbies.textContent = p1HobbiesInput.value;
 
-  return (
-    &lt;div&gt;
-      Current User: {user ? user.name : 'Guest'}
-    &lt;/div&gt;
-  );
-};
+        // Visual Cascade render highlight
+        childBoundary.classList.remove('border-emerald-500/30');
+        childBoundary.classList.add('border-emerald-400', 'bg-emerald-950/20', 'scale-[1.01]');
+        parentBoundary.classList.add('border-blue-500/40');
 
-export default UserInfo;</code></pre>
-        </div>
-      </section>
-      <!-- Section 4: Other Hooks -->
-      <section id="other-hooks" class="mb-16 p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-3xl font-bold text-slate-900 mb-6">4. Other Essential React Hooks</h2>
-        <p class="text-slate-600 mb-10 max-w-3xl">Beyond managing state and context, React provides several other Hooks to handle component lifecycle, optimize performance, and manage complex logic. Here are some of the most important ones.</p>
-        <!-- useEffect -->
-        <div class="mb-12">
-          <h3 class="text-2xl font-semibold mb-2 text-indigo-700">The `useEffect` Hook</h3>
-          <p class="text-slate-600 mb-4"><strong>What it is:</strong>
-            The `useEffect` Hook lets you synchronize a component with an external system. This includes fetching data, setting up subscriptions, or manually manipulating the DOM. It runs after the component has rendered to the screen.</p>
-          <p class="text-slate-600 mb-4"><strong>Why it's necessary:</strong>
-            Rendering should be a pure calculation based on props and state. However, applications need to interact with the outside world. `useEffect` provides a dedicated place for these "side effects," keeping your rendering logic clean and predictable. It allows you to separate the code that *causes* side effects from the rendering process itself.</p>
-          <div class="mt-6 p-6 bg-indigo-50 border border-indigo-200 rounded-lg">
-            <h4 class="text-lg font-semibold text-indigo-800 mb-2">The Dependency Array</h4>
-            <p class="text-indigo-700 mb-4">The second argument to `useEffect` is the dependency array, which controls *when* the effect re-runs. This is the most critical part to understand:</p>
-            <ul class="list-disc list-inside space-y-2 text-indigo-700">
-              <li><code>useEffect(callback)</code>
-                -
-                <strong>No array:</strong>
-                The effect runs after *every single render*. This is often inefficient and should be used with caution.</li>
-              <li><code>useEffect(callback, [])</code>
-                -
-                <strong>Empty array:</strong>
-                The effect runs *only once*, after the initial render. This is perfect for one-time setup code, like fetching initial data.</li>
-              <li><code>useEffect(callback, [dep1, dep2])</code>
-                -
-                <strong>Array with values:</strong>
-                The effect runs after the initial render and then again *only if* any of the dependency values have changed since the last render.</li>
-            </ul>
-          </div>
-          <div class="mt-6 p-6 bg-indigo-50 border border-indigo-200 rounded-lg">
-            <h4 class="text-lg font-semibold text-indigo-800 mb-2">The Cleanup Function</h4>
-            <p class="text-indigo-700 mb-4">Optionally, the function inside `useEffect` can return another function. This is called the cleanup function. React will run it before the component is removed from the UI (unmounts) and also before re-running the effect due to dependency changes.</p>
-            <p class="text-indigo-700">This is essential for preventing memory leaks by cleaning up long-running operations, such as subscriptions or timers.</p>
-            <pre class="!bg-indigo-100 !text-indigo-900 mt-2"><code>useEffect(() => {
-  const timerId = setInterval(() => {
-    console.log('Tick');
-  }, 1000);
+        setTimeout(() => {
+          childBoundary.classList.remove('bg-emerald-950/20', 'scale-[1.01]');
+          childBoundary.classList.add('border-emerald-500/30');
+          parentBoundary.classList.remove('border-blue-500/40');
+        }, 300);
+      }
 
-  // Cleanup function
-  return () => {
-    clearInterval(timerId);
-    console.log('Timer cleared');
-  };
-}, []); // Empty array means this runs once and cleans up on unmount</code></pre>
-          </div>
-        </div>
-        <!-- useReducer -->
-        <div class="mb-12">
-          <h3 class="text-2xl font-semibold mb-2 text-rose-700">The `useReducer` Hook</h3>
-          <p class="text-slate-600 mb-4"><strong>What it is:</strong>
-            An alternative to `useState` for managing more complex component state. It's typically preferred when you have state logic that involves multiple sub-values or when the next state depends on the previous one.</p>
-          <p class="text-slate-600 mb-4"><strong>Why it's necessary:</strong>
-            When state updates become complex (e.g., a form with many fields and validation rules), managing them with multiple `useState` calls can be cumbersome. `useReducer` centralizes your update logic into a single "reducer" function, making it easier to manage, test, and predict state changes.</p>
-          <div class="code-block-title">Example: A simple counter</div>
-          <pre class="!rounded-t-none"><code>import React, { useReducer } from 'react';
+      p1NameInput.addEventListener('input', syncP1Demo);
+      p1AgeInput.addEventListener('input', syncP1Demo);
+      p1HobbiesInput.addEventListener('input', syncP1Demo);
 
-const initialState = { count: 0 };
+      // Simulate Mutation Violation Action
+      violateBtn.addEventListener('click', () => {
+        errorConsole.classList.remove('hidden');
+        childBoundary.classList.add('border-red-500/50', 'bg-red-950/10');
 
-function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
-    default:
-      throw new Error();
-  }
-}
+        setTimeout(() => {
+          errorConsole.classList.add('hidden');
+          childBoundary.classList.remove('border-red-500/50', 'bg-red-950/10');
+        }, 5000);
+      });
 
-function Counter() {
-  const [state, dispatch] = useReducer(reducer, initialState);
 
-  return (
-    &lt;&gt;
-      Count: {state.count}
-      &lt;button onClick={() => dispatch({ type: 'decrement' })}&gt;-&lt;/button&gt;
-      &lt;button onClick={() => dispatch({ type: 'increment' })}&gt;+&lt;/button&gt;
-    &lt;/&gt;
-  );
-}</code></pre>
-        </div>
-        <!-- useCallback -->
-        <div class="mb-12">
-          <h3 class="text-2xl font-semibold mb-2 text-amber-700">The `useCallback` Hook</h3>
-          <p class="text-slate-600 mb-4"><strong>What it is:</strong>
-            Returns a "memoized" version of a callback function that only changes if one of its dependencies has changed.</p>
-          <p class="text-slate-600 mb-4"><strong>Why it's necessary:</strong>
-            This is a performance optimization. When passing callbacks to child components, a new function is created on every render. `useCallback` prevents this, ensuring the child component doesn't re-render unnecessarily if the callback hasn't actually changed.</p>
-          <pre><code>const memoizedCallback = useCallback(
-  () => {
-    doSomething(a, b);
-  },
-  [a, b], // Dependencies
-);</code></pre>
-        </div>
-        <!-- useMemo -->
-        <div class="mb-12">
-          <h3 class="text-2xl font-semibold mb-2 text-cyan-700">The `useMemo` Hook</h3>
-          <p class="text-slate-600 mb-4"><strong>What it is:</strong>
-            Returns a "memoized" value. It re-runs a function and re-computes the value only when one of its dependencies has changed.</p>
-          <p class="text-slate-600 mb-4"><strong>Why it's necessary:</strong>
-            This is used to optimize expensive calculations. By memoizing the result, you can avoid re-computing it on every single render, which can significantly improve performance.</p>
-          <pre><code>const memoizedValue = useMemo(
-  () => computeExpensiveValue(a, b),
-  [a, b], // Dependencies
-);</code></pre>
-        </div>
-        <!-- useRef -->
-        <div class="mb-12">
-          <h3 class="text-2xl font-semibold mb-2 text-lime-700">The `useRef` Hook</h3>
-          <p class="text-slate-600 mb-4"><strong>What it is:</strong>
-            A Hook that returns a mutable `ref` object whose `.current` property is initialized to the passed argument. The returned object will persist for the full lifetime of the component.</p>
-          <p class="text-slate-600 mb-4"><strong>Why it's necessary:</strong>
-            It has two main uses. First, it's a way to access DOM nodes directly (e.g., to focus an input field). Second, it can hold a mutable value that does *not* cause a re-render when it changes, making it useful for storing things like interval IDs or previous state values.</p>
-          <div class="code-block-title">Example: Focusing a text input</div>
-          <pre class="!rounded-t-none"><code>import React, { useRef } from 'react';
+      // --- STREAMING_CHUNK: Implementing Section 2 Child-to-Parent callback listener and log prepend... ---
+      const p2ProdName = document.getElementById('p2-prod-name');
+      const p2ProdPrice = document.getElementById('p2-prod-price');
+      const p2ActionBtn = document.getElementById('p2-action-btn');
+      const p2CartCount = document.getElementById('p2-cart-count');
+      const p2EventLog = document.getElementById('p2-event-log');
 
-function TextInputWithFocusButton() {
-  const inputEl = useRef(null);
+      let cartItemsCount = 0;
 
-  const onButtonClick = () => {
-    // `current` points to the mounted text input element
-    inputEl.current.focus();
-  };
+      p2ActionBtn.addEventListener('click', () => {
+        cartItemsCount++;
+        p2CartCount.textContent = cartItemsCount;
 
-  return (
-    &lt;&gt;
-      &lt;input ref={inputEl} type="text" /&gt;
-      &lt;button onClick={onButtonClick}&gt;Focus the input&lt;/button&gt;
-    &lt;/&gt;
-  );
-}</code></pre>
-        </div>
-      </section>
-    </main>
-    <script>
-      mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
-            background: '#f1f5f9',
-            primaryColor: '#f8fafc',
-            primaryTextColor: '#1e293b',
-            lineColor: '#64748b',
-            textColor: '#334155',
-            fontSize: '16px'
-        }});
+        if (cartItemsCount === 1) {
+          p2EventLog.innerHTML = '';
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Child-to-Parent Demo ---
-            const addToCartBtn = document.getElementById('addToCartBtn');
-            const cartList = document.getElementById('cart-list');
-            const emptyCartMsg = document.getElementById('empty-cart-msg');
-            let cartItemCount = 0;
+        const timestamp = new Date().toLocaleTimeString();
+        const itemLabel = p2ProdName.value;
+        const itemPrice = p2ProdPrice.value || '0';
 
-            addToCartBtn.addEventListener('click', () => {
-                if (emptyCartMsg && emptyCartMsg.parentElement) {
-                    emptyCartMsg.remove();
-                }
-                cartItemCount++;
-                const product = { id: cartItemCount, name: 'Laptop', price: 1200 };
-                const li = document.createElement('li');
-                li.textContent = `${product.name} - $${product.price}`;
-                li.className = 'animate-fade-in';
-                cartList.appendChild(li);
-            });
+        const logEntry = document.createElement('div');
+        logEntry.className = "flex justify-between border-b border-slate-900 pb-1 text-emerald-400 animate-pulse";
+        logEntry.innerHTML = `<span>[${timestamp}] handleAddToCart() caught emission: "${itemLabel}" ($${itemPrice})</span>`;
 
-            // --- Context API Demo ---
-            const toggleUserBtn = document.getElementById('toggleUserBtn');
-            const userNameSpan = document.getElementById('user-name');
-            let isLoggedIn = false;
+        p2EventLog.prepend(logEntry);
+      });
 
-            toggleUserBtn.addEventListener('click', () => {
-                isLoggedIn = !isLoggedIn;
-                if (isLoggedIn) {
-                    userNameSpan.textContent = 'Bob';
-                    userNameSpan.classList.remove('text-slate-500');
-                    userNameSpan.classList.add('text-green-600');
-                    toggleUserBtn.textContent = 'Log Out';
-                } else {
-                    userNameSpan.textContent = 'Guest';
-                    userNameSpan.classList.remove('text-green-600');
-                    userNameSpan.classList.add('text-blue-600');
-                    toggleUserBtn.textContent = 'Log In';
-                }
-            });
 
-            // Add a simple fade-in animation for cart items
-            const style = document.createElement('style');
-            style.innerHTML = `
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in {
-                    animation: fadeIn 0.3s ease-out;
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
-  </body>
+      // --- STREAMING_CHUNK: Binding Context API dynamic login and update handlers... ---
+      const p3UserInput = document.getElementById('p3-user-input');
+      const p3LoginBtn = document.getElementById('p3-login-btn');
+      const p3OutputUser = document.getElementById('p3-output-user');
+      const p3Container = document.getElementById('p3-consumer-container');
+
+      p3LoginBtn.addEventListener('click', () => {
+        p3OutputUser.textContent = p3UserInput.value || 'Guest';
+
+        // Visual ring flash on consumer element when state updates via Context
+        p3Container.classList.remove('border-teal-500/40');
+        p3Container.classList.add('border-teal-400', 'scale-[1.02]', 'bg-teal-950/20');
+
+        setTimeout(() => {
+          p3Container.classList.remove('scale-[1.02]', 'bg-teal-950/20');
+          p3Container.classList.add('border-teal-500/40');
+        }, 400);
+      });
+
+
+      // --- STREAMING_CHUNK: Engineering the useEffect mounting, query changes, and cleanup simulation logic... ---
+      const p4BtnMount = document.getElementById('p4-btn-mount');
+      const p4BtnUnmount = document.getElementById('p4-btn-unmount');
+      const p4SelectQuery = document.getElementById('p4-select-query');
+      const p4BtnAux = document.getElementById('p4-btn-aux');
+      const p4AuxVal = document.getElementById('p4-aux-val');
+      const p4TerminalOutput = document.getElementById('p4-terminal-output');
+      const p4ClearTerminal = document.getElementById('p4-clear-terminal');
+
+      let isMounted = false;
+      let auxCount = 0;
+      let currentQuery = p4SelectQuery.value;
+      let activeTimeout = null;
+
+      function addLog(text, colorClass = "text-slate-300") {
+        const now = new Date().toLocaleTimeString();
+        const line = document.createElement('p');
+        line.className = `${colorClass} font-mono mb-1 leading-normal`;
+        line.innerHTML = `<span class="text-slate-500 font-bold">[${now}]</span> ${text}`;
+        p4TerminalOutput.appendChild(line);
+        p4TerminalOutput.scrollTop = p4TerminalOutput.scrollHeight;
+      }
+
+      p4ClearTerminal.addEventListener('click', () => {
+        p4TerminalOutput.innerHTML = '<p class="text-slate-500 italic">// Console logs cleared.</p>';
+      });
+
+      // Simulator for mounting components
+      p4BtnMount.addEventListener('click', () => {
+        if (isMounted) {
+          addLog("Warning: Component is already mounted in the DOM.", "text-yellow-400");
+          return;
+        }
+        isMounted = true;
+        addLog("&lt;UserData /&gt; successfully mounted to target parent DOM node.", "text-blue-400 font-extrabold");
+        triggerRenderAndEffect();
+      });
+
+      // Simulator for unmounting components
+      p4BtnUnmount.addEventListener('click', () => {
+        if (!isMounted) {
+          addLog("Warning: Component is not mounted. Mount first.", "text-yellow-400");
+          return;
+        }
+        if (activeTimeout) clearTimeout(activeTimeout);
+
+        addLog("[CLEANUP] Running effect cleanup hook...", "text-rose-400");
+        addLog("&lt;UserData /&gt; unmounted successfully.", "text-slate-400 font-bold");
+        isMounted = false;
+      });
+
+      // Simulator state changes
+      p4SelectQuery.addEventListener('change', () => {
+        const queryVal = p4SelectQuery.value;
+        if (!isMounted) {
+          addLog(`State 'Endpoint' changed to ${queryVal} (No side effect triggered because component is unmounted).`, "text-slate-500");
+          currentQuery = queryVal;
+          return;
+        }
+
+        addLog(`State 'Endpoint' dependency modified: "${currentQuery}" &rarr; "${queryVal}"`, "text-amber-400 font-bold");
+        currentQuery = queryVal;
+        triggerRenderAndEffect();
+      });
+
+      // Auxiliary counts (doesn't trigger dependency execution)
+      p4BtnAux.addEventListener('click', () => {
+        auxCount++;
+        p4AuxVal.textContent = auxCount;
+        if (!isMounted) {
+          addLog(`Auxiliary render counter updated to ${auxCount}.`, "text-slate-500");
+          return;
+        }
+        addLog(`[Render] &lt;UserData /&gt; re-rendered. State (renderCount) changed to ${auxCount}.`, "text-sky-400");
+        addLog(`[Skipped Effect] Dependency query unchanged. Skipping 'useEffect' block invocation entirely.`, "text-slate-500 italic");
+      });
+
+      function triggerRenderAndEffect() {
+        if (activeTimeout) clearTimeout(activeTimeout);
+
+        addLog(`[Render] &lt;UserData /&gt; rendered with query dependency: "${currentQuery}"`, "text-indigo-400");
+        addLog(`[CLEANUP] Running cleanup for previous query dependency...`, "text-rose-400");
+        addLog(`[EFFECT] Scheduled fetch request side-effect started for "${currentQuery}"`, "text-teal-400 font-semibold");
+
+        // Emulate fetch lag
+        activeTimeout = setTimeout(() => {
+          addLog(`[ASYNCHRONOUS UPDATE] API responded. State updated: payload matched query successfully.`, "text-emerald-400 font-bold");
+        }, 800);
+      }
+
+
+      // --- STREAMING_CHUNK: Coding Section 5 useReducer, useMemo, useCallback, and useRef sandbox state changes... ---
+
+      // useReducer Simulation
+      const p5ReducerState = document.getElementById('p5-reducer-state');
+      const p5DispatchWork = document.getElementById('p5-dispatch-work');
+      const p5DispatchReset = document.getElementById('p5-dispatch-reset');
+      let reducerVal = { status: "IDLE", logs: 0 };
+
+      p5DispatchWork.addEventListener('click', () => {
+        reducerVal.status = "PROCESSING";
+        reducerVal.logs += 1;
+        p5ReducerState.textContent = `{ status: "PROCESSING", logs: ${reducerVal.logs} }`;
+        p5ReducerState.className = "text-rose-400 font-bold animate-pulse";
+
+        setTimeout(() => {
+          reducerVal.status = "IDLE";
+          p5ReducerState.textContent = `{ status: "IDLE", logs: ${reducerVal.logs} }`;
+          p5ReducerState.className = "text-rose-400 font-bold";
+        }, 1000);
+      });
+
+      p5DispatchReset.addEventListener('click', () => {
+        reducerVal = { status: "IDLE", logs: 0 };
+        p5ReducerState.textContent = `{ status: "IDLE", logs: 0 }`;
+        p5ReducerState.className = "text-rose-400 font-bold";
+      });
+
+      // useMemo Simulation
+      const p5MemoLimit = document.getElementById('p5-memo-limit');
+      const p5MemoStatus = document.getElementById('p5-memo-status');
+      const p5TriggerUnrelated = document.getElementById('p5-trigger-unrelated');
+      let cachedLimit = parseInt(p5MemoLimit.value);
+
+      p5MemoLimit.addEventListener('input', () => {
+        const val = parseInt(p5MemoLimit.value) || 0;
+        cachedLimit = val;
+        p5MemoStatus.innerHTML = `<span class="animate-pulse text-amber-400">Recomputing primes...</span>`;
+        setTimeout(() => {
+          const mathVal = Math.floor(Math.random() * 8) + 1; // Simulated run milliseconds
+          p5MemoStatus.textContent = `Recalculated in ${mathVal} ms (Value: ${val})`;
+          p5MemoStatus.className = "text-cyan-400 font-bold";
+        }, 300);
+      });
+
+      p5TriggerUnrelated.addEventListener('click', () => {
+        p5MemoStatus.textContent = `Cached (0 ms calculated -- Value still ${cachedLimit})`;
+        p5MemoStatus.className = "text-emerald-400 font-bold";
+      });
+
+      // useCallback Simulation
+      const p5CbRef = document.getElementById('p5-cb-ref');
+      const p5BtnWithCb = document.getElementById('p5-btn-with-cb');
+      const p5BtnWithoutCb = document.getElementById('p5-btn-without-cb');
+
+      p5BtnWithCb.addEventListener('click', () => {
+        p5CbRef.textContent = "Persistent_Ref_0x7654";
+        p5CbRef.className = "text-emerald-400 font-bold font-mono";
+      });
+
+      p5BtnWithoutCb.addEventListener('click', () => {
+        const randomHex = Math.floor(Math.random() * 16777215).toString(16).toUpperCase();
+        p5CbRef.textContent = `New_Instance_0x${randomHex}`;
+        p5CbRef.className = "text-rose-400 font-bold font-mono";
+      });
+
+      // useRef Simulation
+      const p5RefInput = document.getElementById('p5-ref-input');
+      const p5BtnFocus = document.getElementById('p5-btn-focus');
+      const p5RefCounter = document.getElementById('p5-ref-counter');
+      const p5BtnTick = document.getElementById('p5-btn-tick');
+      let tickCounter = 0;
+
+      p5BtnFocus.addEventListener('click', () => {
+        p5RefInput.focus();
+        p5RefInput.className = "flex-1 bg-slate-900 border-2 border-lime-500 rounded p-1 text-xs text-white transition-all";
+        setTimeout(() => {
+          p5RefInput.className = "flex-1 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white transition-all";
+        }, 1000);
+      });
+
+      p5BtnTick.addEventListener('click', () => {
+        tickCounter++;
+        p5RefCounter.textContent = tickCounter;
+        p5RefCounter.classList.add('scale-125');
+        setTimeout(() => p5RefCounter.classList.remove('scale-125'), 100);
+      });
+
+    });
+  </script>
+</body>
+
 </html>
