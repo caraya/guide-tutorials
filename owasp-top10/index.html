@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Infographic: The OWASP Top 10 2021</title>
+    <title>Interactive Infographic: The OWASP Top 10 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,16 +67,16 @@
             <span
                 class="text-xs font-bold uppercase tracking-widest text-[#0A74DA] bg-blue-50 px-3 py-1.5 rounded-full">Security
                 Education Resource</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0D253F] mt-3 tracking-tight">OWASP Top 10 - 2021</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0D253F] mt-3 tracking-tight">OWASP Top 10 - 2025</h1>
             <p class="text-lg text-[#6C757D] mt-3 max-w-2xl mx-auto">An interactive, high-accessibility dashboard
-                exploring the most critical web application security risks.</p>
+                exploring the most modern application security risks.</p>
         </header>
 
         <!-- Sticky navigation of Top 10 vulnerability tags -->
         <nav id="vuln-nav"
             class="sticky top-0 z-20 bg-[#F8FAFC]/95 backdrop-blur-md py-4 mb-10 border-b border-slate-200/50">
             <div id="nav-container" class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 md:gap-3 text-center">
-                <!-- Navigation buttons will be dynamically injected here -->
+                <!-- Navigation buttons dynamically injected here -->
             </div>
         </nav>
 
@@ -89,7 +89,7 @@
                         <div>
                             <h2 class="text-2xl font-bold text-[#0D253F]">Vulnerability Prevalence Ranking</h2>
                             <p class="text-sm text-[#6C757D] mt-1">Comparing the average incidence rates of the Top 10
-                                risks mapped from over 500,000 real-world applications.</p>
+                                risks mapped from over 2.8 million applications.</p>
                         </div>
                         <button id="toggle-data-table-btn"
                             class="text-xs font-semibold text-[#0A74DA] hover:text-[#0D253F] border border-[#0A74DA] rounded-lg px-3 py-1.5 transition-all">
@@ -97,16 +97,40 @@
                         </button>
                     </div>
 
-                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-slate-700">
-                        <h4 class="font-bold text-[#0D253F] flex items-center gap-1.5">
-                            ℹ️ Data Source & Methodology:
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-6 text-sm text-slate-700 space-y-3">
+                        <h4 class="font-bold text-[#0D253F] flex items-center gap-1.5 text-base">
+                            ℹ️ Precise Data Source & Gathering Methodology:
                         </h4>
-                        <p class="mt-1">
-                            Calculated from a massive data pool contributed by top-tier application security vendors and
-                            internal programs. The <strong>Incidence Rate (Prevalence)</strong> is the percentage of
-                            audited applications found to host at least one active instance of the corresponding
-                            vulnerability type during testing.
+                        <p>
+                            For the 2025 cycle, the OWASP project expanded its empirical scope significantly, analyzing
+                            security data gathered from over <strong>2,800,000 audited applications</strong> globally
+                            between <strong>2021 and 2024</strong>. The metrics were contributed by leading application
+                            security vendors, consultancies, bug bounty frameworks, and corporate security teams.
                         </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-blue-100">
+                            <div>
+                                <h5 class="font-bold text-[#0D253F] mb-1">📊 Weighted Scoring Formula</h5>
+                                <p class="text-xs leading-relaxed text-slate-600">
+                                    Placement is computed through a standardized risk factor formula combining incidence
+                                    and testing telemetry with community survey priority adjustments:
+                                </p>
+                                <div
+                                    class="bg-white/80 p-2.5 rounded-lg border border-blue-100 font-mono text-[10px] text-slate-800 mt-2">
+                                    Risk Score = (Max Incidence Rate * 1000) + (Max Coverage * 100) + (Avg Exploit * 10)
+                                    + (Avg Impact * 20) + (Sum Occurrences / 10000)
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-[#0D253F] mb-1">⚙️ Normalization & Mapping</h5>
+                                <p class="text-xs leading-relaxed text-slate-600">
+                                    Data was normalized between <strong>Human-assisted Tooling (HaT)</strong> (scanner
+                                    telemetry) and <strong>Tool-assisted Humans (TaH)</strong> (manual pen testing
+                                    findings) to ensure fair scaling. Across the dataset, <strong>248 Common Weakness
+                                        Enumerations (CWEs)</strong> were analyzed and mapped directly to these 10 core
+                                    categories.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Horizonal Chart Wrapper -->
@@ -122,7 +146,7 @@
                                 <tr>
                                     <th class="px-4 py-3">Rank & ID</th>
                                     <th class="px-4 py-3">Vulnerability Category</th>
-                                    <th class="px-4 py-3 text-right">Incidence Rate (%)</th>
+                                    <th class="px-4 py-3 text-right">Exact Incidence Rate (%)</th>
                                 </tr>
                             </thead>
                             <tbody id="prevalence-table-body" class="divide-y divide-slate-100">
@@ -155,53 +179,77 @@
                                 <p id="vuln-how-it-affects" class="text-base text-slate-600 leading-relaxed"></p>
                             </div>
                             <div class="mt-6 pt-6 border-t border-slate-100">
+                                <h4 class="text-sm font-bold text-[#0D253F] mb-2 flex items-center gap-1.5">
+                                    <span>🔍</span> Detailed Operational Mechanics
+                                </h4>
+                                <p id="vuln-detailed-explanation" class="text-sm text-slate-600 leading-relaxed"></p>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-slate-100">
                                 <span
-                                    class="text-xs font-semibold text-[#0A74DA] uppercase tracking-wider block mb-1">Key
+                                    class="text-xs font-semibold text-[#0A74DA] uppercase tracking-wider block mb-1">Modern
                                     Context</span>
-                                <p class="text-xs text-[#6C757D]">Exploitation can compromise system integrity, bypass
-                                    active restrictions, and lead to total architectural takeover depending on user
-                                    session access parameters.</p>
+                                <p class="text-xs text-[#6C757D]">Exploitation targets modern architecture boundaries,
+                                    CI/CD trust pipelines, API gateways, and authorization planes, leading to
+                                    significant compromises depending on access controls.</p>
                             </div>
                         </div>
 
                         <!-- Scorecard Visual Card -->
                         <div class="lg:col-span-2 card flex flex-col items-center justify-between">
                             <div class="w-full text-center">
-                                <h3 class="text-xl font-bold text-[#0D253F] mb-2">📊 Risk Scorecard</h3>
-                                <p class="text-xs text-[#6C757D] mb-4">A graphical risk profile of incidence prevalence
-                                    vs. severity impact.</p>
+                                <h3 class="text-xl font-bold text-[#0D253F] mb-2">📊 Risk Profile</h3>
+                                <p class="text-xs text-[#6C757D] mb-4">Metric values cleanly separated to avoid unit
+                                    formatting overlaps.</p>
                             </div>
 
-                            <!-- Doughnut Container -->
-                            <div class="chart-container h-64 max-h-64 relative flex items-center justify-center">
-                                <canvas id="riskScorecardChart"></canvas>
+                            <!-- Dedicated Clean Metric Layout -->
+                            <div class="w-full space-y-6 px-2">
+                                <!-- Prevalence Meter -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center text-sm font-semibold">
+                                        <span class="text-slate-600 uppercase tracking-wide text-xs">Prevalence
+                                            Rate</span>
+                                        <span class="text-[#0A74DA] text-lg font-bold"
+                                            id="text-metric-prevalence">0%</span>
+                                    </div>
+                                    <div
+                                        class="w-full bg-slate-100 rounded-full h-4 overflow-hidden relative border border-slate-200">
+                                        <div id="prevalence-bar"
+                                            class="bg-[#0A74DA] h-full rounded-full transition-all duration-500"
+                                            style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400">Percentage of audited applications hosting
+                                        this vulnerability.</p>
+                                </div>
+
+                                <!-- Subjective Impact Meter -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center text-sm font-semibold">
+                                        <span class="text-slate-600 uppercase tracking-wide text-xs">Subjective Impact
+                                            Score</span>
+                                        <span class="text-amber-600 text-lg font-bold" id="text-metric-impact">0 /
+                                            10</span>
+                                    </div>
+                                    <div
+                                        class="w-full bg-slate-100 rounded-full h-4 overflow-hidden relative border border-slate-200">
+                                        <div id="impact-bar"
+                                            class="bg-amber-500 h-full rounded-full transition-all duration-500"
+                                            style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400">Estimated worst-case corporate damage scale
+                                        evaluated by experts (not a percentage).</p>
+                                </div>
                             </div>
 
                             <!-- Accessible Plain-Text Summary Table of the graphics values -->
                             <div class="w-full bg-slate-50 rounded-xl p-4 mt-6 border border-slate-200/60">
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-[#0D253F] mb-2 text-center">
-                                    Accessible Score Breakdown</h4>
-                                <div class="grid grid-cols-2 gap-4 text-center divide-x divide-slate-200">
-                                    <div>
-                                        <span class="text-2xl font-extrabold text-[#0A74DA]"
-                                            id="text-metric-prevalence">0%</span>
-                                        <span
-                                            class="block text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-1">Prevalence
-                                            Rate</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-2xl font-extrabold text-amber-500"
-                                            id="text-metric-impact">0/10</span>
-                                        <span
-                                            class="block text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-1">Subjective
-                                            Impact</span>
-                                    </div>
-                                </div>
-                                <p
-                                    class="text-[11px] text-[#6C757D] text-center mt-3 leading-snug border-t border-slate-200/50 pt-2.5">
-                                    <strong>How calculated:</strong> Prevalence uses exact application incidence rates
-                                    rounded to full percentages. Impact is a standard OWASP rating scale (1-10) scoring
-                                    maximum business damage.
+                                    Metrics Explanation</h4>
+                                <p class="text-[11px] text-[#6C757D] leading-snug text-center">
+                                    <strong>Prevalence:</strong> Exact percentage calculated across tested telemetry
+                                    applications. <br>
+                                    <strong>Impact:</strong> Subjective classification score out of 10 representing
+                                    overall technical exploitability and business threat potential.
                                 </p>
                             </div>
                         </div>
@@ -213,7 +261,7 @@
                             <span>🛡️</span> Mitigation Strategy Flowchart
                         </h3>
                         <div id="vuln-mitigations" class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-                            <!-- Mitigations will populate here as highly readable, numbered components -->
+                            <!-- Mitigations populate dynamically here -->
                         </div>
                     </div>
 
@@ -240,163 +288,171 @@
                 id: 'A01',
                 name: 'Broken Access Control',
                 rank: 1,
-                prevalence: 4,
+                prevalence: 3.73,
                 impact: 9,
-                description: "Access control enforces policies so users cannot act outside of their intended permissions. Failures typically lead to unauthorized information disclosure, modification, or destruction of all data or performing a business function outside the user's limits.",
-                effects: "This is the most serious web security risk. Attackers can exploit these flaws to access other users' accounts, view sensitive files, modify other users' data, change access rights, and bypass authentication layers, sometimes gaining full administrative control over the application environment.",
+                description: "Access control enforces policies so users cannot act outside of their intended permissions. Server-Side Request Forgery (SSRF) has been integrated into this class for 2025. Failures typically lead to unauthorized information disclosure, modification, or destruction of all data.",
+                effects: "This remains the most serious application security risk. Attackers exploit missing check scopes to escalate privilege, bypass operational layers, manipulate sensitive database entries, access other user profiles, or abuse administrative panels.",
+                detailedExplanation: "Attackers exploit missing check scopes to escalate privilege, bypass operational layers, manipulate sensitive database entries, access other user profiles, or abuse administrative panels. By leveraging vulnerabilities like IDOR (Insecure Direct Object References) or path traversal, they can gain unauthorized access to restricted resource directories or execute raw database configurations.",
                 mitigations: [
-                    "Implement access control mechanisms once and re-use them throughout the application, minimizing CORS usage.",
-                    "Model access controls to enforce records ownership rather than letting any user execute CRUD operations on arbitrary resources.",
-                    "Disable web server directory listing and ensure file metadata and backups are secure.",
-                    "Log access control failures and alert administrators for repeated violations.",
-                    "Rate limit API and controller endpoints to minimize the harm from automated scanning tooling."
+                    "Implement access control mechanisms strictly on the server-side, never trusting client states.",
+                    "Set default posture to 'Deny All' for every system endpoint and file path.",
+                    "Ensure access controls enforce record-level ownership boundaries rather than generic CRUD operations.",
+                    "Audit, rate limit, and log all authorization failures instantly to block lateral movement scanning."
                 ],
-                link: 'https://owasp.org/Top10/A01_2021-Broken_Access_Control/'
+                link: 'https://owasp.org/Top10/2025/0x04_2025-A01_Broken_Access_Control/'
             },
             {
                 id: 'A02',
-                name: 'Cryptographic Failures',
+                name: 'Security Misconfiguration',
                 rank: 2,
-                prevalence: 4,
-                impact: 8,
-                description: "This category focuses on failures related to cryptography (or lack thereof), which can lead to the exposure of sensitive data like passwords, credit card numbers, and personal information.",
-                effects: "If an application doesn't protect sensitive data, attackers can intercept or extract weakly protected data to conduct credit card fraud, identity theft, or other high-impact crimes. This results in severe financial liability and compliance penalties.",
+                prevalence: 3.00,
+                impact: 7,
+                description: "Improperly hardened environment configurations, default credentials, accessible test files, or verbose error details. This has surged to #2 in 2025 due to complex cloud, container, and infrastructure-as-code automation.",
+                effects: "Attackers gain direct platform and server credentials without needing to perform any complex source code exploit. It exposes cloud buckets, databases, and configuration consoles directly to scripts and automated crawlers.",
+                detailedExplanation: "This vulnerability occurs when security settings are optimized incorrectly, left at default values, or exposed publicly. In automated cloud structures, misconfigured API keys, open Amazon S3 buckets, and overly permissive IAM roles can expose entire storage systems and database nodes to public inspection without requiring complex code injection.",
                 mitigations: [
-                    "Classify all processed data to identify what is sensitive.",
-                    "Don't store sensitive data unnecessarily; discard old datasets immediately.",
-                    "Encrypt all sensitive data at rest using standard strong algorithms.",
-                    "Use updated cryptographic packages, strong protocols (TLS), and secure keys.",
-                    "Disable caching of HTTP responses that handle highly sensitive user metrics."
+                    "Implement a strictly repeatable hardening pipeline so dev, staging, and production match exactly.",
+                    "Keep environment minimal, stripping out default samples, configurations, and unnecessary libraries.",
+                    "Ensure cloud storages, buckets, and registry keys are audited against anonymous access.",
+                    "Avoid exposing verbose system stack-traces and backend database parameters inside error payloads."
                 ],
-                link: 'https://owasp.org/Top10/A02_2021-Cryptographic_Failures/'
+                link: 'https://owasp.org/Top10/2025/0x05_2025-A02_Security_Misconfiguration/'
             },
             {
                 id: 'A03',
-                name: 'Injection',
+                name: 'Software Supply Chain Failures',
                 rank: 3,
-                prevalence: 3,
-                impact: 8,
-                description: "Injection flaws, such as SQL, NoSQL, Cross-site Scripting (XSS), OS, and LDAP injection, occur when untrusted data is sent to an interpreter as part of a command or query.",
-                effects: "The attacker's hostile payload tricks interpreters into executing unintended administrative commands or retrieving unauthorized data, frequently allowing remote command execution or raw database access.",
+                prevalence: 2.00,
+                impact: 10,
+                description: "An expansion of vulnerable component risks focusing on compromises in third-party libraries, dependencies, CI/CD systems, and package registry distribution vectors.",
+                effects: "Compromised packages inject direct backdoors into production systems. Because systems natively trust updating pipelines, attackers execute unchecked codes during dynamic builds or downstream runtime environments.",
+                detailedExplanation: "Compromised third-party modules or build systems introduce immediate, highly impactful vulnerabilities. Because downstream clients implicitly trust automated software update pipelines, attackers can distribute malicious code masquerading as minor package updates, executing undetected commands in active runtime environments.",
                 mitigations: [
-                    "Use safe APIs that avoid interpreters entirely or provide parameterized, typed interfaces.",
-                    "Employ positive, whitelist-based server-side input validation.",
-                    "Escape special characters dynamically using native escaping syntax built for the targeted database interpreter.",
-                    "Utilize LIMIT constraints inside SQL queries to prevent mass exposure of tables if injection occurs."
+                    "Maintain, update, and sign a comprehensive Software Bill of Materials (SBOM) for all pipelines.",
+                    "Run automated Software Composition Analysis (SCA) verification steps on every build loop.",
+                    "Only obtain components from validated, signed sources, freezing dependencies on secure revisions.",
+                    "Apply MFA, strong IAM controls, and isolated runner profiles inside the build and deployment pipeline."
                 ],
-                link: 'https://owasp.org/Top10/A03_2021-Injection/'
+                link: 'https://owasp.org/Top10/2025/0x06_2025-A03_Software_Supply_Chain_Failures/'
             },
             {
                 id: 'A04',
-                name: 'Insecure Design',
+                name: 'Cryptographic Failures',
                 rank: 4,
-                prevalence: 3,
-                impact: 9,
-                description: "A category focusing on risks related to design and architectural flaws. It emphasizes the need for threat modeling and secure design patterns from the beginning of the development lifecycle.",
-                effects: "Insecure design patterns cannot be patched or fixed through perfect code implementations. These flaws expose fundamental architectural gaps, allowing systemic compromise even if individual code files are written correctly.",
+                prevalence: 3.80,
+                impact: 8,
+                description: "Lack of robust protection mechanisms on sensitive storage data at rest or in transit, leading to decryption or credentials extraction.",
+                effects: "Sensitive personal identifiers, passwords, credit card configurations, and secret API keys are intercepted or broken. Compromise of cryptographic routines renders all application privacy controls obsolete.",
+                detailedExplanation: "Exposing sensitive entities like passwords, session tokens, and health records occurs when applications fail to encrypt data in transit or at rest. If weak algorithms (such as MD5 or SHA-1) are used, or if encryption keys are hardcoded in source repositories, data can be effortlessly extracted and decrypted by attackers.",
                 mitigations: [
-                    "Establish a secure development lifecycle integrated with professional threat modeling.",
-                    "Perform threat modeling for critical flows like authentication, session changes, and business processing.",
-                    "Write robust unit tests and integration tests to ensure logic boundaries reject malicious state flows.",
-                    "Separate critical tiers to limit blast radiuses if single interfaces are compromised."
+                    "Encrypt all high-value data categories both in transit (TLS 1.3) and at rest (AES-256).",
+                    "Do not implement custom crypto; rely exclusively on modern, standard verified libraries.",
+                    "Use adaptive hashing schemes (Argon2, bcrypt) with strong salts to safely secure credentials.",
+                    "Plan and catalog cryptographic routines to prepare systems for Post-Quantum Cryptography (PQC)."
                 ],
-                link: 'https://owasp.org/Top10/A04_2021-Insecure_Design/'
+                link: 'https://owasp.org/Top10/2025/0x07_2025-A04_Cryptographic_Failures/'
             },
             {
                 id: 'A05',
-                name: 'Security Misconfiguration',
+                name: 'Injection',
                 rank: 5,
-                prevalence: 5,
-                impact: 7,
-                description: "This risk refers to improperly configured security settings, such as insecure default configurations, incomplete configurations, open cloud storage, misconfigured HTTP headers, and verbose error messages containing sensitive information.",
-                effects: "Exposes system endpoints to rapid footprinting. Attackers can leverage defaults, standard passwords, and unhardened ports to pivot directly into secure assets without needing code-level vulnerabilities.",
+                prevalence: 3.25,
+                impact: 8,
+                description: "Flaws where untrusted user-supplied data is concatenated directly with system interpreters (such as SQL, OS commands, or LDAP configurations).",
+                effects: "Enables arbitrary queries or execution paths to take over backend operations. Attackers read, write, or delete complete database structures, run OS shells, or compromise adjacent networks.",
+                detailedExplanation: "Concatenating unvalidated user input directly with database queries or system commands allows attackers to bypass standard control filters. With structured commands injected into the query stream, they can bypass authentication barriers, view protected schema tables, or execute administrative OS actions.",
                 mitigations: [
-                    "Implement a repeatable hardening process to make it fast to deploy secure identical servers.",
-                    "Remove unnecessary packages, frameworks, sample files, and testing accounts.",
-                    "Audit cloud storage configurations, database listeners, and dynamic service permissions regularly.",
-                    "Utilize automated security audits to detect live misconfigurations inside staging environments."
+                    "Avoid interpreters entirely by utilizing strongly parameterized APIs or Object-Relational Mappers (ORMs).",
+                    "Employ positive white-list input sanitization and verification patterns.",
+                    "Always escape special characters using context-aware escaping libraries.",
+                    "Limit maximum query results to limit bulk data theft attempts."
                 ],
-                link: 'https://owasp.org/Top10/A05_2021-Security_Misconfiguration/'
+                link: 'https://owasp.org/Top10/2025/0x08_2025-A05_Injection/'
             },
             {
                 id: 'A06',
-                name: 'Vulnerable Components',
+                name: 'Insecure Design',
                 rank: 6,
-                prevalence: 4,
-                impact: 7,
-                description: "This risk arises from using unsupported or out-of-date components, including libraries, frameworks, and other software modules, which may contain known vulnerabilities.",
-                effects: "Allows script-kiddies and bots to scan applications and exploit known, CVE-documented security holes. Compromising a minor dependency could open severe access vulnerabilities on host architectures.",
+                prevalence: 2.50,
+                impact: 9,
+                description: "Systemic architecture, design, and pattern issues introduced prior to writing code, such as missing business-flow validations or flawed threat boundaries.",
+                effects: "Code is executed exactly as designed, yet the application design itself is inherently broken. Security updates cannot easily patch logic gaps, leaving core business operations fundamentally vulnerable to bypasses.",
+                detailedExplanation: "Unlike implementation bugs, this is an architectural failure. If an application's foundational logic contains a design flaw (such as lacking a rate-limiting policy on sensitive verification routes, or failing to verify state transitions in automated shopping checkout steps), the system will remain inherently vulnerable regardless of how clean the written code is.",
                 mitigations: [
-                    "Audit application frameworks and dependencies, stripping out unused software packages.",
-                    "Utilize Software Composition Analysis (SCA) scanners directly inside CI/CD compilation pipelines.",
-                    "Deploy only components obtained via secure, signature-validated official distribution channels.",
-                    "Formulate a rapid response plan to patch outdated software whenever critical CVE disclosures occur."
+                    "Integrate professional threat modeling routines inside initial product design phases.",
+                    "Document and use secure design libraries, reference patterns, and certified architectures.",
+                    "Conduct extensive business-logic flow audits, tracking trust boundaries between all integration levels.",
+                    "Write robust functional integration test models verifying edge cases on all access lines."
                 ],
-                link: 'https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/'
+                link: 'https://owasp.org/Top10/2025/0x09_2025-A06_Insecure_Design/'
             },
             {
                 id: 'A07',
                 name: 'Authentication Failures',
                 rank: 7,
-                prevalence: 4,
+                prevalence: 2.90,
                 impact: 8,
-                description: "Previously 'Broken Authentication', this includes all aspects of managing user identity, authentication, and session management. Failures can allow attackers to compromise passwords, keys, or session tokens.",
-                effects: "Enables credential stuffing, dictionary attacks, and direct session hijacking. Attackers can take over user or administrator sessions, gaining full capabilities without triggering threshold anomalies.",
+                description: "Weaknesses in identifying users, weak credential policies, and fragile session token management frameworks.",
+                effects: "Attackers bypass authentication using credential stuffing, dictionary attacks, or basic session hijacking. They hijack legitimate active sessions and impersonate users, including administrators.",
+                detailedExplanation: "Weak identification checks enable session hijacking, credential stuffing, or direct brute-forcing. If session identifiers are predictable, lack high entropy, or are not securely cycled post-authentication, attackers can spoof active login states and completely take over user accounts.",
                 mitigations: [
-                    "Mandate Multi-Factor Authentication (MFA) on all admin and client facing panels.",
-                    "Enforce rigorous rate limits on login attempts to block automated brute-forcing tools.",
-                    "Check and reject weak passwords during account setups based on known breach lists.",
-                    "Deploy secure, random, high-entropy session managers that cycle session IDs post-authentication."
+                    "Enforce Multi-Factor Authentication (MFA) across all administration and client profiles.",
+                    "Check password settings against known breach databases to prevent weak credential creation.",
+                    "Use random, high-entropy session managers, cycling IDs immediately post-login.",
+                    "Set strict session timeout intervals and securely clear cookies on logout."
                 ],
-                link: 'https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/'
+                link: 'https://owasp.org/Top10/2025/0x10_2025-A07_Authentication_Failures/'
             },
             {
                 id: 'A08',
                 name: 'Software and Data Integrity Failures',
                 rank: 8,
-                prevalence: 2,
+                prevalence: 1.70,
                 impact: 9,
-                description: "A focus on making assumptions related to software updates, critical data, and CI/CD pipelines without verifying their integrity. This includes insecure deserialization.",
-                effects: "Provides pathways for supply-chain compromises. Attackers can inject malicious updates or scripts directly into dependency registries, tricking applications into installing corrupted executable files.",
+                description: "Blindly accepting and processing serialized code packages, payload objects, or software revisions from client inputs or untrusted endpoints.",
+                effects: "Leads directly to remote code execution (RCE) via insecure deserialization, system State Corruption, or malicious logic modifications inside running container workflows.",
+                detailedExplanation: "Accepting serialized objects or code modifications without cryptographic signature checks enables code tampering. When untrusted client data is decoded dynamically during execution flows, it can lead directly to remote code execution (RCE) or complete application state corruption.",
                 mitigations: [
-                    "Use signatures and hashes to guarantee files have not been modified during transmission.",
-                    "Ensure CI/CD build tooling is secured, isolated, and accessible only to audited user identities.",
-                    "Avoid consuming serialized data feeds from unauthorized clients without validating structures first.",
-                    "Employ code signing routines for any libraries compiled inside development teams."
+                    "Avoid deserializing complex data types from untrusted clients, using basic payloads like JSON instead.",
+                    "Verify code updates and payloads using cryptographic signatures and checksum verification.",
+                    "Audit and restrict dynamic deserialization patterns with strict whitelists of accepted classes.",
+                    "Run deserialization tasks in low-privilege isolated runtimes."
                 ],
-                link: 'https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/'
+                link: 'https://owasp.org/Top10/2025/0x11_2025-A08_Software_or_Data_Integrity_Failures/'
             },
             {
                 id: 'A09',
-                name: 'Logging and Monitoring Failures',
+                name: 'Security Logging and Alerting Failures',
                 rank: 9,
-                prevalence: 3,
+                prevalence: 2.10,
                 impact: 6,
-                description: "Previously 'Insufficient Logging & Monitoring', this covers failures to log, generate alerts, or report on security events, which hinders visibility into malicious activities.",
-                effects: "Leaves security responders blind during breach windows. Attackers can operate inside backend environments for weeks or months undetected, exfiltrating data with zero logged trace.",
+                description: "Failing to document high-risk operations, missing security telemetry, or failing to alert security response teams to obvious attack behaviors.",
+                effects: "Breaches remain completely invisible. Attackers persist inside business systems for extended periods, executing data harvesting routines while security operations have zero diagnostic trail to discover or respond to the threat.",
+                detailedExplanation: "Failing to document high-risk system actions keeps security breaches invisible. Without comprehensive audit logs, intrusion patterns go undetected, permitting attackers to maintain prolonged persistent access, map networks, and extract critical assets with zero tracing trail to alert defensive teams.",
                 mitigations: [
-                    "Ensure login, permissions changes, and input validation failures are logged with context.",
-                    "Format application logs to standard models easily digested by centralized SIEM software.",
-                    "Configure automatic alerts for high-frequency connection limits or out-of-bounds database access.",
-                    "Construct incident handling protocols to audit, mitigate, and patch servers in target timelines."
+                    "Ensure authentication, access control failures, and input deviations are logged with contextual metadata.",
+                    "Format application logs to standard models easily consumed by centralized SIEM and security pipelines.",
+                    "Establish automated real-time alerts for login failures and anomalies.",
+                    "Design and routinely exercise incident handling protocols."
                 ],
-                link: 'https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/'
+                link: 'https://owasp.org/Top10/2025/0x12_2025-A09_Security_Logging_and_Alerting_Failures/'
             },
             {
                 id: 'A10',
-                name: 'Server-Side Request Forgery',
+                name: 'Mishandling of Exceptional Conditions',
                 rank: 10,
-                prevalence: 1,
-                impact: 9,
-                description: "SSRF flaws occur whenever a web application fetches a remote resource without validating the user-supplied URL. It allows an attacker to coerce the application to send a crafted request to an unexpected destination.",
-                effects: "Allows external actors to bypass perimeter firewalls and access internal services directly. Attackers can use SSRF to extract localized service metadata, compromise cloud credentials, or scan intranet systems.",
+                prevalence: 1.20,
+                impact: 7,
+                description: "A brand-new category for 2025 focusing on failures to handle exceptions cleanly, leading to verbose error feedback or applications 'failing open' rather than 'failing closed'.",
+                effects: "Exposes system paths, stack traces, and database schemas. If a failure disrupts an authorization check, the failure state may bypass security blocks, granting complete unauthorized bypass access to administrative workflows.",
+                detailedExplanation: "Improper exception handling can leak detailed debug payloads, stack traces, and database connection strings to end users. More dangerously, if an unexpected error occurs during an access control or authentication routine, the application might default to a 'fail-open' configuration, bypassing critical security gates entirely.",
                 mitigations: [
-                    "Perform sanitization on external resource URL requests sent from client interfaces.",
-                    "Restrict target request domains to explicit whitelists of trusted hosts.",
-                    "Decline handling direct requests referencing local loopbacks or metadata IP addresses.",
-                    "Isolate backend worker tasks responsible for URL queries on separated secure network zones."
+                    "Implement global catch-all exception handles across all execution paths.",
+                    "Sanitize production feedback logs to present user-friendly error codes instead of stack traces.",
+                    "Adopt a robust 'Fail-Closed' architectural posture in all authorization logic loops.",
+                    "Ensure unhandled errors automatically release resources and safely shut down execution loops without leaving gates open."
                 ],
-                link: 'https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_(SSRF)/'
+                link: 'https://owasp.org/Top10/2025/0x13_2025-A10_Mishandling_of_Exceptional_Conditions/'
             }
         ];
 
@@ -408,13 +464,11 @@
         };
 
         let overviewChart = null;
-        let riskScorecardChart = null;
         let currentActiveVuln = vulnerabilityData[0];
 
         document.addEventListener('DOMContentLoaded', () => {
             const navContainer = document.getElementById('nav-container');
             const detailsContainer = document.getElementById('vulnerability-details');
-            const introContainer = document.getElementById('intro-text');
             const tableBody = document.getElementById('prevalence-table-body');
             const toggleTableBtn = document.getElementById('toggle-data-table-btn');
             const tableContainer = document.getElementById('prevalence-table-container');
@@ -507,34 +561,7 @@
             }
         };
 
-        // Custom plugin to render active metrics as accessible text at the center of the Doughnut Chart
-        const doughnutCenterTextPlugin = {
-            id: 'doughnutCenterTextPlugin',
-            afterDraw: (chart) => {
-                if (chart.config.type !== 'doughnut') return;
-                const ctx = chart.ctx;
-                ctx.save();
-
-                const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
-                const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-
-                // Header label
-                ctx.font = 'bold 9px Inter';
-                ctx.fillStyle = palette.textGray;
-                ctx.fillText('SCORECARD', centerX, centerY - 14);
-
-                // Exact numbers represented as large text
-                ctx.font = 'extrabold 22px Inter';
-                ctx.fillStyle = palette.darkBlue;
-                ctx.fillText(`${currentActiveVuln.prevalence}% / ${currentActiveVuln.impact}`, centerX, centerY + 8);
-
-                ctx.restore();
-            }
-        };
-
+        // Creates the horizontal bar chart
         function createOverviewChart() {
             const ctx = document.getElementById('overviewChart').getContext('2d');
             const sortedData = [...vulnerabilityData].sort((a, b) => b.prevalence - a.prevalence);
@@ -606,14 +633,27 @@
 
             currentActiveVuln = vuln;
 
-            // Text adjustments
+            // Text updates
             document.getElementById('vuln-title').textContent = `${vuln.id}: ${vuln.name}`;
             document.getElementById('vuln-what-it-is').textContent = vuln.description;
             document.getElementById('vuln-how-it-affects').textContent = vuln.effects;
+            document.getElementById('vuln-detailed-explanation').textContent = vuln.detailedExplanation;
 
-            // Set simple accessible metrics values below/beside charts
+            // Set simple accessible metrics values clearly separating % and /10 units
             document.getElementById('text-metric-prevalence').textContent = `${vuln.prevalence}%`;
-            document.getElementById('text-metric-impact').textContent = `${vuln.impact}/10`;
+            document.getElementById('text-metric-impact').textContent = `${vuln.impact} / 10`;
+
+            // Adjust width bars in the risk meters
+            const prevalenceBar = document.getElementById('prevalence-bar');
+            const impactBar = document.getElementById('impact-bar');
+
+            // Scaled visually: prevalence max is 5% in reality, let's scale it out of 5 for visually responsive fills (e.g., 3.73% prevalence fills ~74.6% of bar)
+            const prevalencePercentage = Math.min((vuln.prevalence / 5) * 100, 100);
+            prevalenceBar.style.width = `${prevalencePercentage}%`;
+
+            // Impact is out of 10, so 9/10 is 90% of bar (no percentage units attached)
+            const impactPercentage = vuln.impact * 10;
+            impactBar.style.width = `${impactPercentage}%`;
 
             // Build dynamic Mitigations Flowchart
             const mitigationsContainer = document.getElementById('vuln-mitigations');
@@ -627,7 +667,7 @@
                         ${index + 1}
                     </div>
                     <div>
-                        <span class="text-xs font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Control Action</span>
+                        <span class="text-xs font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Mitigation Step</span>
                         <p class="text-sm text-slate-700 leading-relaxed">${mitigation}</p>
                     </div>
                 `;
@@ -635,61 +675,6 @@
             });
 
             document.getElementById('vuln-link').href = vuln.link;
-
-            // Build Scorecard Doughnut Chart
-            createRiskScorecardChart(vuln);
-        }
-
-        function createRiskScorecardChart(vuln) {
-            const ctx = document.getElementById('riskScorecardChart').getContext('2d');
-            if (riskScorecardChart) {
-                riskScorecardChart.destroy();
-            }
-
-            riskScorecardChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Prevalence Score (out of 10)', 'Impact Rating (out of 10)'],
-                    datasets: [{
-                        data: [vuln.prevalence, vuln.impact],
-                        backgroundColor: [palette.primaryBlue, palette.accentYellow],
-                        borderColor: ['#ffffff', '#ffffff'],
-                        borderWidth: 2,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15,
-                                color: palette.darkBlue,
-                                font: { size: 11, family: 'Inter', weight: '500' }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: palette.darkBlue,
-                            padding: 12,
-                            titleFont: { size: 11, family: 'Inter', weight: 'bold' },
-                            bodyFont: { size: 12, family: 'Inter' },
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const val = context.raw || 0;
-                                    return ` ${label}: ${val}`;
-                                }
-                            }
-                        }
-                    }
-                },
-                plugins: [doughnutCenterTextPlugin]
-            });
         }
     </script>
 </body>
