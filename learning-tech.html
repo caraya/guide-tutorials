@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Report: Learning Design for Technical Skills</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      /* slate-50 */
+      color: #334155;
+      /* slate-700 */
+    }
+
+    .nav-pill {
+      transition: all 0.2s ease-in-out;
+    }
+
+    .nav-pill:hover {
+      background-color: #f1f5f9;
+      color: #0d9488;
+    }
+
+    .nav-pill.active {
+      background-color: #0d9488;
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2), 0 2px 4px -1px rgba(13, 148, 136, 0.1);
+    }
+
+    .active-tab {
+      background-color: #14b8a6;
+      /* teal-500 */
+      color: white;
+    }
+
+    .tab-btn {
+      transition: all 0.2s ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- Top Banner / Title Header -->
+  <header class="bg-white border-b border-slate-200 pt-12 pb-8 text-center">
+    <div class="max-w-4xl mx-auto px-4">
+      <span
+        class="text-teal-600 font-bold text-xs tracking-widest uppercase bg-teal-50 px-3 py-1 rounded-full">Instructional
+        Architecture</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3 mb-6">Learning Design for Technical Skills</h1>
+
+      <!-- Introduction & Objectives Block -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 text-left max-w-3xl mx-auto">
+        <h2 class="text-lg font-bold text-slate-800 mb-3">Introduction</h2>
+        <p class="text-slate-600 text-sm leading-relaxed mb-6">
+          Technical skill acquisition in modern software development requires moving beyond passive consumption.
+          Watching tutorials and copying code creates an illusion of competence without developing actual
+          problem-solving capabilities. This interactive framework provides educators, mentors, and instructional
+          designers with a structured, scientifically backed methodology to design high-impact technical learning
+          experiences.
+        </p>
+        <div class="border-t border-slate-200 pt-5">
+          <h3 class="text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Our Core Objectives</h3>
+          <ul class="grid sm:grid-cols-2 gap-3 text-xs text-slate-600">
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Prioritize Active Building:</strong> Anchor all lessons around contextual, hands-on
+                development.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Manage Working Memory:</strong> Minimize cognitive friction using modern instructional
+                design principles.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Exemplify Clean Pedagogy:</strong> Use structured Scaffolding, Inquiry, and Expert
+                Modeling.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Define Clear Baselines:</strong> Divide prerequisites into clear execution (JS) and
+                architecture (TS) tiers.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Menu (Placed Under the Title and Intro) -->
+  <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-4">
+    <div class="max-w-4xl mx-auto px-4 flex flex-wrap justify-center gap-2 sm:gap-3">
+      <a href="#section-philosophy"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">By Doing</a>
+      <a href="#section-cognitive-load"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Cognitive Load</a>
+      <a href="#section-addie"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">ADDIE Framework</a>
+      <a href="#section-pedagogy"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Teaching Methods</a>
+      <a href="#section-prerequisite"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Baselines</a>
+      <a href="#section-fundamentals"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Fundamentals</a>
+      <a href="#section-bibliography"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Bibliography</a>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+    <!-- Section 1: The Core Philosophy -->
+    <section id="section-philosophy" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">The Core Philosophy: Learning by Doing</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        The single most effective way to learn a complex technical skill is to actively build something. Passive
+        learning can only take you so far. Active, project-based construction is the gold standard for deep
+        understanding and long-term retention.
+      </p>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white mb-4 text-xl">💡
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Active Problem-Solving</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Building a project forces you to face and solve
+            real problems, cementing your understanding in a way that watching tutorials cannot.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white mb-4 text-xl">⚙️
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Contextual Knowledge</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Abstract concepts become tangible, useful tools
+            when you apply them directly to make a real-world feature work.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white mb-4 text-xl">🎯
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Sustained Motivation</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">A personal project, no matter how small, provides
+            a clear, satisfying goal that keeps you motivated to push through syntax errors and setup hurdles.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: How Your Brain Learns (Cognitive Load Theory) -->
+    <section id="section-cognitive-load" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">How Your Brain Learns: Managing Cognitive Load</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Cognitive Load Theory explains why picking up complex frameworks can feel overwhelmingly difficult. Our working
+        memory is finite and split into three distinct categories <a href="#ref-sweller"
+          class="text-teal-600 hover:underline">[1]</a>: <strong>Intrinsic load</strong> (the inherent difficulty of the
+        task or material itself), <strong>Extraneous load</strong> (unnecessary mental effort caused by confusing setups
+        or distracting instructions), and <strong>Germane load</strong> (the valuable mental effort spent processing,
+        organizing, and building deep conceptual models). Strategic instruction seeks to minimize extraneous load,
+        leaving more mental bandwidth to process intrinsic difficulty and construct lasting understanding.
+      </p>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="chart-container relative w-full h-80 max-w-xl mx-auto">
+          <canvas id="cognitiveLoadChart"></canvas>
+        </div>
+        <div class="mt-8 flex justify-center flex-wrap gap-3">
+          <button id="scenario-good"
+            class="bg-teal-500 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-teal-600 transition-colors">Simulate
+            Good Tutorial</button>
+          <button id="scenario-bad"
+            class="bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-400 transition-colors">Simulate
+            Bad Tutorial</button>
+          <button id="scenario-complex"
+            class="bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-400 transition-colors">Simulate
+            Complex Topic</button>
+        </div>
+        <div id="chart-explanation"
+          class="mt-6 text-center text-slate-600 text-sm max-w-xl mx-auto bg-slate-50 p-4 rounded-lg border border-slate-100">
+          Select a scenario to see how cognitive load is distributed.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: The ADDIE Framework in Action -->
+    <section id="section-addie" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">The Instructional Framework: ADDIE in Action</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Designing highly technical learning experiences requires a systematic instructional design approach. By
+        anchoring our strategy within the classical <strong>ADDIE framework</strong> (Analyze, Design, Develop,
+        Implement, Evaluate), we translate cognitive theory into a concrete, replicable curriculum lifecycle <a
+          href="#ref-branch" class="text-teal-600 hover:underline">[2]</a>. We follow a single project
+        thread—<strong>The Real-Time Kanban Task Board</strong>—to demonstrate how this framework moves from theory to
+        code.
+      </p>
+
+      <div class="space-y-8">
+        <!-- Analyze -->
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">A</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Analyze: Mapping Learner Baselines</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              Before a single line of framework code is taught, we map out existing mental schemas and identify
+              potential technical barriers. In engineering training, this means establishing clear baseline requirements
+              (such as defining Tier 1 execution limits vs. Tier 2 structural baselines) to ensure learners possess the
+              requisite working memory capacity to construct new models without suffering cognitive overload <a
+                href="#ref-sweller" class="text-teal-600 hover:underline">[1]</a>.
+            </p>
+            <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
+                Analysis Stage</span>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Before designing the module on our <strong>Real-Time Kanban Task Board</strong>, instructors distribute
+                a 10-minute diagnostic code-reading assessment on asynchronous JavaScript, closures, and modern array
+                manipulation (such as <code class="bg-slate-200 px-1 rounded text-teal-700">.map()</code> and <code
+                  class="bg-slate-200 px-1 rounded text-teal-700">.filter()</code>) which are strictly required to
+                manage column card arrays. Students scoring below 70% are automatically routed to a 1-week
+                execution-level prep course, preventing syntax confusion from overloading their working memory during
+                high-level framework classes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Design -->
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">D</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Design: Task-Centered Architecture</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              We design structured, progressive paths where theoretical lessons are directly coupled with practical
+              execution tasks. Following Merrill's First Principles of Instruction, lessons are designed around
+              authentic, progressively complex software development problems rather than disconnected abstract exercises
+              <a href="#ref-merrill" class="text-teal-600 hover:underline">[3]</a>.
+            </p>
+            <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
+                Design Stage</span>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Rather than delivering an abstract 2-hour lecture on declarative state or how to "lift state up" in
+                component hierarchies, the curriculum designer formats the lessons around a concrete project milestone:
+                <em>"Implement dynamic column-to-column card dragging on the Kanban Board."</em> The underlying theories
+                of unified parent state, child state updates, and immutable array spreads are taught explicitly through
+                the lens of moving a task card from "To-Do" to "Done".
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Develop -->
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">D</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Develop: Scaffolding and Sandboxing</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              We construct educational material within Vygotsky's Zone of Proximal Development (ZPD) <a
+                href="#ref-vygotsky" class="text-teal-600 hover:underline">[4]</a>. Developers build interactive
+              materials, starting code sandboxes, template boilerplates, and clear error trace paths to isolate specific
+              concepts and minimize irrelevant tooling friction (such as local bundling configuration issues).
+            </p>
+            <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
+                Development Stage</span>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                The content developer builds a customized local Vite repository specifically for the <strong>Kanban Task
+                  Board</strong>. This starter codebase includes complete CSS columns, pre-configured layouts, and
+                pre-packaged API endpoints for task storage. The repository also features custom automated test suites
+                that run in the background; if a student tries to mutate column arrays directly instead of updating them
+                immutably, the test fails with helpful, pedagogical troubleshooting hints.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Implement -->
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">I</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Implement: Guided Expert Modeling</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              Instruction is delivered through highly active, guided techniques. Teachers do not just showcase a
+              finished product; they model real-time development, error remediation, and code refactoring. This
+              demonstrates to students that minimal instruction fails, and guided expert pathways foster far greater
+              schema compilation <a href="#ref-kirschner" class="text-teal-600 hover:underline">[5]</a>.
+            </p>
+            <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
+                Implementation Stage</span>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                During the live instruction session, the lead trainer conducts a "fault-finding" lab using the
+                <strong>Kanban Task Board</strong>. Rather than writing perfect code, the trainer purposely introduces a
+                state mutation bug that causes dragged cards to disappear intermittently. The instructor models how to
+                inspect React DevTools, analyze column state snapshots, read the console warning logs, and refactor the
+                component live, normalizing constructive troubleshooting.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evaluate -->
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">E</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Evaluate: Diagnostic Iteration</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              We gauge structural competency via tangible, compiled outputs rather than simple multiple-choice metrics.
+              Building upon Kirkpatrick's evaluation levels, instructional design is iteratively modified based on
+              direct diagnostic analysis of where learners struggled during sandbox milestones <a
+                href="#ref-kirkpatrick" class="text-teal-600 hover:underline">[6]</a>.
+            </p>
+            <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
+                Evaluation Stage</span>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Upon evaluating code submissions for the first cohort's <strong>Kanban Task Board</strong>, the
+                educational designer reads through Git commit logs and discovers that 45% of students introduced socket
+                sync errors or memory leaks. They failed to write "cleanup" functions when setting up real-time update
+                connections (e.g., clearing polling events). Based on this data, the designer adds a dedicated
+                mini-scaffolding milestone on unmounting hooks in the subsequent course iteration.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Effective Pedagogical Approaches -->
+    <section id="section-pedagogy" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">How to Teach: Effective Pedagogical Approaches</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        How we organize information is just as critical as the information itself. By utilizing structured teaching
+        frameworks, we can systematically guide a beginner into a self-sufficient developer.
+      </p>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-2 sm:p-4">
+        <div class="flex justify-center border-b border-slate-200 mb-4">
+          <button data-tab="scaffolding"
+            class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 active-tab rounded-t-lg">Scaffolding</button>
+          <button data-tab="inquiry"
+            class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 rounded-t-lg">Inquiry-Based</button>
+          <button data-tab="modeling"
+            class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 rounded-t-lg">Modeling</button>
+        </div>
+        <div id="tab-content" class="p-4">
+          <div id="tab-scaffolding" class="tab-pane">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Scaffolding</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">This method involves providing learners with initial
+              support that is gradually removed as their skills grow <a href="#ref-vygotsky"
+                class="text-teal-600 hover:underline">[4]</a>. It's a structured path from dependence to independence.
+            </p>
+            <ol class="list-decimal list-inside space-y-2 text-slate-600 text-sm">
+              <li>Start with direct explanation of a single feature or pattern.</li>
+              <li>Provide boilerplate code for learners to finish or troubleshoot.</li>
+              <li>Gradually require them to write larger blocks of operational logic.</li>
+              <li>Assign an open-ended project for them to design and compile on their own.</li>
+            </ol>
+          </div>
+          <div id="tab-inquiry" class="tab-pane hidden">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Inquiry-Based Learning</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">This approach encourages learners to explore and question.
+              Instead of giving flat answers, you provide a starting point and pose questions like, "What happens if you
+              change this lifecycle dependency?" or "How could you refactor this loop to make it cleaner?" This directly
+              mirrors real-world engineering troubleshooting <a href="#ref-kirschner"
+                class="text-teal-600 hover:underline">[5]</a>.</p>
+          </div>
+          <div id="tab-modeling" class="tab-pane hidden">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Modeling</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">Instructors who actively model the entire development
+              process—including making mistakes, inspecting the call stack, utilizing a debugger, and navigating
+              documentation—provide a highly encouraging, human learning experience <a href="#ref-kirschner"
+                class="text-teal-600 hover:underline">[5]</a>. It removes the magic of coding and normalizes
+              constructive failure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: The Prerequisite (Two-Tier Baseline) -->
+    <section id="section-prerequisite" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">Prerequisite Baselines: A Two-Tier Approach</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Learning modern declarative frameworks requires a structured, diagnostic-backed setup of prerequisite skills.
+        Rather than assuming general developer experience, we segment technical expectations into execution limits
+        (runtime execution) and structural limits (architecture limits) to prevent cognitive overload.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- Tier 1 Card -->
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white font-bold text-sm">
+              Tier 1</div>
+            <div>
+              <h3 class="text-base font-bold text-slate-800">Execution-Level Baseline</h3>
+              <p class="text-xs font-bold text-slate-400 tracking-wider uppercase">JavaScript Engine Fundamentals</p>
+            </div>
+          </div>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+            Prior to processing complex framework cycles, developers must master active runtime flow. This tier acts as
+            the underlying execution engine of any reactive UI pipeline.
+          </p>
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Asynchronous Systems:</strong> Deeply trace Promises, async/await mechanics, and async
+                execution cycles.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Functional Manipulation:</strong> Immutable arrays using <code
+                  class="bg-slate-100 text-teal-600 px-1 py-0.5 rounded font-mono font-semibold">.map()</code>, <code
+                  class="bg-slate-100 text-teal-600 px-1 py-0.5 rounded font-mono font-semibold">.filter()</code>, and
+                spread state transitions.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Scope & Closures:</strong> Understand lexical environment boundaries which govern variable
+                persistence inside lifecycle hooks.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Tier 2 Card -->
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center space-x-3 mb-4">
+            <div
+              class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white font-bold text-sm">
+              Tier 2</div>
+            <div>
+              <h3 class="text-base font-bold text-slate-800">Structural-Level Baseline</h3>
+              <p class="text-xs font-bold text-slate-400 tracking-wider uppercase">TypeScript Compilation Architecture
+              </p>
+            </div>
+          </div>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+            As applications expand, static verification acts as the primary safety net. This tier focuses on application
+            reliability, interface contracts, and compilation workflows.
+          </p>
+          <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Type Definitions & Interfaces:</strong> Formulate predictable API payloads and declare
+                strict component input boundaries.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Generics & Safety:</strong> Write component structures that inherit and reuse properties
+                safely without losing strict typing.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-teal-500 mr-2 font-bold">✓</span>
+              <span><strong>Discriminated Unions:</strong> Model finite UI states (e.g., Idle vs. Pending vs. Success)
+                to eradicate rendering anomalies at design time.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: The Long Game -->
+    <section id="section-fundamentals" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">The Long Game: Fundamentals Over Tools</h2>
+      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Specific library iterations and tech stacks evolve rapidly, but structural engineering principles are evergreen.
+        Prioritizing fundamentals builds deep competence that spans across stacks.
+      </p>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Transferable Skills</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">System architecture, test structures, and
+            algorithmic logic persist regardless of language.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Avoid Hype Cycle</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Fledgling libraries will pop up continually.
+            Focus on building durable, reusable paradigms first.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Exponential Growth</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Mastering the underlying runtimes makes switching
+            to another runtime framework effortless.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Bibliography -->
+    <section id="section-bibliography" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-6 text-center">Bibliography</h2>
+      <div
+        class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto text-sm text-slate-600 space-y-6">
+        <div id="ref-sweller" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[1] Sweller, J. (1988)</span>
+          <p class="leading-relaxed">
+            <em>Cognitive load during problem solving: Effects on learning.</em> Cognitive Science, 12(2), 257-285. This
+            foundational research paper outlines the parameters of intrinsic, extraneous, and germane cognitive loads
+            that guide our modern pacing and content distribution mechanisms.
+          </p>
+        </div>
+        <div id="ref-branch" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[2] Branch, R. M. (2009)</span>
+          <p class="leading-relaxed">
+            <em>Instructional Design: The ADDIE Approach.</em> Springer Science & Business Media. This volume details
+            the operational aspects of the classical ADDIE framework, supporting our conceptual structure from initial
+            mapping metrics up to iterative programmatic diagnostic revisions.
+          </p>
+        </div>
+        <div id="ref-merrill" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[3] Merrill, M. D. (2002)</span>
+          <p class="leading-relaxed">
+            <em>First principles of instruction.</em> Educational Technology Research and Development, 50(3), 43-59.
+            Merrill establishes task-centered frameworks that validate our core learning philosophy of project-based
+            building and practical programmatic task contextualization.
+          </p>
+        </div>
+        <div id="ref-vygotsky" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[4] Vygotsky, L. S. (1978)</span>
+          <p class="leading-relaxed">
+            <em>Mind in society: The development of higher psychological processes.</em> Harvard University Press.
+            Vygotsky outlines the Zone of Proximal Development (ZPD) and the pedagogical requirements of dynamic
+            scaffolding, serving as the basis for our Scaffolding teaching patterns.
+          </p>
+        </div>
+        <div id="ref-kirschner" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[5] Kirschner, P. A., Sweller, J., & Clark, R. E.
+            (2006)</span>
+          <p class="leading-relaxed">
+            <em>Why minimal guidance during instruction does not work: An analysis of the failure of constructivist,
+              discovery, problem-based, experiential, and inquiry-based teaching.</em> Educational Psychologist, 41(2),
+            75-86. This study demonstrates the empirical superiority of direct, guided instruction and expert modeling
+            over unguided exploration.
+          </p>
+        </div>
+        <div id="ref-kirkpatrick" class="pb-2">
+          <span class="text-teal-600 font-bold block mb-1">[6] Kirkpatrick, D. L. (1994)</span>
+          <p class="leading-relaxed">
+            <em>Evaluating Training Programs.</em> Berrett-Koehler Publishers. This landmark guide provides structural
+            guidelines to organize diagnostic benchmarks and feedback evaluation loops to continuously audit our
+            learning models.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // --- Active Navigation Link Styling Observer ---
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-pill');
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-30% 0px -60% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => {
+              if (link.getAttribute('href') === `#${entry.target.id}`) {
+                link.classList.add('active');
+              } else {
+                link.classList.remove('active');
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => observer.observe(section));
+
+      // --- Cognitive Load Chart Logic ---
+      const ctx = document.getElementById('cognitiveLoadChart').getContext('2d');
+      let cognitiveLoadChart;
+
+      const chartData = {
+        good: {
+          data: [20, 10, 70],
+          explanation: "A well-structured tutorial drastically minimizes Extraneous (unnecessary format) load, allocating maximum mental bandwidth to the Germane integration of schemas."
+        },
+        bad: {
+          data: [20, 65, 15],
+          explanation: "An unstructured instructional setup floods the workspace with Extraneous (setup noise, confusing structure) load, severely restricting direct concept intake."
+        },
+        complex: {
+          data: [60, 15, 25],
+          explanation: "Complex structures elevate Intrinsic (inherent complexity) load naturally. This requires systematic scaffolding to slowly distribute the learning process."
+        }
+      };
+
+      const chartExplanation = document.getElementById('chart-explanation');
+
+      function createChart(data) {
+        if (cognitiveLoadChart) {
+          cognitiveLoadChart.destroy();
+        }
+        cognitiveLoadChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Intrinsic Load', 'Extraneous Load', 'Germane Load'],
+            datasets: [{
+              label: 'Mental Budget Split',
+              data: data,
+              backgroundColor: [
+                'rgba(59, 130, 246, 0.75)',  // blue-500
+                'rgba(239, 68, 68, 0.75)',   // red-500
+                'rgba(20, 184, 166, 0.75)'   // teal-500
+              ],
+              borderColor: [
+                'rgba(59, 130, 246, 1)',
+                'rgba(239, 68, 68, 1)',
+                'rgba(20, 184, 166, 1)'
+              ],
+              borderWidth: 1.5,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                max: 100,
+                grid: { display: false },
+                ticks: {
+                  callback: function (value) {
+                    return value + '%'
+                  }
+                }
+              },
+              y: {
+                stacked: true,
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return ` ${context.label}: ${context.raw}%`;
+                  }
+                }
+              },
+              title: {
+                display: true,
+                text: 'Working Memory Distribution (Total 100%)',
+                font: {
+                  size: 13,
+                  weight: 'bold'
+                },
+                color: '#475569'
+              }
+            }
+          }
+        });
+      }
+
+      // Initialize chart with good scenario
+      createChart(chartData.good.data);
+      chartExplanation.textContent = chartData.good.explanation;
+      document.getElementById('scenario-good').classList.add('bg-teal-500', 'text-white');
+      document.getElementById('scenario-good').classList.remove('bg-slate-300', 'text-slate-800');
+
+      const scenarioButtons = document.querySelectorAll('[id^="scenario-"]');
+      scenarioButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const scenario = e.target.id.split('-')[1];
+          cognitiveLoadChart.data.datasets[0].data = chartData[scenario].data;
+          cognitiveLoadChart.update();
+          chartExplanation.textContent = chartData[scenario].explanation;
+
+          scenarioButtons.forEach(btn => {
+            btn.classList.add('bg-slate-300', 'text-slate-800');
+            btn.classList.remove('bg-teal-500', 'text-white');
+          });
+          e.target.classList.add('bg-teal-500', 'text-white');
+          e.target.classList.remove('bg-slate-300', 'text-slate-800');
+        });
+      });
+
+      // --- Pedagogy Tabs Logic ---
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetTab = button.dataset.tab;
+
+          tabButtons.forEach(btn => {
+            btn.classList.remove('active-tab');
+          });
+          button.classList.add('active-tab');
+
+          tabPanes.forEach(pane => {
+            if (pane.id === `tab-${targetTab}`) {
+              pane.classList.remove('hidden');
+            } else {
+              pane.classList.add('hidden');
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
