@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive Report: Learning Design for Technical Skills</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -45,7 +44,7 @@
 
 <body class="antialiased">
 
-  <!-- Navigation Menu -->
+  <!-- Navigation Menu (Placed at the Very Top) -->
   <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-4">
     <div class="max-w-4xl mx-auto px-4 flex flex-wrap justify-center gap-2 sm:gap-3">
       <a href="#section-philosophy"
@@ -103,8 +102,8 @@
             </li>
             <li class="flex items-start">
               <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Define Clear Baselines:</strong> Divide prerequisites into clear presentational (HTML/CSS),
-                execution (JS), and structural (TS) tiers.</span>
+              <span><strong>Define Clear Baselines:</strong> Segment prerequisites into three clear progression tiers
+                across HTML, CSS, and JavaScript.</span>
             </li>
           </ul>
         </div>
@@ -159,24 +158,55 @@
         organizing, and building deep conceptual models). Strategic instruction seeks to minimize extraneous load,
         leaving more mental bandwidth to process intrinsic difficulty and construct lasting understanding.
       </p>
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <div class="chart-container relative w-full h-80 max-w-xl mx-auto">
-          <canvas id="cognitiveLoadChart"></canvas>
-        </div>
-        <div class="mt-8 flex justify-center flex-wrap gap-3">
-          <button id="scenario-good"
-            class="bg-teal-500 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-teal-600 transition-colors">Simulate
-            Good Tutorial</button>
-          <button id="scenario-bad"
-            class="bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-400 transition-colors">Simulate
-            Bad Tutorial</button>
-          <button id="scenario-complex"
-            class="bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-400 transition-colors">Simulate
-            Complex Topic</button>
-        </div>
-        <div id="chart-explanation"
-          class="mt-6 text-center text-slate-600 text-sm max-w-xl mx-auto bg-slate-50 p-4 rounded-lg border border-slate-100">
-          Select a scenario to see how cognitive load is distributed.
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-slate-600">
+            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-4">Scenario</th>
+                <th scope="col" class="px-6 py-4">Intrinsic Load</th>
+                <th scope="col" class="px-6 py-4">Extraneous Load</th>
+                <th scope="col" class="px-6 py-4">Germane Load</th>
+                <th scope="col" class="px-6 py-4">Result</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="bg-white">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Good Tutorial</td>
+                <td class="px-6 py-4"><span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">20%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">10%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded">70%</span></td>
+                <td class="px-6 py-4 leading-relaxed">A well-structured tutorial drastically minimizes Extraneous
+                  (unnecessary format) load, allocating maximum mental bandwidth to the Germane integration of schemas.
+                </td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Bad Tutorial</td>
+                <td class="px-6 py-4"><span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">20%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">65%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded">15%</span></td>
+                <td class="px-6 py-4 leading-relaxed">An unstructured instructional setup floods the workspace with
+                  Extraneous (setup noise, confusing structure) load, severely restricting direct concept intake.</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Complex Topic</td>
+                <td class="px-6 py-4"><span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">60%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">15%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded">25%</span></td>
+                <td class="px-6 py-4 leading-relaxed">Complex structures elevate Intrinsic (inherent complexity) load
+                  naturally. This requires systematic scaffolding to slowly distribute the learning process.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -199,14 +229,11 @@
           class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
           <div class="bg-teal-50 text-teal-700 font-extrabold text-xl px-5 py-3 rounded-lg flex-shrink-0">A</div>
           <div class="flex-grow">
-            <h3 class="text-lg font-bold text-slate-800 mb-2">Analyze: Mapping Learner Baselines</h3>
-            <p class="text-slate-600 text-sm leading-relaxed mb-4">
-              Before a single line of framework code is taught, we map out existing mental schemas and identify
-              potential technical barriers. In engineering training, this means establishing clear baseline requirements
-              across our structured three-tier matrix (HTML, CSS, JS) to ensure learners possess the requisite working
-              memory capacity to construct new models without suffering cognitive overload <a href="#ref-sweller"
-                class="text-teal-600 hover:underline">[1]</a>.
-            </p>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Analyze: Comprehensive Diagnostic Gateways</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">We map existing mental schemas by building exhaustive
+              automated diagnostic gateways into the platform before content begins. These assessments measure directly
+              against our established three-tier baseline (HTML, CSS, JS) to identify precise structural weaknesses
+              rather than general "experience levels."</p>
             <div class="bg-slate-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
               <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block mb-1">Kanban Project Example:
                 Analysis Stage</span>
@@ -764,120 +791,6 @@
       }, observerOptions);
 
       sections.forEach(section => observer.observe(section));
-
-      // --- Cognitive Load Chart Logic ---
-      const ctx = document.getElementById('cognitiveLoadChart').getContext('2d');
-      let cognitiveLoadChart;
-
-      const chartData = {
-        good: {
-          data: [20, 10, 70],
-          explanation: "A well-structured tutorial drastically minimizes Extraneous (unnecessary format) load, allocating maximum mental bandwidth to the Germane integration of schemas."
-        },
-        bad: {
-          data: [20, 65, 15],
-          explanation: "An unstructured instructional setup floods the workspace with Extraneous (setup noise, confusing structure) load, severely restricting direct concept intake."
-        },
-        complex: {
-          data: [60, 15, 25],
-          explanation: "Complex structures elevate Intrinsic (inherent complexity) load naturally. This requires systematic scaffolding to slowly distribute the learning process."
-        }
-      };
-
-      const chartExplanation = document.getElementById('chart-explanation');
-
-      function createChart(data) {
-        if (cognitiveLoadChart) {
-          cognitiveLoadChart.destroy();
-        }
-        cognitiveLoadChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Intrinsic Load', 'Extraneous Load', 'Germane Load'],
-            datasets: [{
-              label: 'Mental Budget Split',
-              data: data,
-              backgroundColor: [
-                'rgba(59, 130, 246, 0.75)',
-                'rgba(239, 68, 68, 0.75)',
-                'rgba(20, 184, 166, 0.75)'
-              ],
-              borderColor: [
-                'rgba(59, 130, 246, 1)',
-                'rgba(239, 68, 68, 1)',
-                'rgba(20, 184, 166, 1)'
-              ],
-              borderWidth: 1.5,
-              borderRadius: 4
-            }]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                stacked: true,
-                max: 100,
-                grid: { display: false },
-                ticks: {
-                  callback: function (value) {
-                    return value + '%'
-                  }
-                }
-              },
-              y: {
-                stacked: true,
-                grid: { display: false }
-              }
-            },
-            plugins: {
-              legend: {
-                display: false
-              },
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    return ` ${context.label}: ${context.raw}%`;
-                  }
-                }
-              },
-              title: {
-                display: true,
-                text: 'Working Memory Distribution (Total 100%)',
-                font: {
-                  size: 13,
-                  weight: 'bold'
-                },
-                color: '#475569'
-              }
-            }
-          }
-        });
-      }
-
-      // Initialize chart with good scenario
-      createChart(chartData.good.data);
-      chartExplanation.textContent = chartData.good.explanation;
-      document.getElementById('scenario-good').classList.add('bg-teal-500', 'text-white');
-      document.getElementById('scenario-good').classList.remove('bg-slate-300', 'text-slate-800');
-
-      const scenarioButtons = document.querySelectorAll('[id^="scenario-"]');
-      scenarioButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          const scenario = e.target.id.split('-')[1];
-          cognitiveLoadChart.data.datasets[0].data = chartData[scenario].data;
-          cognitiveLoadChart.update();
-          chartExplanation.textContent = chartData[scenario].explanation;
-
-          scenarioButtons.forEach(btn => {
-            btn.classList.add('bg-slate-300', 'text-slate-800');
-            btn.classList.remove('bg-teal-500', 'text-white');
-          });
-          e.target.classList.add('bg-teal-500', 'text-white');
-          e.target.classList.remove('bg-slate-300', 'text-slate-800');
-        });
-      });
 
       // --- Pedagogy Tabs Logic ---
       const tabButtons = document.querySelectorAll('.tab-btn');

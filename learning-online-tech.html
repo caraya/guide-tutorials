@@ -4,9 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Report: Building Online Technical Curriculum</title>
+  <title>Building Online Technical Curriculum</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -269,29 +268,61 @@
         terminal, IDE, and documentation. Online curriculum must ruthlessly eliminate extraneous load.
       </p>
 
-      <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
-        <div class="chart-container relative w-full h-80 max-w-2xl mx-auto">
-          <canvas id="cognitiveLoadChart"></canvas>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-slate-600">
+            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-4">Learning Environment</th>
+                <th scope="col" class="px-6 py-4">Intrinsic (Difficulty)</th>
+                <th scope="col" class="px-6 py-4">Extraneous (Friction)</th>
+                <th scope="col" class="px-6 py-4">Germane (Learning)</th>
+                <th scope="col" class="px-6 py-4">Analysis</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="bg-white">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Integrated Browser Sandbox</td>
+                <td class="px-6 py-4"><span
+                    class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">25%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">5%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded">70%</span></td>
+                <td class="px-6 py-4 leading-relaxed">Minimizes Extraneous Load by combining code, preview, and
+                  instructions in one window, directing maximum mental bandwidth to schema construction.</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Video + Local Setup Hell</td>
+                <td class="px-6 py-4"><span
+                    class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">20%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">70%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded">10%</span></td>
+                <td class="px-6 py-4 leading-relaxed">Floods the workspace with Extraneous Load (installing packages,
+                  debugging Webpack, context-switching), severely restricting actual concept intake.</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">Advanced Systems Architecture</td>
+                <td class="px-6 py-4"><span
+                    class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">65%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">10%</span></td>
+                <td class="px-6 py-4"><span
+                    class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded">25%</span></td>
+                <td class="px-6 py-4 leading-relaxed">Naturally elevates Intrinsic Load. This requires digital
+                  scaffolding (e.g., pre-written boilerplate) to keep the combined load manageable.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="mt-8 flex justify-center flex-wrap gap-3">
-          <button id="scenario-good"
-            class="bg-indigo-500 text-white px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-indigo-600 transition-colors shadow-sm">Integrated
-            Browser Sandbox</button>
-          <button id="scenario-bad"
-            class="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">Video
-            + Local Setup Hell</button>
-          <button id="scenario-complex"
-            class="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">Advanced
-            Systems Architecture</button>
-        </div>
-        <div id="chart-explanation"
-          class="mt-6 text-center text-slate-700 text-sm max-w-2xl mx-auto bg-indigo-50/50 p-5 rounded-lg border border-indigo-100 font-medium">
-          Select an online learning environment scenario to see how cognitive capacity is utilized.
-        </div>
-        <div class="mt-5 text-center text-slate-500 text-xs italic max-w-2xl mx-auto">
-          * Note: The capacity distributions modeled above are illustrative estimates synthesized from empirical
-          findings on the <strong>Split-Attention Effect</strong> (Mayer, 2014) and the <strong>Expertise Reversal
-            Effect</strong> (Kalyuga et al., 2003) to demonstrate the relative impact of digital tooling friction.
+        <div class="bg-indigo-50/30 p-4 border-t border-slate-200">
+          <p class="text-center text-slate-500 text-xs italic max-w-3xl mx-auto">
+            * Note: The capacity distributions modeled above are illustrative estimates synthesized from empirical
+            findings on the <strong>Split-Attention Effect</strong> (Mayer, 2014) and the <strong>Expertise Reversal
+              Effect</strong> (Kalyuga et al., 2003) to demonstrate the relative impact of digital tooling friction.
+          </p>
         </div>
       </div>
     </section>
@@ -305,27 +336,28 @@
         into distinct knowledge tiers to prevent cognitive overload during advanced instruction.
       </p>
 
-      <div class="max-w-6xl mx-auto space-y-16">
+      <div class="max-w-6xl mx-auto space-y-12">
 
-        <!-- HTML Track -->
+        <!-- TIER 1 -->
         <div>
           <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
-            <div class="bg-orange-100 text-orange-600 p-2 rounded-lg mr-3">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800">HTML Structure</h3>
+            <div
+              class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white font-bold text-lg mr-4 shadow-sm">
+              T1</div>
+            <h3 class="text-2xl font-bold text-slate-800">Tier 1: Foundation & Basics</h3>
           </div>
           <div class="grid lg:grid-cols-3 gap-6">
+            <!-- HTML T1 -->
             <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-300 transition-colors">
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-orange-500 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
               <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-500 text-white font-bold text-xs shadow-sm">
-                  T1</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Foundation</h4>
+                <div class="bg-orange-100 text-orange-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">HTML: Foundation</h4>
               </div>
               <ul class="space-y-3 text-sm text-slate-600">
                 <li class="flex items-start"><span class="text-orange-500 mr-2 font-bold">•</span><span>Basic document
@@ -336,63 +368,19 @@
                     external CSS and JavaScript resources.</span></li>
               </ul>
             </div>
-            <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-400 transition-colors">
-              <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-600 text-white font-bold text-xs shadow-sm">
-                  T2</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Semantics & Forms</h4>
-              </div>
-              <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Use of semantic
-                    HTML elements (`article`, `nav`, `section`).</span></li>
-                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Forms, standard
-                    input elements, and labels.</span></li>
-                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Accessibility
-                    features, alt text, and structural best practices.</span></li>
-              </ul>
-            </div>
-            <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-500 transition-colors">
-              <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-700 text-white font-bold text-xs shadow-sm">
-                  T3</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Advanced APIs</h4>
-              </div>
-              <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>HTML APIs
-                    (Canvas, Geolocation, Web Storage) from the markup side.</span></li>
-                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Advanced forms,
-                    validation attributes, and specific input types.</span></li>
-                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Implementation
-                    of custom `data-*` attributes for DOM tracking.</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
 
-        <!-- CSS Track -->
-        <div>
-          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
-            <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
-                </path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800">CSS Presentation</h3>
-          </div>
-          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- CSS T1 -->
             <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition-colors">
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-blue-500 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
               <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-500 text-white font-bold text-xs shadow-sm">
-                  T1</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Styling Basics</h4>
+                <div class="bg-blue-100 text-blue-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                    </path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">CSS: Styling Basics</h4>
               </div>
               <ul class="space-y-3 text-sm text-slate-600">
                 <li class="flex items-start"><span class="text-blue-500 mr-2 font-bold">•</span><span>How CSS targets
@@ -403,62 +391,18 @@
                     (margin, border, padding, content) and layout fundamentals.</span></li>
               </ul>
             </div>
-            <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-400 transition-colors">
-              <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-600 text-white font-bold text-xs shadow-sm">
-                  T2</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Layout & Responsive</h4>
-              </div>
-              <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Advanced layouts
-                    using Flexbox and CSS Grid.</span></li>
-                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Responsive design
-                    strategies and structural media queries.</span></li>
-                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>CSS transitions
-                    and keyframe animations.</span></li>
-              </ul>
-            </div>
-            <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-500 transition-colors">
-              <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-700 text-white font-bold text-xs shadow-sm">
-                  T3</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Architecture</h4>
-              </div>
-              <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Advanced
-                    combinator selectors and specific pseudo-classes.</span></li>
-                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>CSS variables
-                    (custom properties) and theming architecture.</span></li>
-                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Implementation of
-                    the Web Animations API (WAAPI) and performance.</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
 
-        <!-- JS Track -->
-        <div>
-          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
-            <div class="bg-amber-100 text-amber-600 p-2 rounded-lg mr-3">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
-                </path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800">JavaScript Execution</h3>
-          </div>
-          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- JS T1 -->
             <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-400 transition-colors">
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-amber-500 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
               <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-400 text-white font-bold text-xs shadow-sm">
-                  T1</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Core Logic</h4>
+                <div class="bg-amber-100 text-amber-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">JS: Core Logic</h4>
               </div>
               <ul class="space-y-3 text-sm text-slate-600">
                 <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Basic syntax,
@@ -469,42 +413,165 @@
                     scope rules, and vanilla DOM manipulation.</span></li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        <!-- TIER 2 -->
+        <div>
+          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
             <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-500 transition-colors">
+              class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white font-bold text-lg mr-4 shadow-sm">
+              T2</div>
+            <h3 class="text-2xl font-bold text-slate-800">Tier 2: Intermediate & Execution</h3>
+          </div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- HTML T2 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-orange-600 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
               <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-500 text-white font-bold text-xs shadow-sm">
-                  T2</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Async & Modern Features</h4>
+                <div class="bg-orange-100 text-orange-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">HTML: Semantics & Forms</h4>
               </div>
               <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Event handling,
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Use of semantic
+                    HTML elements (`article`, `nav`, `section`).</span></li>
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Forms, standard
+                    input elements, and labels.</span></li>
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Accessibility
+                    features, alt text, and structural best practices.</span></li>
+              </ul>
+            </div>
+
+            <!-- CSS T2 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-blue-600 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="bg-blue-100 text-blue-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                    </path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">CSS: Layout & Responsive</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Advanced layouts
+                    using Flexbox and CSS Grid.</span></li>
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Responsive design
+                    strategies and structural media queries.</span></li>
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>CSS transitions
+                    and keyframe animations.</span></li>
+              </ul>
+            </div>
+
+            <!-- JS T2 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-amber-600 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="bg-amber-100 text-amber-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">JS: Async & Modern</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Event handling,
                     propagation, and delegation.</span></li>
-                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Asynchronous
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Asynchronous
                     execution paradigms (Promises, async/await).</span></li>
-                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>ES6+ modern
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>ES6+ modern
                     features (let/const, arrow functions, destructuring, template literals).</span></li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        <!-- TIER 3 -->
+        <div>
+          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
             <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-600 transition-colors">
+              class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-900 text-white font-bold text-lg mr-4 shadow-sm">
+              T3</div>
+            <h3 class="text-2xl font-bold text-slate-800">Tier 3: Advanced & Architecture</h3>
+          </div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- HTML T3 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-orange-700 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
               <div class="flex items-center space-x-3 mb-4">
-                <div
-                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-600 text-white font-bold text-xs shadow-sm">
-                  T3</div>
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Engineering & Types</h4>
+                <div class="bg-orange-100 text-orange-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">HTML: Advanced APIs</h4>
               </div>
               <ul class="space-y-3 text-sm text-slate-600">
-                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Advanced
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>HTML APIs
+                    (Canvas, Geolocation, Web Storage) from the markup side.</span></li>
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Advanced forms,
+                    validation attributes, and specific input types.</span></li>
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Implementation
+                    of custom `data-*` attributes for DOM tracking.</span></li>
+              </ul>
+            </div>
+
+            <!-- CSS T3 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-blue-700 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="bg-blue-100 text-blue-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                    </path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">CSS: Architecture</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Advanced
+                    combinator selectors and specific pseudo-classes.</span></li>
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>CSS variables
+                    (custom properties) and theming architecture.</span></li>
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Implementation of
+                    the Web Animations API (WAAPI) and performance.</span></li>
+              </ul>
+            </div>
+
+            <!-- JS T3 -->
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-t-amber-700 border-x border-b border-slate-200 hover:shadow-md transition-shadow">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="bg-amber-100 text-amber-600 p-1.5 rounded-md">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">JS: Engineering & Types</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-amber-700 mr-2 font-bold">•</span><span>Advanced
                     patterns: Modules, lexical closures, and IIFEs.</span></li>
-                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Performance
+                <li class="flex items-start"><span class="text-amber-700 mr-2 font-bold">•</span><span>Performance
                     optimization, garbage collection, and memory management tracking.</span></li>
-                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Integration of
+                <li class="flex items-start"><span class="text-amber-700 mr-2 font-bold">•</span><span>Integration of
                     TypeScript for static typing, interfaces, and safe architectural compilation.</span></li>
               </ul>
             </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -526,14 +593,16 @@
             <h3 class="text-lg font-bold text-slate-800 mb-2">Analyze: Comprehensive Diagnostic Gateways</h3>
             <p class="text-slate-600 text-sm leading-relaxed mb-4">We map existing mental schemas by building exhaustive
               automated diagnostic gateways into the platform before content begins. These assessments measure directly
-              against our established baseline tiers to identify structural weaknesses.</p>
+              against our established three-tier baseline (HTML, CSS, JS) to identify precise structural weaknesses
+              rather than general "experience levels."</p>
             <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
               <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> Before entering the
-                module, the platform deploys a multi-stage diagnostic. It goes beyond a simple multiple-choice quiz on
-                RESTful HTTP verbs; it requires learners to complete a sandbox exercise resolving nested JavaScript
-                Promises. If a student struggles with async execution (identifying a gap in JS Tier 2), the system
-                automatically routes them to a "Promise & Fetch Refresher" track before they can access the main API
-                lessons.</p>
+                module, the platform deploys a multi-stage diagnostic aligned strictly to our Tiers. It requires
+                learners to complete a sandbox exercise verifying semantic form structuring (HTML Tier 2), responsive
+                layout application (CSS Tier 2), and resolving API data fetching (JS Tier 2). If a student correctly
+                builds the responsive grid but fails to handle the data promise, the system identifies a specific gap in
+                JS Tier 2. It automatically routes them to an asynchronous data refresher track while validating their
+                UI competency, ensuring they meet the precise prerequisites without wasting time re-learning CSS.</p>
             </div>
           </div>
         </div>
@@ -825,113 +894,6 @@
       }, observerOptions);
 
       sections.forEach(section => observer.observe(section));
-
-      const ctx = document.getElementById('cognitiveLoadChart').getContext('2d');
-      let cognitiveLoadChart;
-
-      const chartData = {
-        good: {
-          data: [25, 5, 70],
-          explanation: "An Integrated Browser Sandbox minimizes Extraneous Load by combining code, preview, and instructions in one window, directing maximum mental bandwidth to Germane schema construction."
-        },
-        bad: {
-          data: [20, 70, 10],
-          explanation: "Video + Local Setup Hell floods the learner's workspace with Extraneous Load (installing packages, debugging Webpack, context-switching), severely restricting actual concept intake."
-        },
-        complex: {
-          data: [65, 10, 25],
-          explanation: "Advanced Systems Architecture naturally elevates Intrinsic Load. This requires digital scaffolding (e.g., pre-written boilerplate) to keep the combined load manageable."
-        }
-      };
-
-      const chartExplanation = document.getElementById('chart-explanation');
-
-      function createChart(data) {
-        if (cognitiveLoadChart) {
-          cognitiveLoadChart.destroy();
-        }
-        cognitiveLoadChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Intrinsic (Difficulty)', 'Extraneous (Friction)', 'Germane (Learning)'],
-            datasets: [{
-              label: 'Mental Budget Split',
-              data: data,
-              backgroundColor: [
-                'rgba(99, 102, 241, 0.75)',
-                'rgba(239, 68, 68, 0.75)',
-                'rgba(16, 185, 129, 0.75)'
-              ],
-              borderColor: [
-                'rgba(99, 102, 241, 1)',
-                'rgba(239, 68, 68, 1)',
-                'rgba(16, 185, 129, 1)'
-              ],
-              borderWidth: 1.5,
-              borderRadius: 4
-            }]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                stacked: true,
-                max: 100,
-                grid: { display: false },
-                ticks: {
-                  callback: function (value) {
-                    return value + '%'
-                  }
-                }
-              },
-              y: {
-                stacked: true,
-                grid: { display: false }
-              }
-            },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    return ` ${context.label}: ${context.raw}%`;
-                  }
-                }
-              },
-              title: {
-                display: true,
-                text: 'Cognitive Bandwidth Distribution (Total 100%)',
-                font: { size: 13, weight: 'bold' },
-                color: '#475569'
-              }
-            }
-          }
-        });
-      }
-
-      createChart(chartData.good.data);
-      chartExplanation.textContent = chartData.good.explanation;
-      document.getElementById('scenario-good').classList.add('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
-      document.getElementById('scenario-good').classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-300');
-
-      const scenarioButtons = document.querySelectorAll('[id^="scenario-"]');
-      scenarioButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          const scenario = e.target.id.split('-')[1];
-          cognitiveLoadChart.data.datasets[0].data = chartData[scenario].data;
-          cognitiveLoadChart.update();
-          chartExplanation.textContent = chartData[scenario].explanation;
-
-          scenarioButtons.forEach(btn => {
-            btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-300');
-            btn.classList.remove('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
-          });
-          e.target.classList.add('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
-          e.target.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-300');
-        });
-      });
     });
   </script>
 </body>
