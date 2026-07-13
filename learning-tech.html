@@ -48,6 +48,26 @@
 
 <body class="antialiased">
 
+  <!-- Navigation Menu (Placed at the Very Top) -->
+  <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-4">
+    <div class="max-w-4xl mx-auto px-4 flex flex-wrap justify-center gap-2 sm:gap-3">
+      <a href="#section-philosophy"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">By Doing</a>
+      <a href="#section-cognitive-load"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Cognitive Load</a>
+      <a href="#section-addie"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">ADDIE Framework</a>
+      <a href="#section-pedagogy"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Teaching Methods</a>
+      <a href="#section-prerequisite"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Baselines</a>
+      <a href="#section-fundamentals"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Fundamentals</a>
+      <a href="#section-bibliography"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Bibliography</a>
+    </div>
+  </div>
+
   <!-- Top Banner / Title Header -->
   <header class="bg-white border-b border-slate-200 pt-12 pb-8 text-center">
     <div class="max-w-4xl mx-auto px-4">
@@ -86,34 +106,14 @@
             </li>
             <li class="flex items-start">
               <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Define Clear Baselines:</strong> Divide prerequisites into clear execution (JS) and
-                architecture (TS) tiers.</span>
+              <span><strong>Define Clear Baselines:</strong> Divide prerequisites into clear document structures
+                (HTML/CSS), execution (JS), and architectural (TS) tiers.</span>
             </li>
           </ul>
         </div>
       </div>
     </div>
   </header>
-
-  <!-- Navigation Menu (Placed Under the Title and Intro) -->
-  <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-4">
-    <div class="max-w-4xl mx-auto px-4 flex flex-wrap justify-center gap-2 sm:gap-3">
-      <a href="#section-philosophy"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">By Doing</a>
-      <a href="#section-cognitive-load"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Cognitive Load</a>
-      <a href="#section-addie"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">ADDIE Framework</a>
-      <a href="#section-pedagogy"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Teaching Methods</a>
-      <a href="#section-prerequisite"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Baselines</a>
-      <a href="#section-fundamentals"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Fundamentals</a>
-      <a href="#section-bibliography"
-        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Bibliography</a>
-    </div>
-  </div>
 
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
@@ -382,84 +382,124 @@
       </div>
     </section>
 
-    <!-- Section 5: The Prerequisite (Two-Tier Baseline) -->
+    <!-- Section 5: The Prerequisite (Three-Tier Baseline) -->
     <section id="section-prerequisite" class="mb-24 scroll-mt-24">
-      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">Prerequisite Baselines: A Two-Tier Approach</h2>
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">Prerequisite Baselines: A Three-Tier Approach</h2>
       <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
-        Learning modern declarative frameworks requires a structured, diagnostic-backed setup of prerequisite skills.
-        Rather than assuming general developer experience, we segment technical expectations into execution limits
-        (runtime execution) and structural limits (architecture limits) to prevent cognitive overload.
+        Developing complex, scale-ready web solutions requires a structured, diagnostic-backed setup of prerequisite
+        skills. Rather than assuming general developer experience, we segment technical expectations into document
+        presentation (HTML/CSS), execution flow (JavaScript), and safety boundaries (TypeScript) to prevent cognitive
+        overload.
       </p>
 
-      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <!-- Tier 1 Card -->
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex items-center space-x-3 mb-4">
-            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white font-bold text-sm">
-              Tier 1</div>
-            <div>
-              <h3 class="text-base font-bold text-slate-800">Execution-Level Baseline</h3>
-              <p class="text-xs font-bold text-slate-400 tracking-wider uppercase">JavaScript Engine Fundamentals</p>
+      <div class="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <!-- Tier 1 Card: Presentational & Document Foundation -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <div
+                class="flex items-center justify-center h-10 w-10 rounded-lg bg-teal-500 text-white font-bold text-sm">
+                Tier 1</div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">Presentational Foundation</h3>
+                <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">HTML5 & CSS3 Architecture</p>
+              </div>
             </div>
+            <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+              Before writing advanced interface interactions, developers must master presentational document flow. This
+              tier acts as the structural foundation of visual layout rendering.
+            </p>
+            <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Semantic Document Trees:</strong> Mastery of structural, accessible DOM mapping
+                  (ARIA/WCAG) and viewport parameters.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Layout Systems:</strong> Advanced responsive positioning hierarchies utilizing Grid,
+                  Flexbox, and dynamic sizing parameters.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Document Lifecycle:</strong> Understanding the critical rendering path, selector weight
+                  resolutions, and browser repaint loops.</span>
+              </li>
+            </ul>
           </div>
-          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-            Prior to processing complex framework cycles, developers must master active runtime flow. This tier acts as
-            the underlying execution engine of any reactive UI pipeline.
-          </p>
-          <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Asynchronous Systems:</strong> Deeply trace Promises, async/await mechanics, and async
-                execution cycles.</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Functional Manipulation:</strong> Immutable arrays using <code
-                  class="bg-slate-100 text-teal-600 px-1 py-0.5 rounded font-mono font-semibold">.map()</code>, <code
-                  class="bg-slate-100 text-teal-600 px-1 py-0.5 rounded font-mono font-semibold">.filter()</code>, and
-                spread state transitions.</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Scope & Closures:</strong> Understand lexical environment boundaries which govern variable
-                persistence inside lifecycle hooks.</span>
-            </li>
-          </ul>
         </div>
 
-        <!-- Tier 2 Card -->
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex items-center space-x-3 mb-4">
-            <div
-              class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white font-bold text-sm">
-              Tier 2</div>
-            <div>
-              <h3 class="text-base font-bold text-slate-800">Structural-Level Baseline</h3>
-              <p class="text-xs font-bold text-slate-400 tracking-wider uppercase">TypeScript Compilation Architecture
-              </p>
+        <!-- Tier 2 Card: Execution-Level Dynamic Core -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <div
+                class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white font-bold text-sm">
+                Tier 2</div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">Execution-Level Core</h3>
+                <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">ECMAScript Dynamic Runtime</p>
+              </div>
             </div>
+            <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+              Processing client logic demands a core-level command of scripting operations. This tier forms the
+              execution runtime behind user workflows and system pipelines.
+            </p>
+            <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Scope & Closures:</strong> Tracking variable scopes, execution context boundaries, and
+                  memory persistence within closures.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Asynchronous Cycles:</strong> Untangling the Event Loop, macro/micro task queues, active
+                  Promises, and error-resilient network requests.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Array & Data Operations:</strong> Working immutably with complex structures via high-order
+                  array iterations and object spread logic.</span>
+              </li>
+            </ul>
           </div>
-          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-            As applications expand, static verification acts as the primary safety net. This tier focuses on application
-            reliability, interface contracts, and compilation workflows.
-          </p>
-          <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Type Definitions & Interfaces:</strong> Formulate predictable API payloads and declare
-                strict component input boundaries.</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Generics & Safety:</strong> Write component structures that inherit and reuse properties
-                safely without losing strict typing.</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-teal-500 mr-2 font-bold">✓</span>
-              <span><strong>Discriminated Unions:</strong> Model finite UI states (e.g., Idle vs. Pending vs. Success)
-                to eradicate rendering anomalies at design time.</span>
-            </li>
-          </ul>
+        </div>
+
+        <!-- Tier 3 Card: Structural-Level Safety -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <div
+                class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-900 text-white font-bold text-sm">
+                Tier 3</div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">Structural-Level Safety</h3>
+                <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">TypeScript Static Compilation
+                </p>
+              </div>
+            </div>
+            <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+              As codebases scale across complex features, static analysis serves as your primary safety net. This tier
+              establishes architectural reliability and data verification.
+            </p>
+            <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Type Definitions & Contracts:</strong> Defining clean API schemas, functional interfaces,
+                  and type mappings to secure external systems.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Generics & Safety:</strong> Constructing flexible, highly reusable algorithmic structures
+                  while enforcing absolute type constraints.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-teal-500 mr-2 font-bold">✓</span>
+                <span><strong>Algebraic Data Models:</strong> Eliminating runtime failures by declaring clear, finite
+                  state conditions via Discriminated Unions.</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -467,10 +507,6 @@
     <!-- Section 6: The Long Game -->
     <section id="section-fundamentals" class="mb-16 scroll-mt-24">
       <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">The Long Game: Fundamentals Over Tools</h2>
-      <p class="max-w-2xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
-        Specific library iterations and tech stacks evolve rapidly, but structural engineering principles are evergreen.
-        Prioritizing fundamentals builds deep competence that spans across stacks.
-      </p>
       <div class="grid md:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center">
           <h3 class="text-base font-semibold text-slate-900 mb-2">Transferable Skills</h3>
@@ -495,56 +531,84 @@
       <h2 class="text-3xl font-bold text-slate-900 mb-6 text-center">Bibliography</h2>
       <div
         class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto text-sm text-slate-600 space-y-6">
-        <div id="ref-sweller" class="border-b border-slate-100 pb-4">
-          <span class="text-teal-600 font-bold block mb-1">[1] Sweller, J. (1988)</span>
-          <p class="leading-relaxed">
-            <em>Cognitive load during problem solving: Effects on learning.</em> Cognitive Science, 12(2), 257-285. This
-            foundational research paper outlines the parameters of intrinsic, extraneous, and germane cognitive loads
-            that guide our modern pacing and content distribution mechanisms.
+
+        <div id="ref-sweller" class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Sweller, J. (1988). <a href="https://doi.org/10.1207/s15516709cog1202_4" target="_blank"
+              class="text-teal-600 hover:underline font-semibold">Cognitive load during problem solving: Effects on
+              learning.</a> <em>Cognitive Science</em>, <em>12</em>(2), 257–285.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
+            This foundational research paper outlines the parameters of intrinsic, extraneous, and germane cognitive
+            loads that guide our modern pacing and content distribution mechanisms.
           </p>
         </div>
-        <div id="ref-branch" class="border-b border-slate-100 pb-4">
-          <span class="text-teal-600 font-bold block mb-1">[2] Branch, R. M. (2009)</span>
-          <p class="leading-relaxed">
-            <em>Instructional Design: The ADDIE Approach.</em> Springer Science & Business Media. This volume details
-            the operational aspects of the classical ADDIE framework, supporting our conceptual structure from initial
-            mapping metrics up to iterative programmatic diagnostic revisions.
+
+        <div id="ref-branch" class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Branch, R. M. (2009). <a href="https://link.springer.com/book/10.1007/978-1-4020-5283-1" target="_blank"
+              class="text-teal-600 hover:underline font-semibold"><em>Instructional design: The ADDIE approach</em></a>.
+            Springer Science & Business Media.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
+            This volume details the operational aspects of the classical ADDIE framework, supporting our conceptual
+            structure from initial mapping metrics up to iterative programmatic diagnostic revisions.
           </p>
         </div>
-        <div id="ref-merrill" class="border-b border-slate-100 pb-4">
-          <span class="text-teal-600 font-bold block mb-1">[3] Merrill, M. D. (2002)</span>
-          <p class="leading-relaxed">
-            <em>First principles of instruction.</em> Educational Technology Research and Development, 50(3), 43-59.
+
+        <div id="ref-merrill" class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Merrill, M. D. (2002). <a
+              href="https://mdavidmerrill.wordpress.com/wp-content/uploads/2019/04/firstprinciplesbymerrill.pdf"
+              target="_blank" class="text-teal-600 hover:underline font-semibold">First principles of instruction.</a>
+            <em>Educational Technology Research and Development</em>, <em>50</em>(3), 43–59.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
             Merrill establishes task-centered frameworks that validate our core learning philosophy of project-based
             building and practical programmatic task contextualization.
           </p>
         </div>
-        <div id="ref-vygotsky" class="border-b border-slate-100 pb-4">
-          <span class="text-teal-600 font-bold block mb-1">[4] Vygotsky, L. S. (1978)</span>
-          <p class="leading-relaxed">
-            <em>Mind in society: The development of higher psychological processes.</em> Harvard University Press.
+
+        <div id="ref-vygotsky" class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Vygotsky, L. S. (1978). <a
+              href="https://w.pauldowling.me/rtf/2021.1/readings/LSVygotsky_1978_MindinSocietyDevelopmentofHigherPsycholo.pdf"
+              target="_blank" class="text-teal-600 hover:underline font-semibold"><em>Mind in society: The development
+                of higher psychological processes</em></a>. Harvard University Press.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
             Vygotsky outlines the Zone of Proximal Development (ZPD) and the pedagogical requirements of dynamic
             scaffolding, serving as the basis for our Scaffolding teaching patterns.
           </p>
         </div>
-        <div id="ref-kirschner" class="border-b border-slate-100 pb-4">
-          <span class="text-teal-600 font-bold block mb-1">[5] Kirschner, P. A., Sweller, J., & Clark, R. E.
-            (2006)</span>
-          <p class="leading-relaxed">
-            <em>Why minimal guidance during instruction does not work: An analysis of the failure of constructivist,
-              discovery, problem-based, experiential, and inquiry-based teaching.</em> Educational Psychologist, 41(2),
-            75-86. This study demonstrates the empirical superiority of direct, guided instruction and expert modeling
-            over unguided exploration.
+
+        <div id="ref-kirschner" class="border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Kirschner, P. A., Sweller, J., & Clark, R. E. (2006). <a
+              href="https://itgs.ict.usc.edu/papers/Constructivism_KirschnerEtAl_EP_06.pdf" target="_blank"
+              class="text-teal-600 hover:underline font-semibold">Why minimal guidance during instruction does not work:
+              An analysis of the failure of constructivist, discovery, problem-based, experiential, and inquiry-based
+              teaching.</a> <em>Educational Psychologist</em>, <em>41</em>(2), 75–86.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
+            This study demonstrates the empirical superiority of direct, guided instruction and expert modeling over
+            unguided exploration.
           </p>
         </div>
+
         <div id="ref-kirkpatrick" class="pb-2">
-          <span class="text-teal-600 font-bold block mb-1">[6] Kirkpatrick, D. L. (1994)</span>
-          <p class="leading-relaxed">
-            <em>Evaluating Training Programs.</em> Berrett-Koehler Publishers. This landmark guide provides structural
-            guidelines to organize diagnostic benchmarks and feedback evaluation loops to continuously audit our
-            learning models.
+          <p class="leading-relaxed text-slate-805 text-sm">
+            Kirkpatrick, D. L. (1994). <a
+              href="https://www.amazon.com/Evaluating-Training-Programs-Four-Levels/dp/1576753484" target="_blank"
+              class="text-teal-600 hover:underline font-semibold"><em>Evaluating training programs</em></a>.
+            Berrett-Koehler Publishers.
+          </p>
+          <p class="mt-2 pl-6 text-slate-500 border-l-2 border-slate-200 leading-relaxed text-xs sm:text-sm">
+            This landmark guide provides structural guidelines to organize diagnostic benchmarks and feedback evaluation
+            loops to continuously audit our learning models.
           </p>
         </div>
+
       </div>
     </section>
   </main>

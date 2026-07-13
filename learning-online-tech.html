@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Report: Building Online Technical Curriculum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+    }
+
+    .nav-pill {
+      transition: all 0.2s ease-in-out;
+    }
+
+    .nav-pill:hover {
+      background-color: #f1f5f9;
+      color: #4f46e5;
+    }
+
+    .nav-pill.active {
+      background-color: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-4">
+    <div class="max-w-6xl mx-auto px-4 flex flex-wrap justify-center gap-2 sm:gap-3">
+      <a href="#section-platform"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Infrastructure</a>
+      <a href="#section-philosophy"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Digital Philosophy</a>
+      <a href="#section-cognitive-load"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Cognitive Load</a>
+      <a href="#section-baselines"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Learner Baselines</a>
+      <a href="#section-addie"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">ADDIE Pipeline</a>
+      <a href="#section-blended"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Blended Learning</a>
+      <a href="#section-longevity"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Curriculum Longevity</a>
+      <a href="#section-bibliography"
+        class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-600">Bibliography</a>
+    </div>
+  </div>
+
+  <header class="bg-white border-b border-slate-200 pt-12 pb-8 text-center">
+    <div class="max-w-5xl mx-auto px-4">
+      <span
+        class="text-indigo-600 font-bold text-xs tracking-widest uppercase bg-indigo-50 px-3 py-1 rounded-full">Digital
+        Instructional Architecture</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3 mb-6">Building Online Technical Curriculum</h1>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 text-left max-w-4xl mx-auto shadow-sm">
+        <h2 class="text-lg font-bold text-slate-800 mb-3">The Challenge of Asynchronous Technical Education</h2>
+        <p class="text-slate-600 text-sm leading-relaxed mb-6">
+          Designing technical curriculum for an online, largely asynchronous audience requires distinct architectural
+          shifts. When an instructor isn't physically present to debug a broken local environment or read a student's
+          confusion in real-time, the curriculum itself must carry the pedagogical weight. Passive video consumption
+          easily creates an "illusion of competence." This interactive framework outlines a scientifically backed
+          methodology to design high-impact, scalable online technical learning experiences.
+        </p>
+        <div class="border-t border-slate-200 pt-5">
+          <h3 class="text-xs font-bold text-slate-400 tracking-wider uppercase mb-3">Core Objectives for Digital Design
+          </h3>
+          <ul class="grid sm:grid-cols-2 gap-4 text-xs text-slate-600">
+            <li class="flex items-start">
+              <span class="text-indigo-500 mr-2 font-bold text-base leading-none">•</span>
+              <span><strong>Eliminate Setup Friction:</strong> Utilize cloud sandboxes and automated environments to
+                keep learners coding, not configuring.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-indigo-500 mr-2 font-bold text-base leading-none">•</span>
+              <span><strong>Design for Telemetry:</strong> Build assessments and milestones that generate actionable
+                data on where remote cohorts are failing.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-indigo-500 mr-2 font-bold text-base leading-none">•</span>
+              <span><strong>Asynchronous Scaffolding:</strong> Translate live teaching techniques into scalable digital
+                formats.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-indigo-500 mr-2 font-bold text-base leading-none">•</span>
+              <span><strong>Enforce Baseline Routing:</strong> Use automated pre-assessments to ensure learners meet
+                necessary prerequisites before complex modules.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+    <section id="section-platform" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">1. Infrastructure: LMS vs. Custom Build</h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Before developing content or teaching philosophy, curriculum architects face a foundational infrastructure
+        decision. The platform you choose strictly dictates the limits of your pedagogy. Do you lease an off-the-shelf
+        Learning Management System (LMS) or engineer a custom educational platform?
+      </p>
+
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-slate-100 text-slate-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Off-the-Shelf LMS</h3>
+          </div>
+          <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mb-3">E.g., Canvas, Moodle, Teachable
+          </p>
+          <div class="flex-grow space-y-4">
+            <div>
+              <strong class="text-sm text-emerald-700 block mb-1">The Benefit: Rapid Deployment</strong>
+              <p class="text-sm text-slate-600 leading-relaxed">Instantly provides user auth, payment processing,
+                gradebooks, and out-of-the-box compliance without requiring engineering teams.</p>
+            </div>
+            <div>
+              <strong class="text-sm text-rose-700 block mb-1">The Drawback: Pedagogical Limits</strong>
+              <p class="text-sm text-slate-600 leading-relaxed">Traditionally hostile to complex technical setups.
+                Embedding live code editors often requires fragile iFrames.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-indigo-100 text-indigo-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Custom Infrastructure</h3>
+          </div>
+          <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase mb-3">Building from scratch</p>
+          <div class="flex-grow space-y-4">
+            <div>
+              <strong class="text-sm text-emerald-700 block mb-1">The Benefit: Total Control</strong>
+              <p class="text-sm text-slate-600 leading-relaxed">Allows for seamless integration of CI/CD pipelines,
+                native sandboxing, and bespoke automated hint engines tied to keystrokes.</p>
+            </div>
+            <div>
+              <strong class="text-sm text-amber-700 block mb-1">The Trade-off: Internal Tool Ownership</strong>
+              <p class="text-sm text-slate-600 leading-relaxed">Like any application built for internal use, you must
+                allocate ongoing engineering cycles to maintain, secure, and iterate on the platform itself.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-indigo-900 p-6 rounded-xl shadow-sm border border-indigo-800 flex flex-col h-full text-indigo-50">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-indigo-800 text-indigo-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white">The Headless Hybrid</h3>
+          </div>
+          <p class="text-xs text-indigo-300 font-semibold tracking-wider uppercase mb-3">The Modern Compromise</p>
+          <div class="flex-grow space-y-4">
+            <p class="text-sm text-indigo-100 leading-relaxed">
+              Utilize an API-first LMS backend to handle the generic heavy lifting (authentication, progress tracking).
+              Simultaneously, build a custom frontend application that renders your own interactive coding environments.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-philosophy" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">2. Digital Philosophy: Active Screen Time</h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Once infrastructure is decided, the core pedagogical ethos must be established. The single most pervasive
+        failure in online technical education is the reliance on long-form video lectures. In a digital environment, the
+        curriculum must force the learner's hands onto the keyboard as rapidly and frequently as possible.
+      </p>
+
+      <div class="space-y-8">
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div
+            class="flex items-center justify-center h-12 w-12 rounded-lg bg-indigo-100 text-indigo-600 mb-4 text-xl flex-shrink-0">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Zero-Friction Environments</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              Removing the "works on my machine" barrier is critical for early momentum. For quick conceptual exercises,
+              curriculum should utilize embedded cloud IDEs so learners can execute code within seconds. For
+              comprehensive projects, providing a pre-configured Git repository (requiring only an installation step) is
+              equally effective. Assuming prerequisites are met, standardized boilerplates eliminate setup frustration
+              while smoothly transitioning learners into a real-world, local IDE workflow that they can modify and
+              experiment with as their proficiency grows.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div
+            class="flex items-center justify-center h-12 w-12 rounded-lg bg-indigo-100 text-indigo-600 mb-4 text-xl flex-shrink-0">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+              </path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Automated Evaluation (Verification, not TDD)</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              Automated testing gives remote students immediate, objective feedback 24/7, replacing the bottleneck of
+              manual instructor code reviews. We are primarily using tests for <strong>Verification</strong> rather than
+              teaching Test-Driven Development (TDD) from day one.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-start">
+          <div
+            class="flex items-center justify-center h-12 w-12 rounded-lg bg-indigo-100 text-indigo-600 mb-4 text-xl flex-shrink-0">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+              </path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Asynchronous Community Tooling</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+              A student stuck on a module at 2:00 AM needs a searchable repository of peer solutions. Threaded,
+              SEO-indexable platforms (like Discourse) act as a living StackOverflow for your specific course, rather
+              than ephemeral chat apps (like Slack) where answers are quickly lost.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-cognitive-load" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">3. The Science: Managing Online Cognitive Load</h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Why are the above philosophies so important? Because of Cognitive Load Theory. In online learning,
+        <strong>Extraneous load</strong> is the enemy: it's the mental friction of switching between a video player,
+        terminal, IDE, and documentation. Online curriculum must ruthlessly eliminate extraneous load.
+      </p>
+
+      <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200">
+        <div class="chart-container relative w-full h-80 max-w-2xl mx-auto">
+          <canvas id="cognitiveLoadChart"></canvas>
+        </div>
+        <div class="mt-8 flex justify-center flex-wrap gap-3">
+          <button id="scenario-good"
+            class="bg-indigo-500 text-white px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-indigo-600 transition-colors shadow-sm">Integrated
+            Browser Sandbox</button>
+          <button id="scenario-bad"
+            class="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">Video
+            + Local Setup Hell</button>
+          <button id="scenario-complex"
+            class="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">Advanced
+            Systems Architecture</button>
+        </div>
+        <div id="chart-explanation"
+          class="mt-6 text-center text-slate-700 text-sm max-w-2xl mx-auto bg-indigo-50/50 p-5 rounded-lg border border-indigo-100 font-medium">
+          Select an online learning environment scenario to see how cognitive capacity is utilized.
+        </div>
+        <div class="mt-5 text-center text-slate-500 text-xs italic max-w-2xl mx-auto">
+          * Note: The capacity distributions modeled above are illustrative estimates synthesized from empirical
+          findings on the <strong>Split-Attention Effect</strong> (Mayer, 2014) and the <strong>Expertise Reversal
+            Effect</strong> (Kalyuga et al., 2003) to demonstrate the relative impact of digital tooling friction.
+        </div>
+      </div>
+    </section>
+
+    <section id="section-baselines" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">4. The Learner: Defining Prerequisite Baselines
+      </h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Before entering the core curriculum pipeline, developers must possess foundational capabilities. Rather than
+        assuming general developer experience, we segment technical expectations across the three core web technologies
+        into distinct knowledge tiers to prevent cognitive overload during advanced instruction.
+      </p>
+
+      <div class="max-w-6xl mx-auto space-y-16">
+
+        <!-- HTML Track -->
+        <div>
+          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
+            <div class="bg-orange-100 text-orange-600 p-2 rounded-lg mr-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">HTML Structure</h3>
+          </div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-300 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-500 text-white font-bold text-xs shadow-sm">
+                  T1</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Foundation</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-orange-500 mr-2 font-bold">•</span><span>Basic document
+                    structure (`html`, `head`, `body`).</span></li>
+                <li class="flex items-start"><span class="text-orange-500 mr-2 font-bold">•</span><span>Difference
+                    between block and inline elements.</span></li>
+                <li class="flex items-start"><span class="text-orange-500 mr-2 font-bold">•</span><span>Linking to
+                    external CSS and JavaScript resources.</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-400 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-600 text-white font-bold text-xs shadow-sm">
+                  T2</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Semantics & Forms</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Use of semantic
+                    HTML elements (`article`, `nav`, `section`).</span></li>
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Forms, standard
+                    input elements, and labels.</span></li>
+                <li class="flex items-start"><span class="text-orange-600 mr-2 font-bold">•</span><span>Accessibility
+                    features, alt text, and structural best practices.</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-orange-500 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-orange-700 text-white font-bold text-xs shadow-sm">
+                  T3</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Advanced APIs</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>HTML APIs
+                    (Canvas, Geolocation, Web Storage) from the markup side.</span></li>
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Advanced forms,
+                    validation attributes, and specific input types.</span></li>
+                <li class="flex items-start"><span class="text-orange-700 mr-2 font-bold">•</span><span>Implementation
+                    of custom `data-*` attributes for DOM tracking.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CSS Track -->
+        <div>
+          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
+            <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">CSS Presentation</h3>
+          </div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-500 text-white font-bold text-xs shadow-sm">
+                  T1</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Styling Basics</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-blue-500 mr-2 font-bold">•</span><span>How CSS targets
+                    elements, classes, and IDs.</span></li>
+                <li class="flex items-start"><span class="text-blue-500 mr-2 font-bold">•</span><span>Basic syntax,
+                    colors, typography, and text styling.</span></li>
+                <li class="flex items-start"><span class="text-blue-500 mr-2 font-bold">•</span><span>The Box Model
+                    (margin, border, padding, content) and layout fundamentals.</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-400 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-600 text-white font-bold text-xs shadow-sm">
+                  T2</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Layout & Responsive</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Advanced layouts
+                    using Flexbox and CSS Grid.</span></li>
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>Responsive design
+                    strategies and structural media queries.</span></li>
+                <li class="flex items-start"><span class="text-blue-600 mr-2 font-bold">•</span><span>CSS transitions
+                    and keyframe animations.</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-500 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-blue-700 text-white font-bold text-xs shadow-sm">
+                  T3</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Architecture</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Advanced
+                    combinator selectors and specific pseudo-classes.</span></li>
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>CSS variables
+                    (custom properties) and theming architecture.</span></li>
+                <li class="flex items-start"><span class="text-blue-700 mr-2 font-bold">•</span><span>Implementation of
+                    the Web Animations API (WAAPI) and performance.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- JS Track -->
+        <div>
+          <div class="flex items-center mb-6 border-b border-slate-200 pb-2">
+            <div class="bg-amber-100 text-amber-600 p-2 rounded-lg mr-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">JavaScript Execution</h3>
+          </div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-400 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-400 text-white font-bold text-xs shadow-sm">
+                  T1</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Core Logic</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Basic syntax,
+                    operators, and control flow.</span></li>
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Variables and
+                    primitive/reference data types.</span></li>
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Functions, basic
+                    scope rules, and vanilla DOM manipulation.</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-500 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-500 text-white font-bold text-xs shadow-sm">
+                  T2</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Async & Modern Features</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Event handling,
+                    propagation, and delegation.</span></li>
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>Asynchronous
+                    execution paradigms (Promises, async/await).</span></li>
+                <li class="flex items-start"><span class="text-amber-500 mr-2 font-bold">•</span><span>ES6+ modern
+                    features (let/const, arrow functions, destructuring, template literals).</span></li>
+              </ul>
+            </div>
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-amber-600 transition-colors">
+              <div class="flex items-center space-x-3 mb-4">
+                <div
+                  class="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-600 text-white font-bold text-xs shadow-sm">
+                  T3</div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Engineering & Types</h4>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Advanced
+                    patterns: Modules, lexical closures, and IIFEs.</span></li>
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Performance
+                    optimization, garbage collection, and memory management tracking.</span></li>
+                <li class="flex items-start"><span class="text-amber-600 mr-2 font-bold">•</span><span>Integration of
+                    TypeScript for static typing, interfaces, and safe architectural compilation.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-addie" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">5. Execution: The ADDIE Curriculum Pipeline</h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        With infrastructure, philosophy, and baselines defined, we use the <strong>ADDIE framework</strong> (Analyze,
+        Design, Develop, Implement, Evaluate) to manufacture the course. We track a single project—<strong>Building a
+          Full-Stack E-Commerce Checkout</strong>—to demonstrate the pipeline.
+      </p>
+
+      <div class="space-y-6">
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-5 items-start">
+          <div
+            class="bg-indigo-100 text-indigo-700 font-extrabold text-xl w-12 h-12 flex items-center justify-center rounded-lg flex-shrink-0">
+            A</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Analyze: Comprehensive Diagnostic Gateways</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">We map existing mental schemas by building exhaustive
+              automated diagnostic gateways into the platform before content begins. These assessments measure directly
+              against our established baseline tiers to identify structural weaknesses.</p>
+            <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+              <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> Before entering the
+                module, the platform deploys a multi-stage diagnostic. It goes beyond a simple multiple-choice quiz on
+                RESTful HTTP verbs; it requires learners to complete a sandbox exercise resolving nested JavaScript
+                Promises. If a student struggles with async execution (identifying a gap in JS Tier 2), the system
+                automatically routes them to a "Promise & Fetch Refresher" track before they can access the main API
+                lessons.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-5 items-start">
+          <div
+            class="bg-indigo-100 text-indigo-700 font-extrabold text-xl w-12 h-12 flex items-center justify-center rounded-lg flex-shrink-0">
+            D</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Design: Modular & Task-Centered Paths</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">We abandon 60-minute monolithic lectures. Content is
+              broken into hyper-focused micro-videos, immediately followed by actionable code challenges.</p>
+            <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+              <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> A 4-minute video
+                demonstrates client-side price spoofing, followed immediately by an embedded sandbox where the student
+                must write a server-side <code>reduce()</code> function to safely calculate the total.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-5 items-start">
+          <div
+            class="bg-indigo-100 text-indigo-700 font-extrabold text-xl w-12 h-12 flex items-center justify-center rounded-lg flex-shrink-0">
+            D</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Develop: Automated Sandboxing & CI/CD</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">Curriculum engineers build the interactive
+              environments, boilerplates, and automated testing suites that act as the asynchronous instructor.</p>
+            <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+              <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> Engineers build a
+                GitHub Classroom repo with hidden Jest tests. If a student fails to write a <code>catch()</code> block
+                for network failures, the CI runner fails their commit and auto-replies with a pedagogical hint.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-5 items-start">
+          <div
+            class="bg-indigo-100 text-indigo-700 font-extrabold text-xl w-12 h-12 flex items-center justify-center rounded-lg flex-shrink-0">
+            I</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Implement: Platform Rollout & Moderation</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">Uploading assets, setting up Discourse forums, and
+              initiating beta cohorts. The focus shifts to system reliability and monitoring student flow.</p>
+            <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+              <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> TAs are instructed
+                not to give direct code fixes on the forums; instead, they reply with links to timestamped think-aloud
+                debugging videos, enforcing self-serve problem solving.</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-5 items-start">
+          <div
+            class="bg-indigo-100 text-indigo-700 font-extrabold text-xl w-12 h-12 flex items-center justify-center rounded-lg flex-shrink-0">
+            E</div>
+          <div class="flex-grow">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Evaluate: Telemetry & Continuous Iteration</h3>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">Evaluation is continuous and quantitative, looking at
+              video drop-off rates and common test runner errors to identify bottlenecks.</p>
+            <div class="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+              <p class="text-slate-600 text-sm leading-relaxed"><strong>E-Commerce Example:</strong> Telemetry reveals
+                65% of students spend 4 hours on the "JWT Management" challenge. The designer schedules a sprint to
+                refactor that module, adding an intermediate scaffolding step.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-blended" class="mb-24 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">6. Delivery: Blended Learning & Synchronous Tools
+      </h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        Purely asynchronous environments are excellent for knowledge acquisition but lack the human immediacy needed for
+        complex synthesis. A <strong>Blended Learning</strong> architecture relies on the digital platform to teach the
+        syntax, reserving synchronous live sessions for high-leverage collaborative problem-solving.
+      </p>
+
+      <div class="grid lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-emerald-100 text-emerald-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">Breakout Pair Programming</h3>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed mb-4">
+            Remote technical students frequently suffer from "silent struggling." Synchronous breakout rooms force
+            students to articulate their mental models out loud.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-emerald-100 text-emerald-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">Live Architectural Debates</h3>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed mb-4">
+            While writing syntax is often a solo endeavor, systems design is inherently collaborative. Utilize digital
+            whiteboarding tools for instructors to lead real-time mapping sessions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-longevity" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">7. Maintenance: Curriculum Longevity</h2>
+      <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10 text-sm sm:text-base">
+        The hidden cost of online technical curriculum is maintenance. Frameworks update constantly. If a curriculum
+        relies too heavily on high-production video for minor syntax details, it will rot within six months.
+      </p>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center hover:-translate-y-1 transition-transform duration-300">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Text for Syntax, Video for Concepts</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Keep exact code syntax in text or markdown
+            formats that can be updated in seconds via a GitHub PR. Reserve expensive video production for high-level
+            concepts.</p>
+        </div>
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center hover:-translate-y-1 transition-transform duration-300">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Fundamentals First, Frameworks Second</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Curriculum must explicitly sequence core language
+            fundamentals (Vanilla JS, DOM manipulation, HTTP) before introducing abstract frameworks. Strong
+            foundational knowledge allows learners to easily adapt to any future technology, ensuring your curriculum
+            path remains relevant.</p>
+        </div>
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center hover:-translate-y-1 transition-transform duration-300">
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Modular Versioning</h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">Structure the LMS course like a software
+            repository. When a major framework update drops, you shouldn't have to rebuild the entire course—just swap
+            out the specific module.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-bibliography" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-slate-900 mb-6 text-center">Bibliography</h2>
+      <div
+        class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto text-sm text-slate-600 space-y-6">
+
+        <div id="ref-sweller" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[1] Sweller, J. (1988)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline" href="https://doi.org/10.1207/s15516709cog1202_4">Cognitive load during
+              problem solving: Effects on learning.</a> <em>Cognitive Science</em>, 12(2), 257-285.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            This foundational research paper outlines the parameters of intrinsic, extraneous, and germane cognitive
+            loads that guide our modern pacing and content distribution mechanisms.
+          </p>
+        </div>
+
+        <div id="ref-branch" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[2] Branch, R. M. (2009)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline"
+              href="https://link.springer.com/book/10.1007/978-1-4020-5283-1"><em>Instructional Design: The ADDIE
+                Approach</em>.</a> Springer Science & Business Media.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            This volume details the operational aspects of the classical ADDIE framework, supporting our conceptual
+            structure from initial mapping metrics up to iterative programmatic diagnostic revisions.
+          </p>
+        </div>
+
+        <div id="ref-merrill" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[3] Merrill, M. D. (2002)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline"
+              href="https://mdavidmerrill.wordpress.com/wp-content/uploads/2019/04/firstprinciplesbymerrill.pdf">First
+              principles of instruction.</a> <em>Educational Technology Research and Development</em>, 50(3), 43-59.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            Merrill establishes task-centered frameworks that validate our core learning philosophy of project-based
+            building and practical programmatic task contextualization.
+          </p>
+        </div>
+
+        <div id="ref-vygotsky" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[4] Vygotsky, L. S. (1978)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline"
+              href="https://w.pauldowling.me/rtf/2021.1/readings/LSVygotsky_1978_MindinSocietyDevelopmentofHigherPsycholo.pdf"><em>Mind
+                in society: The development of higher psychological processes</em>.</a> Harvard University Press.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            Vygotsky outlines the Zone of Proximal Development (ZPD) and the pedagogical requirements of dynamic
+            scaffolding, serving as the basis for our Scaffolding teaching patterns.
+          </p>
+        </div>
+
+        <div id="ref-kirschner" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[5] Kirschner, P. A., Sweller, J., & Clark, R. E.
+            (2006)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline"
+              href="https://itgs.ict.usc.edu/papers/Constructivism_KirschnerEtAl_EP_06.pdf">Why minimal guidance during
+              instruction does not work: An analysis of the failure of constructivist, discovery, problem-based,
+              experiential, and inquiry-based teaching.</a> <em>Educational Psychologist</em>, 41(2), 75-86.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            This study demonstrates the empirical superiority of direct, guided instruction and expert modeling over
+            unguided exploration.
+          </p>
+        </div>
+
+        <div id="ref-kirkpatrick" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[6] Kirkpatrick, D. L. (1994)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline"
+              href="https://www.amazon.com/Evaluating-Training-Programs-Four-Levels/dp/1576753484"><em>Evaluating
+                Training Programs</em>.</a> Berrett-Koehler Publishers.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            This landmark guide provides structural guidelines to organize diagnostic benchmarks and feedback evaluation
+            loops to continuously audit our learning models.
+          </p>
+        </div>
+
+        <div id="ref-mayer" class="border-b border-slate-100 pb-4">
+          <span class="text-teal-600 font-bold block mb-1">[7] Mayer, R. E. (2014)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline" href="https://doi.org/10.1017/CBO9781139547369"><em>The Cambridge
+                Handbook of Multimedia Learning</em></a> (2nd ed.). Cambridge University Press.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            Mayer's research on the Spatial Contiguity Principle validates the necessity of integrated browser sandboxes
+            to eliminate the Split-Attention Effect caused by disparate learning tools.
+          </p>
+        </div>
+
+        <div id="ref-kalyuga" class="pb-2">
+          <span class="text-teal-600 font-bold block mb-1">[8] Kalyuga, S., Ayres, P., Chandler, P., & Sweller, J.
+            (2003)</span>
+          <p class="leading-relaxed">
+            <a class="text-blue-700 underline" href="https://doi.org/10.1207/S15326985EP3801_4">The Expertise Reversal
+              Effect.</a> <em>Educational Psychologist</em>, 38(1), 23-31.
+          </p>
+          <p class="leading-relaxed mt-2 pl-4 border-l-2 border-slate-300">
+            This study demonstrates how instructional scaffolding that is highly effective for novices becomes a source
+            of extraneous load for advanced learners, informing our approach to dynamic scaffolding.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-pill');
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-30% 0px -60% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => {
+              if (link.getAttribute('href') === `#${entry.target.id}`) {
+                link.classList.add('active');
+              } else {
+                link.classList.remove('active');
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => observer.observe(section));
+
+      const ctx = document.getElementById('cognitiveLoadChart').getContext('2d');
+      let cognitiveLoadChart;
+
+      const chartData = {
+        good: {
+          data: [25, 5, 70],
+          explanation: "An Integrated Browser Sandbox minimizes Extraneous Load by combining code, preview, and instructions in one window, directing maximum mental bandwidth to Germane schema construction."
+        },
+        bad: {
+          data: [20, 70, 10],
+          explanation: "Video + Local Setup Hell floods the learner's workspace with Extraneous Load (installing packages, debugging Webpack, context-switching), severely restricting actual concept intake."
+        },
+        complex: {
+          data: [65, 10, 25],
+          explanation: "Advanced Systems Architecture naturally elevates Intrinsic Load. This requires digital scaffolding (e.g., pre-written boilerplate) to keep the combined load manageable."
+        }
+      };
+
+      const chartExplanation = document.getElementById('chart-explanation');
+
+      function createChart(data) {
+        if (cognitiveLoadChart) {
+          cognitiveLoadChart.destroy();
+        }
+        cognitiveLoadChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Intrinsic (Difficulty)', 'Extraneous (Friction)', 'Germane (Learning)'],
+            datasets: [{
+              label: 'Mental Budget Split',
+              data: data,
+              backgroundColor: [
+                'rgba(99, 102, 241, 0.75)',
+                'rgba(239, 68, 68, 0.75)',
+                'rgba(16, 185, 129, 0.75)'
+              ],
+              borderColor: [
+                'rgba(99, 102, 241, 1)',
+                'rgba(239, 68, 68, 1)',
+                'rgba(16, 185, 129, 1)'
+              ],
+              borderWidth: 1.5,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                max: 100,
+                grid: { display: false },
+                ticks: {
+                  callback: function (value) {
+                    return value + '%'
+                  }
+                }
+              },
+              y: {
+                stacked: true,
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return ` ${context.label}: ${context.raw}%`;
+                  }
+                }
+              },
+              title: {
+                display: true,
+                text: 'Cognitive Bandwidth Distribution (Total 100%)',
+                font: { size: 13, weight: 'bold' },
+                color: '#475569'
+              }
+            }
+          }
+        });
+      }
+
+      createChart(chartData.good.data);
+      chartExplanation.textContent = chartData.good.explanation;
+      document.getElementById('scenario-good').classList.add('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
+      document.getElementById('scenario-good').classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-300');
+
+      const scenarioButtons = document.querySelectorAll('[id^="scenario-"]');
+      scenarioButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const scenario = e.target.id.split('-')[1];
+          cognitiveLoadChart.data.datasets[0].data = chartData[scenario].data;
+          cognitiveLoadChart.update();
+          chartExplanation.textContent = chartData[scenario].explanation;
+
+          scenarioButtons.forEach(btn => {
+            btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-300');
+            btn.classList.remove('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
+          });
+          e.target.classList.add('bg-indigo-500', 'text-white', 'shadow-sm', 'border-transparent');
+          e.target.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-300');
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
